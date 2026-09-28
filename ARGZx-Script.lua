@@ -13,7 +13,6 @@ end)
 
 repeat task.wait(0.3) until plr:FindFirstChild("muscleEvent") and plr:FindFirstChild("leaderstats")
 
-local muscleEvent = plr.muscleEvent
 local Strength = plr.leaderstats.Strength
 local Rebirths = plr.leaderstats.Rebirths
 
@@ -82,7 +81,7 @@ local function startScript(isOP)
     selectGui:Destroy()
 
     if isOP then
-        FarmPower = 180
+        FarmPower = 200
     else
         FarmPower = 70
     end
@@ -91,14 +90,22 @@ local function startScript(isOP)
     task.spawn(function()
         while true do
             if FastFarm then
-                for i = 1, FarmPower do
-                    if not FastFarm then
-                        break
-                    end
+                -- Buscamos el remote constantemente por si el juego lo recarga al hacer rebirth
+                local currentMuscleEvent = plr:FindFirstChild("muscleEvent")
+                
+                if currentMuscleEvent then
+                    for i = 1, FarmPower do
+                        if not FastFarm then break end
 
-                    pcall(function()
-                        muscleEvent:FireServer("rep")
-                    end)
+                        pcall(function()
+                            currentMuscleEvent:FireServer("rep")
+                        end)
+                        
+                        -- FIX: Si es OP Farm, evitamos saturar la red haciendo una micropausa cada 45 peticiones
+                        if i % 45 == 0 then
+                            task.wait()
+                        end
+                    end
                 end
 
                 task.wait()
@@ -114,37 +121,27 @@ local function startScript(isOP)
 
         while true do
             if AutoRebirth then
-
-                -- Evita enviar demasiadas peticiones seguidas
                 if tick() - lastAttempt >= 0.8 then
                     lastAttempt = tick()
 
                     pcall(function()
-                        -- Buscar nuevamente el almacenamiento
                         local rStorage = ReplicatedStorage:FindFirstChild("repStorage")
 
                         if not rStorage then
                             rStorage = ReplicatedStorage
                         end
 
-                        -- Buscar nuevamente rEvents
                         local rEvents = rStorage:FindFirstChild("rEvents")
 
                         if rEvents then
-                            -- IMPORTANTE:
-                            -- Buscar el remote en cada intento.
-                            -- Así no usamos una referencia vieja.
                             local rebirthRemote = rEvents:FindFirstChild("rebirthRemote")
 
                             if rebirthRemote then
-
                                 if rebirthRemote:IsA("RemoteFunction") then
                                     rebirthRemote:InvokeServer("rebirthRequest")
-
                                 elseif rebirthRemote:IsA("RemoteEvent") then
                                     rebirthRemote:FireServer("rebirthRequest")
                                 end
-
                             end
                         end
                     end)
@@ -164,7 +161,6 @@ local function startScript(isOP)
                 sessionRebirths = sessionRebirths + (Rebirths.Value - lastRebirths)
                 lastRebirths = Rebirths.Value
             elseif Rebirths.Value < lastRebirths then
-                -- Por si el juego resetea/recrea el valor
                 lastRebirths = Rebirths.Value
             end
 
