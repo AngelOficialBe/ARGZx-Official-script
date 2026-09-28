@@ -249,10 +249,8 @@ task.spawn(function()
                     rebirthRemote:FireServer("rebirthRequest")
                 end
             end)
-
-            task.wait(0.1)
         else
-            task.wait(0.5)
+            task.wait(0.2)
         end
     end
 end)
