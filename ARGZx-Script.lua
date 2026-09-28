@@ -5,6 +5,9 @@ local ScriptURL = "https://raw.githubusercontent.com/AngelOficialBe/ARGZx-Offici
 -- ==============================================================
 
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local VirtualUser = game:GetService("VirtualUser")
+
 local plr = Players.LocalPlayer
 local PlayerGui = plr:WaitForChild("PlayerGui")
 
