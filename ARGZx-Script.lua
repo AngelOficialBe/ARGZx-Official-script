@@ -237,35 +237,25 @@ local function startScript(isOP)
 
     -- ==================== AUTO REBIRTH ====================
 task.spawn(function()
-
     while true do
-
         if AutoRebirth then
-
             local rEvents = ReplicatedStorage:FindFirstChild("rEvents")
 
             if rEvents then
-
                 local rebirthRemote = rEvents:FindFirstChild("rebirthRemote")
 
                 if rebirthRemote then
-
                     pcall(function()
-
                         if rebirthRemote:IsA("RemoteFunction") then
                             rebirthRemote:InvokeServer("rebirthRequest")
-
                         elseif rebirthRemote:IsA("RemoteEvent") then
                             rebirthRemote:FireServer("rebirthRequest")
                         end
-
                     end)
-
                 end
             end
 
             task.wait()
-
         else
             task.wait(0.2)
         end
