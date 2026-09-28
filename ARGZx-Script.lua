@@ -265,7 +265,7 @@ task.spawn(function()
             Rebirth()
             task.wait()
         else
-            task.wait(0.2)
+            task.wait(0.1)
         end
     end
 end)
