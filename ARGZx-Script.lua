@@ -117,39 +117,32 @@ local function startScript(isOP)
 
     -- ==================== AUTO REBIRTH ====================
     task.spawn(function()
-        local lastAttempt = 0
-
         while true do
             if AutoRebirth then
-                if tick() - lastAttempt >= 0.8 then
-                    lastAttempt = tick()
+                pcall(function()
+                    local rStorage = ReplicatedStorage:FindFirstChild("repStorage") or ReplicatedStorage
+                    local rEvents = rStorage:FindFirstChild("rEvents")
 
-                    pcall(function()
-                        local rStorage = ReplicatedStorage:FindFirstChild("repStorage")
+                    if rEvents then
+                        local rebirthRemote = rEvents:FindFirstChild("rebirthRemote")
 
-                        if not rStorage then
-                            rStorage = ReplicatedStorage
-                        end
-
-                        local rEvents = rStorage:FindFirstChild("rEvents")
-
-                        if rEvents then
-                            local rebirthRemote = rEvents:FindFirstChild("rebirthRemote")
-
-                            if rebirthRemote then
-                                if rebirthRemote:IsA("RemoteFunction") then
+                        if rebirthRemote then
+                            -- Se ejecuta en task.spawn para que NO congelen ni retrasen el bucle esperándolo
+                            if rebirthRemote:IsA("RemoteFunction") then
+                                task.spawn(function()
                                     rebirthRemote:InvokeServer("rebirthRequest")
-                                elseif rebirthRemote:IsA("RemoteEvent") then
-                                    rebirthRemote:FireServer("rebirthRequest")
-                                end
+                                end)
+                            elseif rebirthRemote:IsA("RemoteEvent") then
+                                rebirthRemote:FireServer("rebirthRequest")
                             end
                         end
-                    end)
-                end
+                    end
+                end)
 
-                task.wait(0.1)
+                -- Bucle ultra rápido (0.05s) para renacer inmediatamente al llegar a la fuerza
+                task.wait(0.05)
             else
-                task.wait(0.3)
+                task.wait(0.2)
             end
         end
     end)
