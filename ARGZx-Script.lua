@@ -361,8 +361,3 @@ end)
 opBtn.MouseButton1Click:Connect(function()
     startScript(true)
 end)
-
-
-El cambio clave está en Auto Rebirth: ya no guarda rebirthRemote fuera del bucle. Lo busca nuevamente cada vez que toca hacer un rebirth, así que si el juego recrea ese objeto, el script puede encontrar la nueva referencia.
-
-También mantuve tu OP Farm en 180 y el resto de la interfaz igual.
