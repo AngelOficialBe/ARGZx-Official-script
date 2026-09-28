@@ -237,27 +237,60 @@ local function startScript(isOP)
 
     -- ==================== AUTO REBIRTH ====================
 task.spawn(function()
+
+    local lastRebirthValue = Rebirths.Value
+    local remote = nil
+
     while true do
-        if AutoRebirth then
-            local rEvents = ReplicatedStorage:FindFirstChild("rEvents")
 
-            if rEvents then
-                local rebirthRemote = rEvents:FindFirstChild("rebirthRemote")
+        if not AutoRebirth then
+            task.wait(0.2)
+            continue
+        end
 
-                if rebirthRemote then
-                    pcall(function()
-                        if rebirthRemote:IsA("RemoteFunction") then
-                            rebirthRemote:InvokeServer("rebirthRequest")
-                        elseif rebirthRemote:IsA("RemoteEvent") then
-                            rebirthRemote:FireServer("rebirthRequest")
-                        end
-                    end)
-                end
+        -- Buscar el remote actual
+        local rEvents = ReplicatedStorage:FindFirstChild("rEvents")
+
+        if rEvents then
+            local currentRemote = rEvents:FindFirstChild("rebirthRemote")
+
+            if currentRemote then
+                remote = currentRemote
+            end
+        end
+
+        if remote and remote.Parent then
+
+            if remote:IsA("RemoteFunction") then
+
+                -- IMPORTANTE:
+                -- No usamos task.spawn aquí.
+                -- Una sola petición a la vez evita acumular InvokeServer.
+                pcall(function()
+                    remote:InvokeServer("rebirthRequest")
+                end)
+
+            elseif remote:IsA("RemoteEvent") then
+
+                pcall(function()
+                    remote:FireServer("rebirthRequest")
+                end)
+
+            else
+                remote = nil
             end
 
+        else
+            remote = nil
+        end
+
+        -- Si acaba de producirse un rebirth,
+        -- vuelve a buscar el remote inmediatamente.
+        if Rebirths.Value ~= lastRebirthValue then
+            lastRebirthValue = Rebirths.Value
             task.wait()
         else
-            task.wait(0.2)
+            task.wait(0.03)
         end
     end
 end)
