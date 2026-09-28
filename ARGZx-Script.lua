@@ -104,20 +104,27 @@ local function startScript(isOP)
 
                 if cachedEvent then
                     for i = 1, FarmPower do
+                        -- Si apagas el botón, esto rompe el ciclo instantáneamente
                         if not FastFarm then break end
 
                         cachedEvent:FireServer("rep")
 
-                        if isOP and i % 100 == 0 then
-                            task.wait()
+                        if isOP then
+                            -- MODO OP: Ráfagas masivas de 100 (Extremo)
+                            if i % 100 == 0 then
+                                task.wait()
+                            end
+                        else
+                            -- MODO MAIN: Ráfagas pequeñas de 5. 
+                            -- Mantiene el farmeo súper rápido y constante, y evita que el servidor 
+                            -- se atasque para que se apague DE INMEDIATO al darle OFF.
+                            if i % 5 == 0 then
+                                task.wait()
+                            end
                         end
                     end
                 end
-                if isOP then
-                    task.wait() -- Modo OP: Ráfaga instantánea sin descanso
-                else
-                    task.wait() -- Modo Main: Pausa de casi medio segundo entre repeticiones
-                end
+                task.wait()
             else
                 task.wait(0.1)
             end
