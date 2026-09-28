@@ -240,21 +240,35 @@ task.spawn(function()
     local rEvents = ReplicatedStorage:WaitForChild("rEvents")
     local rebirthRemote = rEvents:WaitForChild("rebirthRemote")
 
+    local function Rebirth()
+        if not AutoRebirth then
+            return
+        end
+
+        pcall(function()
+            if rebirthRemote:IsA("RemoteFunction") then
+                rebirthRemote:InvokeServer("rebirthRequest")
+            elseif rebirthRemote:IsA("RemoteEvent") then
+                rebirthRemote:FireServer("rebirthRequest")
+            end
+        end)
+    end
+
+    Strength:GetPropertyChangedSignal("Value"):Connect(function()
+        if AutoRebirth then
+            Rebirth()
+        end
+    end)
+
     while true do
         if AutoRebirth then
-            pcall(function()
-                if rebirthRemote:IsA("RemoteFunction") then
-                    rebirthRemote:InvokeServer("rebirthRequest")
-                elseif rebirthRemote:IsA("RemoteEvent") then
-                    rebirthRemote:FireServer("rebirthRequest")
-                end
-            end)
+            Rebirth()
+            task.wait()
         else
             task.wait(0.2)
         end
     end
 end)
-
     -- ==================== CONTADOR ====================
     task.spawn(function()
         while true do
