@@ -1,7 +1,7 @@
 -- ==================== CONFIGURACIÓN DE KEY ====================
 local ValidKey = "CLANTOP" -- <--- Aquí pones la key actual
 -- El enlace Raw del script principal que tienes subido en tu GitHub
-local ScriptURL = "https://raw.githubusercontent.com/AngelOficialBe/ARGZx-Official-script/main/ARGZx-Script.lua"
+local ScriptURL = "AQUI_TU_LINK_RAW_DE_GITHUB"
 -- ==============================================================
 
 local Players = game:GetService("Players")
