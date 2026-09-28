@@ -83,7 +83,7 @@ local function startScript(isOP)
    if isOP then
         FarmPower = 400
     else
-        FarmPower = 60
+        FarmPower = 70
     end
 
     -- ==================== FAST FARM ====================
@@ -116,7 +116,7 @@ local function startScript(isOP)
                 if isOP then
                     task.wait() -- Modo OP: Ráfaga instantánea sin descanso
                 else
-                    task.wait(0.2) -- Modo Main: Pausa de casi medio segundo entre repeticiones
+                    task.wait() -- Modo Main: Pausa de casi medio segundo entre repeticiones
                 end
             else
                 task.wait(0.1)
