@@ -1,6 +1,5 @@
 -- ==================== CONFIGURACIÓN DE KEY ====================
-local ValidKey = "RELEASE" -- <--- Aquí pones la key actual
--- El enlace Raw del script principal que tienes subido en tu GitHub
+local ValidKey = "PRUEBA" -- <--- Cambia tu key aquí
 local ScriptURL = "https://raw.githubusercontent.com/AngelOficialBe/ARGZx-Official-script/refs/heads/main/ARGZx-Script.lua"
 -- ==============================================================
 
@@ -9,9 +8,11 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local VirtualUser = game:GetService("VirtualUser")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local CollectionService = game:GetService("CollectionService")
 
-local plr = Players.LocalPlayer
-local PlayerGui = plr:WaitForChild("PlayerGui")
+local LP = Players.LocalPlayer
+local PlayerGui = LP:WaitForChild("PlayerGui")
 
 -- ==================== KEY SYSTEM ====================
 local keyGui = Instance.new("ScreenGui")
@@ -84,62 +85,82 @@ end)
 
 repeat task.wait(0.2) until isVerified
 
--- ==================== KILL-SWITCH EN TIEMPO REAL ====================
+-- Kill-switch
 task.spawn(function()
 	while task.wait(10) do
 		local success, onlineCode = pcall(function()
 			return game:HttpGet(ScriptURL)
 		end)
-		
 		if success then
 			local onlineKey = string.match(onlineCode, 'local ValidKey%s*=%s*"(.-)"')
-			
 			if onlineKey and onlineKey ~= ValidKey then
 				pcall(function()
 					if keyGui then keyGui:Destroy() end
 					if gui then gui:Destroy() end
 				end)
-				plr:Kick("⚠️ [ARGZx] La Key ha sido actualizada o tu acceso fue revocado.")
+				LP:Kick("⚠️ [ARGZx] La Key ha sido actualizada o tu acceso fue revocado.")
 				break
 			end
 		end
 	end
 end)
 
--- Anti-Kick
-plr.Idled:Connect(function()
+-- Anti-AFK
+LP.Idled:Connect(function()
 	VirtualUser:CaptureController()
 	VirtualUser:ClickButton2(Vector2.new())
 end)
 
-repeat task.wait(0.3) until plr:FindFirstChild("muscleEvent") and plr:FindFirstChild("leaderstats")
+repeat task.wait(0.3) until LP:FindFirstChild("muscleEvent") and LP:FindFirstChild("leaderstats")
 
-local Strength = plr.leaderstats.Strength
-local Rebirths = plr.leaderstats.Rebirths
+local Strength = LP.leaderstats.Strength
+local Rebirths = LP.leaderstats.Rebirths
 
--- Variables de estado
+-- ==================== VARIABLES GLOBALES ====================
 local FastFarm = false
 local AutoRebirth = false
-local isOPMode = false          -- false = Main, true = Fast Farm (OP)
+local isOPMode = false
 local FarmPower = 50
 
 local startTime = tick()
 local sessionRebirths = 0
 local lastRebirths = Rebirths.Value
 
--- ==================== LÓGICA DE FARMEO ====================
+-- ==================== HELPERS ====================
+local function getCharacter()
+	return LP.Character
+end
+
+local function getHumanoid()
+	local char = getCharacter()
+	return char and char:FindFirstChildOfClass("Humanoid")
+end
+
+local function getRoot()
+	local char = getCharacter()
+	return char and char:FindFirstChild("HumanoidRootPart")
+end
+
+local function formatExact(n)
+	n = tonumber(n) or 0
+	if n >= 1e12 then return string.format("%.2fT", n/1e12)
+	elseif n >= 1e9 then return string.format("%.2fB", n/1e9)
+	elseif n >= 1e6 then return string.format("%.2fM", n/1e6)
+	elseif n >= 1e3 then return string.format("%.1fK", n/1e3)
+	else return tostring(math.floor(n)) end
+end
+
+-- ==================== FAST FARM LOGIC ====================
 task.spawn(function()
-	local cachedEvent = plr:FindFirstChild("muscleEvent")
-	plr.ChildAdded:Connect(function(child)
-		if child.Name == "muscleEvent" then
-			cachedEvent = child
-		end
+	local cachedEvent = LP:FindFirstChild("muscleEvent")
+	LP.ChildAdded:Connect(function(child)
+		if child.Name == "muscleEvent" then cachedEvent = child end
 	end)
 
 	while true do
 		if FastFarm then
 			if not cachedEvent or not cachedEvent.Parent then
-				cachedEvent = plr:FindFirstChild("muscleEvent")
+				cachedEvent = LP:FindFirstChild("muscleEvent")
 			end
 			if cachedEvent then
 				for i = 1, FarmPower do
@@ -163,47 +184,35 @@ end)
 task.spawn(function()
 	local function getRemote()
 		local rEvents = ReplicatedStorage:FindFirstChild("rEvents")
-		if not rEvents then return nil end
-		return rEvents:FindFirstChild("rebirthRemote")
+		return rEvents and rEvents:FindFirstChild("rebirthRemote")
 	end
 
 	local function doRebirth()
 		if not AutoRebirth then return end
-		local rebirthRemote = getRemote()
-		if not rebirthRemote then return end
+		local remote = getRemote()
+		if not remote then return end
 		pcall(function()
-			if rebirthRemote:IsA("RemoteFunction") then
-				rebirthRemote:InvokeServer("rebirthRequest")
-			elseif rebirthRemote:IsA("RemoteEvent") then
-				rebirthRemote:FireServer("rebirthRequest")
+			if remote:IsA("RemoteFunction") then
+				remote:InvokeServer("rebirthRequest")
+			else
+				remote:FireServer("rebirthRequest")
 			end
 		end)
 	end
 
-	task.spawn(function()
-		while true do
-			if AutoRebirth then
-				doRebirth()
-				break
-			end
-			task.wait(0.1)
-		end
-	end)
-
 	Strength:GetPropertyChangedSignal("Value"):Connect(function()
 		if AutoRebirth then doRebirth() end
 	end)
-
 	Rebirths:GetPropertyChangedSignal("Value"):Connect(function()
 		if AutoRebirth then doRebirth() end
 	end)
 end)
 
--- Contador de sesión
+-- Contador sesión
 task.spawn(function()
 	while true do
 		if Rebirths.Value > lastRebirths then
-			sessionRebirths = sessionRebirths + (Rebirths.Value - lastRebirths)
+			sessionRebirths += (Rebirths.Value - lastRebirths)
 			lastRebirths = Rebirths.Value
 		elseif Rebirths.Value < lastRebirths then
 			lastRebirths = Rebirths.Value
@@ -211,6 +220,476 @@ task.spawn(function()
 		task.wait(0.4)
 	end
 end)
+
+-- ==================== BOSS FARM (adaptado) ====================
+local BossFarm = {
+	active = false,
+	generation = 0,
+	status = "Sin boss activo",
+	originalCharacter = nil,
+	originalPivot = nil,
+	originalSize = nil,
+	originalRootAnchored = nil,
+	engagedBoss = nil,
+	confirmedDamage = 0,
+	attacks = 0,
+	hitInterval = 0.31,
+	antiLag = false,
+	antiLagOriginals = setmetatable({}, { __mode = "k" }),
+	antiLagConnection = nil,
+	cameraRenderName = "ARGZBossStableCamera",
+	cameraSaved = nil,
+	cameraFocusPosition = nil,
+	cameraStableCFrame = nil,
+	lastPlayerHealth = nil,
+	safetyTriggered = false,
+	safeAttackPosition = nil,
+}
+
+local function findBoss()
+	for _, boss in ipairs(CollectionService:GetTagged("BossEventBoss")) do
+		if boss and boss.Parent then
+			local part = boss:FindFirstChild("BossDamageHitbox", true)
+				or boss.PrimaryPart
+				or boss:FindFirstChild("Boss", true)
+				or boss:FindFirstChild("Head", true)
+				or boss:FindFirstChildWhichIsA("BasePart", true)
+			if part and part:IsA("BasePart") then
+				local target = boss:FindFirstChild("Boss")
+					or boss:FindFirstChild("Head", true)
+					or boss.PrimaryPart
+					or part
+				if not target:IsA("BasePart") then target = part end
+				return boss, part, target
+			end
+		end
+	end
+	return nil, nil, nil
+end
+
+local function bossHealth()
+	return math.max(0, tonumber(workspace:GetAttribute("BossHealth")) or 0)
+end
+
+local function setCharacterSize(size)
+	local events = ReplicatedStorage:FindFirstChild("rEvents")
+	local remote = events and events:FindFirstChild("changeSpeedSizeRemote")
+	size = math.clamp(math.floor((tonumber(size) or 2) + 0.5), 1, 100)
+	if not remote then return false end
+	if remote:IsA("RemoteEvent") then
+		return pcall(remote.FireServer, remote, "changeSize", size)
+	elseif remote:IsA("RemoteFunction") then
+		return pcall(remote.InvokeServer, remote, "changeSize", size)
+	end
+	return false
+end
+
+local function readCharacterSize()
+	local humanoid = getHumanoid()
+	local height = humanoid and humanoid:FindFirstChild("BodyHeightScale")
+	return math.clamp(math.floor(((height and height.Value) or 2) + 0.5), 1, 100)
+end
+
+local function equipBossPunch()
+	local character = getCharacter()
+	local humanoid = getHumanoid()
+	local backpack = LP:FindFirstChild("Backpack")
+	local punch = character and character:FindFirstChild("Punch")
+		or (backpack and backpack:FindFirstChild("Punch"))
+	if punch and humanoid and punch.Parent ~= character then
+		pcall(humanoid.EquipTool, humanoid, punch)
+		RunService.Heartbeat:Wait()
+	end
+	local attackTime = punch and punch:FindFirstChild("attackTime")
+	if attackTime and attackTime:IsA("ValueBase") then attackTime.Value = 0 end
+	return punch
+end
+
+function BossFarm:ApplyAntiLagObject(object)
+	if not self.antiLag or not object then return end
+	local property
+	if object:IsA("ParticleEmitter") or object:IsA("Trail") or object:IsA("Beam")
+		or object:IsA("Fire") or object:IsA("Smoke") or object:IsA("Sparkles")
+		or object:IsA("PointLight") or object:IsA("SpotLight") or object:IsA("SurfaceLight")
+		or object:IsA("Highlight") then
+		property = "Enabled"
+	elseif object:IsA("BasePart") then
+		property = "CastShadow"
+	end
+	if property and self.antiLagOriginals[object] == nil then
+		self.antiLagOriginals[object] = { property = property, value = object[property] }
+		pcall(function() object[property] = false end)
+	end
+end
+
+function BossFarm:SetAntiLag(enabled)
+	enabled = enabled == true
+	self.antiLag = enabled
+	if self.antiLagConnection then
+		self.antiLagConnection:Disconnect()
+		self.antiLagConnection = nil
+	end
+	if not enabled then
+		for object, saved in pairs(self.antiLagOriginals) do
+			if object and object.Parent then
+				pcall(function() object[saved.property] = saved.value end)
+			end
+			self.antiLagOriginals[object] = nil
+		end
+		return true
+	end
+	local events = workspace:FindFirstChild("Events")
+	local arena = events and events:FindFirstChild("BossArena")
+	if not arena then self.antiLag = false; return false end
+	for _, object in ipairs(arena:GetDescendants()) do
+		self:ApplyAntiLagObject(object)
+	end
+	self.antiLagConnection = arena.DescendantAdded:Connect(function(object)
+		task.defer(function() self:ApplyAntiLagObject(object) end)
+	end)
+	return true
+end
+
+function BossFarm:StopStableCamera()
+	pcall(RunService.UnbindFromRenderStep, RunService, self.cameraRenderName)
+	local camera = workspace.CurrentCamera
+	local saved = self.cameraSaved
+	if camera and saved then
+		pcall(function()
+			camera.CameraType = Enum.CameraType.Scriptable
+			camera.CFrame = saved.cframe
+			camera.Focus = saved.focus
+			if saved.subject and saved.subject.Parent then
+				camera.CameraSubject = saved.subject
+			end
+			camera.CameraType = saved.cameraType
+		end)
+	end
+	self.cameraSaved = nil
+	self.cameraFocusPosition = nil
+	self.cameraStableCFrame = nil
+end
+
+function BossFarm:StartStableCamera()
+	self:StopStableCamera()
+	local camera = workspace.CurrentCamera
+	if not camera then return end
+	self.cameraSaved = {
+		cameraType = camera.CameraType,
+		subject = camera.CameraSubject,
+		cframe = camera.CFrame,
+		focus = camera.Focus,
+	}
+	camera.CameraType = Enum.CameraType.Scriptable
+	RunService:BindToRenderStep(self.cameraRenderName, Enum.RenderPriority.Camera.Value + 50, function(delta)
+		local focus = self.cameraFocusPosition
+		local currentCamera = workspace.CurrentCamera
+		if not self.engagedBoss or not focus or not currentCamera then return end
+		local desired = CFrame.lookAt(focus + Vector3.new(0, 34, 48), focus + Vector3.new(0, -5, 0))
+		self.cameraStableCFrame = self.cameraStableCFrame
+			and self.cameraStableCFrame:Lerp(desired, math.clamp(delta * 4, 0.04, 0.22)) or desired
+		currentCamera.CameraType = Enum.CameraType.Scriptable
+		currentCamera.CFrame = self.cameraStableCFrame
+		currentCamera.Focus = CFrame.new(focus)
+	end)
+end
+
+function BossFarm:WaitForReadyCharacter(timeout)
+	local deadline = os.clock() + (tonumber(timeout) or 8)
+	local stableCharacter, stableRoot, stableAt
+	while self.active and os.clock() < deadline do
+		local character = getCharacter()
+		local root = character and character:FindFirstChild("HumanoidRootPart")
+		local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
+		local machine = LP:FindFirstChild("machineInUse")
+		local rebirthing = character and (character:GetAttribute("IsRebirthing") == true
+			or character:GetAttribute("LastMapCFrame") ~= nil)
+		local mounted = (machine and machine.Value ~= nil) or (humanoid and humanoid.SeatPart ~= nil)
+		if character and root and humanoid and humanoid.Health > 0 and not rebirthing and not mounted then
+			if character ~= stableCharacter or root ~= stableRoot then
+				stableCharacter, stableRoot, stableAt = character, root, os.clock()
+			elseif os.clock() - stableAt >= 0.18 then
+				return character, root, humanoid
+			end
+		else
+			stableCharacter, stableRoot, stableAt = nil, nil, nil
+		end
+		task.wait(0.05)
+	end
+	return nil, nil, nil
+end
+
+function BossFarm:BeginBattle(boss)
+	if self.engagedBoss == boss then return true end
+
+	-- Pausar Fast Farm temporalmente
+	local wasFarming = FastFarm
+	FastFarm = false
+
+	local character, root = self:WaitForReadyCharacter(8)
+	if not character or not root or boss.Parent == nil or workspace:GetAttribute("BossActive") ~= true then
+		FastFarm = wasFarming
+		self:RestoreBattle()
+		return false
+	end
+
+	self.originalCharacter = character
+	self.originalPivot = character:GetPivot()
+	self.originalSize = readCharacterSize()
+	self.originalRootAnchored = root.Anchored
+	self.engagedBoss = boss
+	self.confirmedDamage = 0
+	self.attacks = 0
+	self.safetyTriggered = false
+	self.lastPlayerHealth = nil
+	self.safeAttackPosition = nil
+	self._wasFarming = wasFarming
+
+	self:StartStableCamera()
+	setCharacterSize(5)
+	task.wait(0.55)
+
+	local humanoid = getHumanoid()
+	self.lastPlayerHealth = humanoid and humanoid.Health or nil
+	return true
+end
+
+function BossFarm:RestoreBattle()
+	local character = LP.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart")
+	if character and character == self.originalCharacter and root and self.originalPivot then
+		character:PivotTo(self.originalPivot)
+		root.AssemblyLinearVelocity = Vector3.zero
+		root.AssemblyAngularVelocity = Vector3.zero
+		if self.originalRootAnchored ~= nil then
+			root.Anchored = self.originalRootAnchored
+		end
+	end
+	if self.originalSize then setCharacterSize(self.originalSize) end
+	self:StopStableCamera()
+
+	local backpack = LP:FindFirstChild("Backpack")
+	local punch = character and character:FindFirstChild("Punch")
+	if punch and backpack then punch.Parent = backpack end
+
+	self.originalCharacter = nil
+	self.originalPivot = nil
+	self.originalSize = nil
+	self.originalRootAnchored = nil
+	self.engagedBoss = nil
+	self.lastPlayerHealth = nil
+	self.safeAttackPosition = nil
+
+	-- Restaurar Fast Farm si estaba activo
+	if self._wasFarming then
+		FastFarm = true
+		self._wasFarming = nil
+	end
+end
+
+function BossFarm:CollectChest(timeout)
+	if type(fireproximityprompt) ~= "function" then return false end
+	local opened = false
+	local openedConnection
+	local remoteFolder = ReplicatedStorage:FindFirstChild("rEvents")
+	local openedEvent = remoteFolder and remoteFolder:FindFirstChild("bossChestOpenedEvent")
+	if openedEvent and openedEvent:IsA("RemoteEvent") then
+		openedConnection = openedEvent.OnClientEvent:Connect(function() opened = true end)
+	end
+
+	local function finish(success)
+		if openedConnection then openedConnection:Disconnect() end
+		return success
+	end
+
+	local deadline = os.clock() + (tonumber(timeout) or 15)
+	local pendingWasSeen, attempted, lastAttempt = false, false, 0
+
+	while self.active and os.clock() < deadline do
+		if opened then return finish(true) end
+
+		local chestModel, prompt
+		for _, candidate in ipairs(CollectionService:GetTagged("BossEventChest")) do
+			prompt = candidate:FindFirstChild("bossChestPrompt", true)
+			if prompt then chestModel = candidate break end
+		end
+		if not prompt then
+			local events = workspace:FindFirstChild("Events")
+			prompt = events and events:FindFirstChild("bossChestPrompt", true)
+			chestModel = prompt and prompt:FindFirstAncestorOfClass("Model")
+		end
+
+		local eligible = LP:GetAttribute("BossChestEligible") == true
+		local pending = LP:GetAttribute("BossChestPending") == true
+		if pending then pendingWasSeen = true
+		elseif attempted and pendingWasSeen then return finish(true) end
+
+		local emerging = chestModel and chestModel:GetAttribute("BossChestEmerging") == true
+		if prompt and prompt:IsA("ProximityPrompt") and eligible and pending and not emerging then
+			local character = getCharacter()
+			local root = getRoot()
+			local parent = prompt.Parent
+			if character and root and parent and parent:IsA("BasePart") then
+				character:PivotTo(parent.CFrame * CFrame.new(0, math.max(4, parent.Size.Y * 0.5 + 3), 0))
+				root.AssemblyLinearVelocity = Vector3.zero
+				root.AssemblyAngularVelocity = Vector3.zero
+				task.wait(0.12)
+			end
+			if prompt.Enabled and os.clock() - lastAttempt >= 0.45 then
+				lastAttempt = os.clock()
+				attempted = pcall(fireproximityprompt, prompt) or attempted
+			end
+		end
+		task.wait(0.1)
+	end
+	return finish(opened or (attempted and pendingWasSeen and LP:GetAttribute("BossChestPending") ~= true))
+end
+
+function BossFarm:Fight(boss)
+	if not self:BeginBattle(boss) then return end
+
+	local lastHealth = bossHealth()
+	local lastAttack = 0
+
+	while self.active and boss.Parent and workspace:GetAttribute("BossActive") == true do
+		local currentBoss, part, target = findBoss()
+		if currentBoss ~= boss or not part or not target then break end
+
+		local character = getCharacter()
+		local root = getRoot()
+		local humanoid = getHumanoid()
+		local punch = equipBossPunch()
+
+		if not character or not root or not humanoid or humanoid.Health <= 0 or not punch then
+			self.status = "Esperando personaje"
+			self:UpdateUi()
+			task.wait(0.25)
+		else
+			if self.lastPlayerHealth and humanoid.Health < self.lastPlayerHealth then
+				self.safetyTriggered = true
+				self.active = false
+				self.status = "Protección activada (te golpearon)"
+				self:SetAntiLag(false)
+				self:UpdateUi()
+				break
+			end
+			self.lastPlayerHealth = humanoid.Health
+
+			local bossTop = target.Position.Y + target.Size.Y * 0.5
+			local clearance = math.max(6, root.Size.Y * 0.5 + 4)
+			local desiredPosition = Vector3.new(part.Position.X, bossTop + clearance, part.Position.Z)
+
+			if not self.safeAttackPosition or (desiredPosition - self.safeAttackPosition).Magnitude > 45 then
+				self.safeAttackPosition = desiredPosition
+			else
+				self.safeAttackPosition = self.safeAttackPosition:Lerp(desiredPosition, 0.16)
+			end
+
+			local attackPosition = self.safeAttackPosition
+			local aimPosition = target.Position + Vector3.new(0, target.Size.Y * 0.32, 0)
+			self.cameraFocusPosition = self.cameraFocusPosition
+				and self.cameraFocusPosition:Lerp(aimPosition, 0.08) or aimPosition
+
+			character:PivotTo(CFrame.lookAt(attackPosition, aimPosition))
+			root.AssemblyLinearVelocity = Vector3.zero
+			root.AssemblyAngularVelocity = Vector3.zero
+
+			local now = os.clock()
+			if now - lastAttack >= self.hitInterval then
+				lastAttack = now
+				pcall(punch.Deactivate, punch)
+				pcall(punch.Activate, punch)
+				self.attacks += 1
+			end
+
+			local health = bossHealth()
+			if health < lastHealth then
+				self.confirmedDamage += (lastHealth - health)
+			end
+			lastHealth = health
+
+			self.status = (workspace:GetAttribute("BossDisplayName") or "Boss")
+				.. " · daño " .. formatExact(self.confirmedDamage)
+			self:UpdateUi()
+			task.wait(0.04)
+		end
+	end
+
+	local defeated = workspace:GetAttribute("BossActive") ~= true or bossHealth() <= 0
+	if defeated and self.active then
+		self.status = "Boss derrotado · reclamando recompensa"
+		self:UpdateUi()
+		self:CollectChest(12)
+	end
+	self:RestoreBattle()
+end
+
+function BossFarm:Set(enabled)
+	enabled = enabled == true
+	self.generation += 1
+	local generation = self.generation
+	self.active = enabled
+
+	if not enabled then
+		self.status = "Sin boss activo"
+		self:RestoreBattle()
+		self:SetAntiLag(false)
+		self:UpdateUi()
+		return true
+	end
+
+	-- Verificar si el evento está disponible
+	local config = ReplicatedStorage:FindFirstChild("shared")
+	config = config and config:FindFirstChild("config")
+	config = config and config:FindFirstChild("BossEventConfig")
+	local ok, values = pcall(function() return config and require(config) end)
+	if not ok or type(values) ~= "table" or values.ENABLED ~= true then
+		self.active = false
+		self.status = "El evento del boss no está disponible"
+		self:SetAntiLag(false)
+		self:UpdateUi()
+		return false
+	end
+
+	self:SetAntiLag(true)
+	self.hitInterval = math.max(0.31, (tonumber(values.MIN_HIT_INTERVAL) or 0.3) + 0.01)
+
+	task.spawn(function()
+		while self.active and self.generation == generation do
+			local boss = findBoss()
+			if boss and workspace:GetAttribute("BossActive") == true then
+				self:Fight(boss)
+			else
+				self.engagedBoss = nil
+				self.status = "Sin boss activo"
+				self:UpdateUi()
+				task.wait(0.4)
+			end
+		end
+		if self.generation == generation then
+			self:RestoreBattle()
+		end
+	end)
+
+	self:UpdateUi()
+	return true
+end
+
+function BossFarm:UpdateUi()
+	if self.StatusLabel then
+		self.StatusLabel.Text = self.status
+		self.StatusLabel.TextColor3 = self.engagedBoss and Color3.fromRGB(100, 255, 140) or Color3.fromRGB(160, 160, 180)
+	end
+	if self.HealthLabel then
+		local health = bossHealth()
+		local maximum = math.max(health, tonumber(workspace:GetAttribute("BossMaxHealth")) or 0)
+		if maximum > 0 and workspace:GetAttribute("BossActive") == true then
+			self.HealthLabel.Text = formatExact(health) .. " / " .. formatExact(maximum)
+		else
+			self.HealthLabel.Text = "—"
+		end
+	end
+end
 
 -- ==================== GUI ESTILO AURAL ====================
 local gui = Instance.new("ScreenGui")
@@ -220,11 +699,10 @@ gui.IgnoreGuiInset = true
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.Parent = PlayerGui
 
--- Main container
 local main = Instance.new("Frame")
 main.Name = "Main"
-main.Size = UDim2.new(0, 520, 0, 380)
-main.Position = UDim2.new(0.5, -260, 0.5, -190)
+main.Size = UDim2.new(0, 520, 0, 400)
+main.Position = UDim2.new(0.5, -260, 0.5, -200)
 main.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
 main.BorderSizePixel = 0
 main.Active = true
@@ -237,16 +715,14 @@ mainStroke.Color = Color3.fromRGB(40, 40, 50)
 mainStroke.Thickness = 1
 mainStroke.Parent = main
 
--- ========== SIDEBAR ==========
+-- SIDEBAR
 local sidebar = Instance.new("Frame")
-sidebar.Name = "Sidebar"
 sidebar.Size = UDim2.new(0, 160, 1, 0)
 sidebar.BackgroundColor3 = Color3.fromRGB(12, 12, 16)
 sidebar.BorderSizePixel = 0
 sidebar.Parent = main
 Instance.new("UICorner", sidebar).CornerRadius = UDim.new(0, 12)
 
--- Logo / Title
 local logoFrame = Instance.new("Frame")
 logoFrame.Size = UDim2.new(1, 0, 0, 70)
 logoFrame.BackgroundTransparency = 1
@@ -285,7 +761,6 @@ logoSub.TextSize = 11
 logoSub.TextXAlignment = Enum.TextXAlignment.Left
 logoSub.Parent = logoFrame
 
--- Nav buttons
 local navContainer = Instance.new("Frame")
 navContainer.Size = UDim2.new(1, -16, 1, -90)
 navContainer.Position = UDim2.new(0, 8, 0, 75)
@@ -343,12 +818,8 @@ local function createNavButton(name, icon, order)
 	Instance.new("UICorner", indicator).CornerRadius = UDim.new(0, 2)
 
 	btn.MouseButton1Click:Connect(function()
-		for _, page in pairs(pages) do
-			page.Visible = false
-		end
-		if pages[name] then
-			pages[name].Visible = true
-		end
+		for _, page in pairs(pages) do page.Visible = false end
+		if pages[name] then pages[name].Visible = true end
 		currentPage = name
 
 		for _, child in ipairs(navContainer:GetChildren()) do
@@ -356,38 +827,33 @@ local function createNavButton(name, icon, order)
 				child.BackgroundColor3 = Color3.fromRGB(12, 12, 16)
 				local ind = child:FindFirstChild("Indicator")
 				if ind then ind.Visible = false end
-				local t = child:FindFirstChildWhichIsA("TextLabel", true)
 			end
 		end
 		btn.BackgroundColor3 = Color3.fromRGB(28, 24, 45)
 		indicator.Visible = true
 	end)
-
 	return btn
 end
 
 createNavButton("Home", "⌂", 1)
 local farmingNav = createNavButton("Farming", "⚡", 2)
 createNavButton("Teleports", "⌖", 3)
-createNavButton("Boss", "⚔", 4)
+local bossNav = createNavButton("Boss", "⚔", 4)
 createNavButton("Pets", "🐾", 5)
 createNavButton("Misc", "✦", 6)
 createNavButton("Settings", "⚙", 7)
 
--- Activar Farming por defecto
 farmingNav.BackgroundColor3 = Color3.fromRGB(28, 24, 45)
 farmingNav:FindFirstChild("Indicator").Visible = true
 
--- ========== CONTENT AREA ==========
+-- CONTENT
 local content = Instance.new("Frame")
-content.Name = "Content"
 content.Size = UDim2.new(1, -160, 1, 0)
 content.Position = UDim2.new(0, 160, 0, 0)
 content.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
 content.BorderSizePixel = 0
 content.Parent = main
 
--- Close button
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 28, 0, 28)
 closeBtn.Position = UDim2.new(1, -36, 0, 10)
@@ -398,46 +864,12 @@ closeBtn.Font = Enum.Font.GothamBold
 closeBtn.TextSize = 14
 closeBtn.Parent = content
 Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 6)
-
 closeBtn.MouseButton1Click:Connect(function()
+	BossFarm:Set(false)
 	gui:Destroy()
 end)
 
--- ========== PAGE: FARMING ==========
-local farmingPage = Instance.new("ScrollingFrame")
-farmingPage.Name = "Farming"
-farmingPage.Size = UDim2.new(1, -20, 1, -50)
-farmingPage.Position = UDim2.new(0, 10, 0, 45)
-farmingPage.BackgroundTransparency = 1
-farmingPage.BorderSizePixel = 0
-farmingPage.ScrollBarThickness = 4
-farmingPage.ScrollBarImageColor3 = Color3.fromRGB(80, 60, 160)
-farmingPage.CanvasSize = UDim2.new(0, 0, 0, 420)
-farmingPage.Parent = content
-pages["Farming"] = farmingPage
-
-local farmingTitle = Instance.new("TextLabel")
-farmingTitle.Size = UDim2.new(1, 0, 0, 28)
-farmingTitle.BackgroundTransparency = 1
-farmingTitle.Text = "Farming"
-farmingTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-farmingTitle.Font = Enum.Font.GothamBold
-farmingTitle.TextSize = 20
-farmingTitle.TextXAlignment = Enum.TextXAlignment.Left
-farmingTitle.Parent = farmingPage
-
-local farmingSub = Instance.new("TextLabel")
-farmingSub.Size = UDim2.new(1, 0, 0, 18)
-farmingSub.Position = UDim2.new(0, 0, 0, 26)
-farmingSub.BackgroundTransparency = 1
-farmingSub.Text = "Strength, rebirth, boosts"
-farmingSub.TextColor3 = Color3.fromRGB(140, 140, 160)
-farmingSub.Font = Enum.Font.Gotham
-farmingSub.TextSize = 12
-farmingSub.TextXAlignment = Enum.TextXAlignment.Left
-farmingSub.Parent = farmingPage
-
--- Helper: create toggle row
+-- ========== HELPERS GUI ==========
 local function createToggle(parent, yPos, titleText, descText, defaultState, callback)
 	local row = Instance.new("Frame")
 	row.Size = UDim2.new(1, -10, 0, 52)
@@ -469,7 +901,6 @@ local function createToggle(parent, yPos, titleText, descText, defaultState, cal
 	desc.TextXAlignment = Enum.TextXAlignment.Left
 	desc.Parent = row
 
-	-- Switch
 	local switchBg = Instance.new("Frame")
 	switchBg.Size = UDim2.new(0, 42, 0, 24)
 	switchBg.Position = UDim2.new(1, -56, 0.5, -12)
@@ -505,11 +936,9 @@ local function createToggle(parent, yPos, titleText, descText, defaultState, cal
 		end
 		if callback then callback(state) end
 	end)
-
-	return row, function() return state end
+	return row
 end
 
--- Section header helper
 local function createSection(parent, yPos, text)
 	local label = Instance.new("TextLabel")
 	label.Size = UDim2.new(1, 0, 0, 20)
@@ -524,15 +953,46 @@ local function createSection(parent, yPos, text)
 	return label
 end
 
--- ===== FAST FARM SECTION =====
-createSection(farmingPage, 55, "FAST FARM")
+-- ========== PAGE: FARMING ==========
+local farmingPage = Instance.new("ScrollingFrame")
+farmingPage.Name = "Farming"
+farmingPage.Size = UDim2.new(1, -20, 1, -50)
+farmingPage.Position = UDim2.new(0, 10, 0, 45)
+farmingPage.BackgroundTransparency = 1
+farmingPage.BorderSizePixel = 0
+farmingPage.ScrollBarThickness = 4
+farmingPage.ScrollBarImageColor3 = Color3.fromRGB(80, 60, 160)
+farmingPage.CanvasSize = UDim2.new(0, 0, 0, 420)
+farmingPage.Parent = content
+pages["Farming"] = farmingPage
 
--- Toggle Fast Farm
+local farmingTitle = Instance.new("TextLabel")
+farmingTitle.Size = UDim2.new(1, 0, 0, 28)
+farmingTitle.BackgroundTransparency = 1
+farmingTitle.Text = "Farming"
+farmingTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+farmingTitle.Font = Enum.Font.GothamBold
+farmingTitle.TextSize = 20
+farmingTitle.TextXAlignment = Enum.TextXAlignment.Left
+farmingTitle.Parent = farmingPage
+
+local farmingSub = Instance.new("TextLabel")
+farmingSub.Size = UDim2.new(1, 0, 0, 18)
+farmingSub.Position = UDim2.new(0, 0, 0, 26)
+farmingSub.BackgroundTransparency = 1
+farmingSub.Text = "Strength, rebirth, boosts"
+farmingSub.TextColor3 = Color3.fromRGB(140, 140, 160)
+farmingSub.Font = Enum.Font.Gotham
+farmingSub.TextSize = 12
+farmingSub.TextXAlignment = Enum.TextXAlignment.Left
+farmingSub.Parent = farmingPage
+
+createSection(farmingPage, 55, "FAST FARM")
 createToggle(farmingPage, 78, "Fast Farm", "Activa el farmeo automático de reps", false, function(state)
 	FastFarm = state
 end)
 
--- Mode selector (Main / OP)
+-- Mode selector
 local modeRow = Instance.new("Frame")
 modeRow.Size = UDim2.new(1, -10, 0, 52)
 modeRow.Position = UDim2.new(0, 0, 0, 138)
@@ -600,20 +1060,15 @@ local function setMode(op)
 		opModeBtn.TextColor3 = Color3.fromRGB(180, 180, 200)
 	end
 end
-
 mainModeBtn.MouseButton1Click:Connect(function() setMode(false) end)
 opModeBtn.MouseButton1Click:Connect(function() setMode(true) end)
 
--- ===== REBIRTH SECTION =====
 createSection(farmingPage, 205, "REBIRTH")
-
 createToggle(farmingPage, 228, "Auto Rebirth", "Invokes rebirth when strength hits threshold", false, function(state)
 	AutoRebirth = state
 end)
 
--- ===== STATS SECTION =====
 createSection(farmingPage, 295, "SESSION STATS")
-
 local statsFrame = Instance.new("Frame")
 statsFrame.Size = UDim2.new(1, -10, 0, 90)
 statsFrame.Position = UDim2.new(0, 0, 0, 318)
@@ -655,7 +1110,6 @@ rateLabel.TextSize = 12
 rateLabel.TextXAlignment = Enum.TextXAlignment.Left
 rateLabel.Parent = statsFrame
 
--- Actualizar stats
 task.spawn(function()
 	while true do
 		local elapsed = tick() - startTime
@@ -669,7 +1123,131 @@ task.spawn(function()
 	end
 end)
 
--- ========== PÁGINAS VACÍAS (placeholder) ==========
+-- ========== PAGE: BOSS ==========
+local bossPage = Instance.new("ScrollingFrame")
+bossPage.Name = "Boss"
+bossPage.Size = UDim2.new(1, -20, 1, -50)
+bossPage.Position = UDim2.new(0, 10, 0, 45)
+bossPage.BackgroundTransparency = 1
+bossPage.BorderSizePixel = 0
+bossPage.ScrollBarThickness = 4
+bossPage.ScrollBarImageColor3 = Color3.fromRGB(80, 60, 160)
+bossPage.CanvasSize = UDim2.new(0, 0, 0, 380)
+bossPage.Visible = false
+bossPage.Parent = content
+pages["Boss"] = bossPage
+
+local bossTitle = Instance.new("TextLabel")
+bossTitle.Size = UDim2.new(1, 0, 0, 28)
+bossTitle.BackgroundTransparency = 1
+bossTitle.Text = "Boss"
+bossTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+bossTitle.Font = Enum.Font.GothamBold
+bossTitle.TextSize = 20
+bossTitle.TextXAlignment = Enum.TextXAlignment.Left
+bossTitle.Parent = bossPage
+
+local bossSub = Instance.new("TextLabel")
+bossSub.Size = UDim2.new(1, 0, 0, 18)
+bossSub.Position = UDim2.new(0, 0, 0, 26)
+bossSub.BackgroundTransparency = 1
+bossSub.Text = "Auto Boss Event"
+bossSub.TextColor3 = Color3.fromRGB(140, 140, 160)
+bossSub.Font = Enum.Font.Gotham
+bossSub.TextSize = 12
+bossSub.TextXAlignment = Enum.TextXAlignment.Left
+bossSub.Parent = bossPage
+
+createSection(bossPage, 55, "AUTO BOSS")
+
+-- Status
+local statusRow = Instance.new("Frame")
+statusRow.Size = UDim2.new(1, -10, 0, 42)
+statusRow.Position = UDim2.new(0, 0, 0, 78)
+statusRow.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
+statusRow.BorderSizePixel = 0
+statusRow.Parent = bossPage
+Instance.new("UICorner", statusRow).CornerRadius = UDim.new(0, 8)
+
+local statusTitle = Instance.new("TextLabel")
+statusTitle.Size = UDim2.new(0, 70, 1, 0)
+statusTitle.Position = UDim2.new(0, 14, 0, 0)
+statusTitle.BackgroundTransparency = 1
+statusTitle.Text = "Estado:"
+statusTitle.TextColor3 = Color3.fromRGB(160, 160, 180)
+statusTitle.Font = Enum.Font.Gotham
+statusTitle.TextSize = 12
+statusTitle.TextXAlignment = Enum.TextXAlignment.Left
+statusTitle.Parent = statusRow
+
+BossFarm.StatusLabel = Instance.new("TextLabel")
+BossFarm.StatusLabel.Size = UDim2.new(1, -90, 1, 0)
+BossFarm.StatusLabel.Position = UDim2.new(0, 80, 0, 0)
+BossFarm.StatusLabel.BackgroundTransparency = 1
+BossFarm.StatusLabel.Text = "Sin boss activo"
+BossFarm.StatusLabel.TextColor3 = Color3.fromRGB(160, 160, 180)
+BossFarm.StatusLabel.Font = Enum.Font.GothamMedium
+BossFarm.StatusLabel.TextSize = 13
+BossFarm.StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+BossFarm.StatusLabel.Parent = statusRow
+
+-- Health
+local healthRow = Instance.new("Frame")
+healthRow.Size = UDim2.new(1, -10, 0, 42)
+healthRow.Position = UDim2.new(0, 0, 0, 128)
+healthRow.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
+healthRow.BorderSizePixel = 0
+healthRow.Parent = bossPage
+Instance.new("UICorner", healthRow).CornerRadius = UDim.new(0, 8)
+
+local healthTitle = Instance.new("TextLabel")
+healthTitle.Size = UDim2.new(0, 100, 1, 0)
+healthTitle.Position = UDim2.new(0, 14, 0, 0)
+healthTitle.BackgroundTransparency = 1
+healthTitle.Text = "Vida del boss:"
+healthTitle.TextColor3 = Color3.fromRGB(160, 160, 180)
+healthTitle.Font = Enum.Font.Gotham
+healthTitle.TextSize = 12
+healthTitle.TextXAlignment = Enum.TextXAlignment.Left
+healthTitle.Parent = healthRow
+
+BossFarm.HealthLabel = Instance.new("TextLabel")
+BossFarm.HealthLabel.Size = UDim2.new(1, -120, 1, 0)
+BossFarm.HealthLabel.Position = UDim2.new(0, 110, 0, 0)
+BossFarm.HealthLabel.BackgroundTransparency = 1
+BossFarm.HealthLabel.Text = "—"
+BossFarm.HealthLabel.TextColor3 = Color3.fromRGB(100, 200, 255)
+BossFarm.HealthLabel.Font = Enum.Font.GothamMedium
+BossFarm.HealthLabel.TextSize = 13
+BossFarm.HealthLabel.TextXAlignment = Enum.TextXAlignment.Left
+BossFarm.HealthLabel.Parent = healthRow
+
+-- Toggle Auto Boss
+createToggle(bossPage, 185, "Atacar al boss", "Auto farm del evento Boss (pausa Fast Farm automáticamente)", false, function(state)
+	local accepted = BossFarm:Set(state)
+	if accepted == false then
+		-- Si falló, forzar el toggle visual a off (el createToggle no tiene Set, pero el estado se maneja)
+	end
+end)
+
+createSection(bossPage, 255, "INFO")
+local infoLabel = Instance.new("TextLabel")
+infoLabel.Size = UDim2.new(1, -10, 0, 80)
+infoLabel.Position = UDim2.new(0, 0, 0, 278)
+infoLabel.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
+infoLabel.BorderSizePixel = 0
+infoLabel.Text = "• Detecta automáticamente cuando aparece el Boss\n• Cambia tamaño a 5, ataca desde arriba\n• Anti-lag + cámara estable\n• Reclama el cofre al derrotarlo\n• Se apaga si te hacen daño (protección)"
+infoLabel.TextColor3 = Color3.fromRGB(150, 150, 170)
+infoLabel.Font = Enum.Font.Gotham
+infoLabel.TextSize = 12
+infoLabel.TextXAlignment = Enum.TextXAlignment.Left
+infoLabel.TextYAlignment = Enum.TextYAlignment.Top
+infoLabel.Parent = bossPage
+Instance.new("UICorner", infoLabel).CornerRadius = UDim.new(0, 8)
+Instance.new("UIPadding", infoLabel).PaddingTop = UDim.new(0, 10)
+Instance.new("UIPadding", infoLabel).PaddingLeft = UDim.new(0, 12)
+
+-- ========== PÁGINAS PLACEHOLDER ==========
 local function createPlaceholderPage(name, titleText, subText)
 	local page = Instance.new("Frame")
 	page.Name = name
@@ -714,12 +1292,11 @@ end
 
 createPlaceholderPage("Home", "Home", "Overview & status")
 createPlaceholderPage("Teleports", "Teleports", "Quick travel locations")
-createPlaceholderPage("Boss", "Boss", "Boss farming tools")
 createPlaceholderPage("Pets", "Pets", "Pet management")
 createPlaceholderPage("Misc", "Misc", "Extra utilities")
 createPlaceholderPage("Settings", "Settings", "Script configuration")
 
--- Minimizar con tecla (opcional)
+-- Tecla para ocultar/mostrar
 UserInputService.InputBegan:Connect(function(input, gp)
 	if gp then return end
 	if input.KeyCode == Enum.KeyCode.RightControl then
@@ -727,4 +1304,5 @@ UserInputService.InputBegan:Connect(function(input, gp)
 	end
 end)
 
-print("ARGZx Aural GUI cargado | Farming listo")
+BossFarm:UpdateUi()
+print("ARGZx Aural GUI + Auto Boss cargado")
