@@ -87,14 +87,20 @@ local function startScript(isOP)
         FarmPower = 70
     end
 
-    -- Fast Farm
+    -- ==================== FAST FARM ====================
     task.spawn(function()
         while true do
             if FastFarm then
                 for i = 1, FarmPower do
-                    if not FastFarm then break end
-                    muscleEvent:FireServer("rep")
+                    if not FastFarm then
+                        break
+                    end
+
+                    pcall(function()
+                        muscleEvent:FireServer("rep")
+                    end)
                 end
+
                 task.wait()
             else
                 task.wait(0.08)
@@ -102,37 +108,66 @@ local function startScript(isOP)
         end
     end)
 
-    -- ========== AUTO REBIRTH ARREGLADO ==========
-   -- ========== AUTO REBIRTH ==========
-task.spawn(function()
-    local rStorage = ReplicatedStorage:FindFirstChild("repStorage") or ReplicatedStorage
-    local rEvents = rStorage and rStorage:FindFirstChild("rEvents")
-    local rebirthRemote = rEvents and rEvents:FindFirstChild("rebirthRemote")
+    -- ==================== AUTO REBIRTH ====================
+    task.spawn(function()
+        local lastAttempt = 0
 
-    while true do
-        if AutoRebirth and rebirthRemote then
-            pcall(function()
-                if rebirthRemote:IsA("RemoteFunction") then
-                    rebirthRemote:InvokeServer("rebirthRequest")
-                elseif rebirthRemote:IsA("RemoteEvent") then
-                    rebirthRemote:FireServer("rebirthRequest")
+        while true do
+            if AutoRebirth then
+
+                -- Evita enviar demasiadas peticiones seguidas
+                if tick() - lastAttempt >= 0.8 then
+                    lastAttempt = tick()
+
+                    pcall(function()
+                        -- Buscar nuevamente el almacenamiento
+                        local rStorage = ReplicatedStorage:FindFirstChild("repStorage")
+
+                        if not rStorage then
+                            rStorage = ReplicatedStorage
+                        end
+
+                        -- Buscar nuevamente rEvents
+                        local rEvents = rStorage:FindFirstChild("rEvents")
+
+                        if rEvents then
+                            -- IMPORTANTE:
+                            -- Buscar el remote en cada intento.
+                            -- Así no usamos una referencia vieja.
+                            local rebirthRemote = rEvents:FindFirstChild("rebirthRemote")
+
+                            if rebirthRemote then
+
+                                if rebirthRemote:IsA("RemoteFunction") then
+                                    rebirthRemote:InvokeServer("rebirthRequest")
+
+                                elseif rebirthRemote:IsA("RemoteEvent") then
+                                    rebirthRemote:FireServer("rebirthRequest")
+                                end
+
+                            end
+                        end
+                    end)
                 end
-            end)
 
-            task.wait(1)
-        else
-            task.wait(0.3)
+                task.wait(0.1)
+            else
+                task.wait(0.3)
+            end
         end
-    end
-end)
+    end)
 
-    -- Contador
+    -- ==================== CONTADOR ====================
     task.spawn(function()
         while true do
             if Rebirths.Value > lastRebirths then
                 sessionRebirths = sessionRebirths + (Rebirths.Value - lastRebirths)
                 lastRebirths = Rebirths.Value
+            elseif Rebirths.Value < lastRebirths then
+                -- Por si el juego resetea/recrea el valor
+                lastRebirths = Rebirths.Value
             end
+
             task.wait(0.4)
         end
     end)
@@ -259,6 +294,7 @@ end)
     rateLabel.TextXAlignment = Enum.TextXAlignment.Left
     rateLabel.Parent = statsFrame
 
+    -- ==================== ACTUALIZAR STATS ====================
     task.spawn(function()
         while true do
             local elapsed = tick() - startTime
@@ -269,10 +305,12 @@ end)
             rebirthsLabel.Text = "Rebirths sesión: " .. sessionRebirths
             timeLabel.Text = string.format("Tiempo: %dh %dm", hours, minutes)
             rateLabel.Text = "Velocidad: " .. rate .. " /h"
+
             task.wait(1)
         end
     end)
 
+    -- ==================== MINIMIZAR ====================
     minBtn.MouseButton1Click:Connect(function()
         main.Visible = false
         argIcon.Visible = true
@@ -283,8 +321,10 @@ end)
         main.Visible = true
     end)
 
+    -- ==================== FAST FARM BUTTON ====================
     farmBtn.MouseButton1Click:Connect(function()
         FastFarm = not FastFarm
+
         if FastFarm then
             farmBtn.Text = "Fast Farm  •  ON"
             farmBtn.BackgroundColor3 = Color3.fromRGB(40, 0, 90)
@@ -296,8 +336,10 @@ end)
         end
     end)
 
+    -- ==================== AUTO REBIRTH BUTTON ====================
     rebirthBtn.MouseButton1Click:Connect(function()
         AutoRebirth = not AutoRebirth
+
         if AutoRebirth then
             rebirthBtn.Text = "Auto Rebirth  •  ON"
             rebirthBtn.BackgroundColor3 = Color3.fromRGB(40, 0, 90)
@@ -319,3 +361,8 @@ end)
 opBtn.MouseButton1Click:Connect(function()
     startScript(true)
 end)
+
+
+El cambio clave está en Auto Rebirth: ya no guarda rebirthRemote fuera del bucle. Lo busca nuevamente cada vez que toca hacer un rebirth, así que si el juego recrea ese objeto, el script puede encontrar la nueva referencia.
+
+También mantuve tu OP Farm en 180 y el resto de la interfaz igual.
