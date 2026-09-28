@@ -83,7 +83,7 @@ local function startScript(isOP)
    if isOP then
         FarmPower = 400
     else
-        FarmPower = 70
+        FarmPower = 1
     end
 
     -- ==================== FAST FARM ====================
