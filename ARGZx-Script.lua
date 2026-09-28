@@ -80,37 +80,46 @@ Instance.new("UICorner", opBtn).CornerRadius = UDim.new(0, 10)
 local function startScript(isOP)
     selectGui:Destroy()
 
-    if isOP then
-        FarmPower = 200
+   if isOP then
+        FarmPower = 400
     else
         FarmPower = 70
     end
 
     -- ==================== FAST FARM ====================
-    task.spawn(function()
+   task.spawn(function()
+        local cachedEvent = plr:FindFirstChild("muscleEvent")
+
+        -- Mantiene el evento guardado para no gastar memoria buscándolo
+        plr.ChildAdded:Connect(function(child)
+            if child.Name == "muscleEvent" then
+                cachedEvent = child
+            end
+        end)
+
         while true do
             if FastFarm then
-                -- Buscamos el remote constantemente por si el juego lo recarga al hacer rebirth
-                local currentMuscleEvent = plr:FindFirstChild("muscleEvent")
-                
-                if currentMuscleEvent then
+                if not cachedEvent or not cachedEvent.Parent then
+                    cachedEvent = plr:FindFirstChild("muscleEvent")
+                end
+
+                if cachedEvent then
                     for i = 1, FarmPower do
                         if not FastFarm then break end
 
-                        pcall(function()
-                            currentMuscleEvent:FireServer("rep")
-                        end)
-                        
-                        -- FIX: Si es OP Farm, evitamos saturar la red haciendo una micropausa cada 45 peticiones
-                        if i % 45 == 0 then
+                        cachedEvent:FireServer("rep")
+
+                        -- Ráfaga extrema: Envía 100 peticiones antes de respirar
+                        if i % 100 == 0 then
                             task.wait()
                         end
                     end
                 end
-
+                
+                -- Micropausa al terminar el ciclo para evitar congelamientos
                 task.wait()
             else
-                task.wait(0.08)
+                task.wait(0.1)
             end
         end
     end)
