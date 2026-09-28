@@ -234,36 +234,34 @@ local function startScript(isOP)
     end)
 
     -- ==================== AUTO REBIRTH ====================
-    task.spawn(function()
-        while true do
-            if AutoRebirth then
-                pcall(function()
-                    local rStorage = ReplicatedStorage:FindFirstChild("repStorage") or ReplicatedStorage
-                    local rEvents = rStorage:FindFirstChild("rEvents")
-
-                    if rEvents then
-                        local rebirthRemote = rEvents:FindFirstChild("rebirthRemote")
-
-                        if rebirthRemote then
-                            -- Se ejecuta en task.spawn para que NO congelen ni retrasen el bucle esperándolo
-                            if rebirthRemote:IsA("RemoteFunction") then
-                                task.spawn(function()
-                                    rebirthRemote:InvokeServer("rebirthRequest")
-                                end)
-                            elseif rebirthRemote:IsA("RemoteEvent") then
-                                rebirthRemote:FireServer("rebirthRequest")
-                            end
-                        end
-                    end
-                end)
-
-                -- Bucle ultra rápido (0.05s) para renacer inmediatamente al llegar a la fuerza
-                task.wait(0.05)
-            else
-                task.wait(0.2)
-            end
-        end
+task.spawn(function()
+    -- Esperamos a que los elementos del juego carguen de forma segura
+    local success, rEvents = pcall(function()
+        local rStorage = ReplicatedStorage:WaitForChild("repStorage", 15) or ReplicatedStorage
+        return rStorage:WaitForChild("rEvents", 15)
     end)
+
+    while true do
+        if AutoRebirth and success and rEvents then
+            pcall(function()
+                local rebirthRemote = rEvents:FindFirstChild("rebirthRemote")
+
+                if rebirthRemote then
+                    if rebirthRemote:IsA("RemoteFunction") then
+                        task.spawn(function()
+                            rebirthRemote:InvokeServer("rebirthRequest")
+                        end)
+                    elseif rebirthRemote:IsA("RemoteEvent") then
+                        rebirthRemote:FireServer("rebirthRequest")
+                    end
+                end
+            end)
+            task.wait(0.05)
+        else
+            task.wait(0.5) -- Espera un momento si está desactivado o esperando carga
+        end
+    end
+end)
 
     -- ==================== CONTADOR ====================
     task.spawn(function()
