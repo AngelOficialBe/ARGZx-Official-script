@@ -10,7 +10,6 @@ local VirtualUser = game:GetService("VirtualUser")
 
 local plr = Players.LocalPlayer
 local PlayerGui = plr:WaitForChild("PlayerGui")
-
 -- ==================== KEY SYSTEM ====================
 local keyGui = Instance.new("ScreenGui")
 keyGui.Name = "ARGZ_KeySystem"
@@ -238,47 +237,20 @@ local function startScript(isOP)
 
     -- ==================== AUTO REBIRTH ====================
 task.spawn(function()
-
-    local rStorage = ReplicatedStorage:WaitForChild("repStorage", 15)
-
-    if not rStorage then
-        warn("[ARGZx] No se encontró repStorage")
-        return
-    end
-
-    local rEvents = rStorage:WaitForChild("rEvents", 15)
-
-    if not rEvents then
-        warn("[ARGZx] No se encontró rEvents")
-        return
-    end
-
-    print("[ARGZx] Auto Rebirth inicializado correctamente")
+    local rEvents = ReplicatedStorage:WaitForChild("rEvents")
+    local rebirthRemote = rEvents:WaitForChild("rebirthRemote")
 
     while true do
         if AutoRebirth then
-
-            local rebirthRemote = rEvents:FindFirstChild("rebirthRemote")
-
-            if rebirthRemote then
-
-                pcall(function()
-
-                    if rebirthRemote:IsA("RemoteFunction") then
-                        rebirthRemote:InvokeServer("rebirthRequest")
-
-                    elseif rebirthRemote:IsA("RemoteEvent") then
-                        rebirthRemote:FireServer("rebirthRequest")
-                    end
-
-                end)
-
-            else
-                warn("[ARGZx] No se encontró rebirthRemote")
-            end
+            pcall(function()
+                if rebirthRemote:IsA("RemoteFunction") then
+                    rebirthRemote:InvokeServer("rebirthRequest")
+                elseif rebirthRemote:IsA("RemoteEvent") then
+                    rebirthRemote:FireServer("rebirthRequest")
+                end
+            end)
 
             task.wait(0.1)
-
         else
             task.wait(0.5)
         end
