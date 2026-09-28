@@ -235,30 +235,49 @@ local function startScript(isOP)
 
     -- ==================== AUTO REBIRTH ====================
 task.spawn(function()
-    -- Esperamos a que los elementos del juego carguen de forma segura
-    local success, rEvents = pcall(function()
-        local rStorage = ReplicatedStorage:WaitForChild("repStorage", 15) or ReplicatedStorage
-        return rStorage:WaitForChild("rEvents", 15)
-    end)
+
+    local rStorage = ReplicatedStorage:WaitForChild("repStorage", 15)
+
+    if not rStorage then
+        warn("[ARGZx] No se encontró repStorage")
+        return
+    end
+
+    local rEvents = rStorage:WaitForChild("rEvents", 15)
+
+    if not rEvents then
+        warn("[ARGZx] No se encontró rEvents")
+        return
+    end
+
+    print("[ARGZx] Auto Rebirth inicializado correctamente")
 
     while true do
-        if AutoRebirth and success and rEvents then
-            pcall(function()
-                local rebirthRemote = rEvents:FindFirstChild("rebirthRemote")
+        if AutoRebirth then
 
-                if rebirthRemote then
+            local rebirthRemote = rEvents:FindFirstChild("rebirthRemote")
+
+            if rebirthRemote then
+
+                pcall(function()
+
                     if rebirthRemote:IsA("RemoteFunction") then
-                        task.spawn(function()
-                            rebirthRemote:InvokeServer("rebirthRequest")
-                        end)
+                        rebirthRemote:InvokeServer("rebirthRequest")
+
                     elseif rebirthRemote:IsA("RemoteEvent") then
                         rebirthRemote:FireServer("rebirthRequest")
                     end
-                end
-            end)
-            task.wait(0.05)
+
+                end)
+
+            else
+                warn("[ARGZx] No se encontró rebirthRemote")
+            end
+
+            task.wait(0.1)
+
         else
-            task.wait(0.5) -- Espera un momento si está desactivado o esperando carga
+            task.wait(0.5)
         end
     end
 end)
