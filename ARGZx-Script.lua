@@ -1,11 +1,10 @@
 -- ==================== CONFIGURACIÓN DE KEY ====================
-local ValidKey = "PRUEBA" -- <--- CAMBIA TU CONTRASEÑA AQUÍ
+local ValidKey = "PRUEBA" -- <--- Aquí pones la key actual
+-- El enlace Raw del script principal que tienes subido en tu GitHub
+local ScriptURL = "https://raw.githubusercontent.com/AngelOficialBe/ARGZx-Official-script/main/ARGZx-Script.lua"
 -- ==============================================================
 
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local VirtualUser = game:GetService("VirtualUser")
-
 local plr = Players.LocalPlayer
 local PlayerGui = plr:WaitForChild("PlayerGui")
 
@@ -81,6 +80,31 @@ end)
 
 -- Pausar todo el script hasta que se verifique la Key
 repeat task.wait(0.2) until isVerified
+
+-- ==================== KILL-SWITCH EN TIEMPO REAL ====================
+-- Esto revisa tu propio script en GitHub cada 10 segundos
+task.spawn(function()
+	while task.wait(10) do
+		local success, onlineCode = pcall(function()
+			return game:HttpGet(ScriptURL)
+		end)
+		
+		if success then
+			-- Extrae automáticamente lo que tengas escrito en la variable ValidKey de tu GitHub
+			local onlineKey = string.match(onlineCode, 'local ValidKey%s*=%s*"(.-)"')
+			
+			if onlineKey and onlineKey ~= ValidKey then
+				pcall(function()
+					if keyGui then keyGui:Destroy() end
+					if gui then gui:Destroy() end
+					if selectGui then selectGui:Destroy() end
+				end)
+				plr:Kick("⚠️ [ARGZx] La Key ha sido actualizada o tu acceso fue revocado.")
+				break
+			end
+		end
+	end
+end)
 -- ====================================================
 
 -- Anti-Kick
