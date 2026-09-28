@@ -103,29 +103,28 @@ local function startScript(isOP)
     end)
 
     -- ========== AUTO REBIRTH ARREGLADO ==========
-    task.spawn(function()
-        local rStorage = ReplicatedStorage:FindFirstChild("repStorage") or ReplicatedStorage
-        local rEvents = rStorage:FindFirstChild("rEvents")
-        local rebirthRemote = rEvents and rEvents:FindFirstChild("rebirthRemote")
+   -- ========== AUTO REBIRTH ==========
+task.spawn(function()
+    local rStorage = ReplicatedStorage:FindFirstChild("repStorage") or ReplicatedStorage
+    local rEvents = rStorage and rStorage:FindFirstChild("rEvents")
+    local rebirthRemote = rEvents and rEvents:FindFirstChild("rebirthRemote")
 
-        while true do
-            if AutoRebirth and rebirthRemote then
-                -- El InvokeServer se aísla para no chocar con las peticiones del OP Farm
-                task.spawn(function()
-                    pcall(function()
-                        if rebirthRemote:IsA("RemoteFunction") then
-                            rebirthRemote:InvokeServer()
-                        else
-                            rebirthRemote:FireServer()
-                        end
-                    end)
-                end)
-                task.wait(1)
-            else
-                task.wait(0.3)
-            end
+    while true do
+        if AutoRebirth and rebirthRemote then
+            pcall(function()
+                if rebirthRemote:IsA("RemoteFunction") then
+                    rebirthRemote:InvokeServer("rebirthRequest")
+                elseif rebirthRemote:IsA("RemoteEvent") then
+                    rebirthRemote:FireServer("rebirthRequest")
+                end
+            end)
+
+            task.wait(1)
+        else
+            task.wait(0.3)
         end
-    end)
+    end
+end)
 
     -- Contador
     task.spawn(function()
