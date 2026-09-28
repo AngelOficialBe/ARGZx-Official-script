@@ -238,61 +238,64 @@ local function startScript(isOP)
     -- ==================== AUTO REBIRTH ====================
 task.spawn(function()
 
-    local lastRebirthValue = Rebirths.Value
-    local remote = nil
+    local rebirthRemote
 
-    while true do
-
-        if not AutoRebirth then
-            task.wait(0.2)
-            continue
-        end
-
-        -- Buscar el remote actual
+    local function getRemote()
         local rEvents = ReplicatedStorage:FindFirstChild("rEvents")
 
-        if rEvents then
-            local currentRemote = rEvents:FindFirstChild("rebirthRemote")
-
-            if currentRemote then
-                remote = currentRemote
-            end
+        if not rEvents then
+            return nil
         end
 
-        if remote and remote.Parent then
-
-            if remote:IsA("RemoteFunction") then
-
-                -- IMPORTANTE:
-                -- No usamos task.spawn aquí.
-                -- Una sola petición a la vez evita acumular InvokeServer.
-                pcall(function()
-                    remote:InvokeServer("rebirthRequest")
-                end)
-
-            elseif remote:IsA("RemoteEvent") then
-
-                pcall(function()
-                    remote:FireServer("rebirthRequest")
-                end)
-
-            else
-                remote = nil
-            end
-
-        else
-            remote = nil
-        end
-
-        -- Si acaba de producirse un rebirth,
-        -- vuelve a buscar el remote inmediatamente.
-        if Rebirths.Value ~= lastRebirthValue then
-            lastRebirthValue = Rebirths.Value
-            task.wait()
-        else
-            task.wait(0.03)
-        end
+        return rEvents:FindFirstChild("rebirthRemote")
     end
+
+    local function doRebirth()
+        if not AutoRebirth then
+            return
+        end
+
+        rebirthRemote = getRemote()
+
+        if not rebirthRemote then
+            return
+        end
+
+        pcall(function()
+            if rebirthRemote:IsA("RemoteFunction") then
+                rebirthRemote:InvokeServer("rebirthRequest")
+
+            elseif rebirthRemote:IsA("RemoteEvent") then
+                rebirthRemote:FireServer("rebirthRequest")
+            end
+        end)
+    end
+
+    -- Intento inicial al activar el sistema
+    task.spawn(function()
+        while true do
+            if AutoRebirth then
+                doRebirth()
+                break
+            end
+            task.wait(0.1)
+        end
+    end)
+
+    -- Cuando cambia la fuerza, comprueba inmediatamente
+    Strength:GetPropertyChangedSignal("Value"):Connect(function()
+        if AutoRebirth then
+            doRebirth()
+        end
+    end)
+
+    -- Cuando termina un rebirth, prepara inmediatamente el siguiente
+    Rebirths:GetPropertyChangedSignal("Value"):Connect(function()
+        if AutoRebirth then
+            doRebirth()
+        end
+    end)
+
 end)
     -- ==================== CONTADOR ====================
     task.spawn(function()
