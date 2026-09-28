@@ -83,14 +83,13 @@ local function startScript(isOP)
    if isOP then
         FarmPower = 400
     else
-        FarmPower = 1
+        FarmPower = 45
     end
 
     -- ==================== FAST FARM ====================
    task.spawn(function()
         local cachedEvent = plr:FindFirstChild("muscleEvent")
 
-        -- Mantiene el evento guardado para no gastar memoria buscándolo
         plr.ChildAdded:Connect(function(child)
             if child.Name == "muscleEvent" then
                 cachedEvent = child
@@ -109,15 +108,16 @@ local function startScript(isOP)
 
                         cachedEvent:FireServer("rep")
 
-                        -- Ráfaga extrema: Envía 100 peticiones antes de respirar
-                        if i % 100 == 0 then
+                        if isOP and i % 100 == 0 then
                             task.wait()
                         end
                     end
                 end
-                
-                -- Micropausa al terminar el ciclo para evitar congelamientos
-                task.wait()
+                if isOP then
+                    task.wait() -- Modo OP: Ráfaga instantánea sin descanso
+                else
+                    task.wait(0.4) -- Modo Main: Pausa de casi medio segundo entre repeticiones
+                end
             else
                 task.wait(0.1)
             end
