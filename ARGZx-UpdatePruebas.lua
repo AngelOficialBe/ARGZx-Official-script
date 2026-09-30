@@ -375,41 +375,184 @@ local function setPerformance(enabled)
 	end)
 end
 
--- ==================== SHOP / BUY PETS ====================
-local function buyCrystal(crystalName)
-	local rEvents = ReplicatedStorage:FindFirstChild("rEvents")
-	if not rEvents then return false, "No rEvents" end
+-- ========== PAGE: SHOP (CORREGIDA) ==========
+local shopPage = Instance.new("ScrollingFrame")
+shopPage.Name = "Shop"
+shopPage.Size = UDim2.new(1, -8, 1, -50)
+shopPage.Position = UDim2.new(0, 4, 0, 44)
+shopPage.BackgroundTransparency = 1
+shopPage.BorderSizePixel = 0
+shopPage.ScrollBarThickness = 4
+shopPage.ScrollBarImageColor3 = Color3.fromRGB(110, 70, 220)
+shopPage.CanvasSize = UDim2.new(0, 0, 0, 620) -- suficiente espacio
+shopPage.AutomaticCanvasSize = Enum.AutomaticSize.None
+shopPage.Visible = false
+shopPage.Parent = content
+pages["Shop"] = shopPage
 
-	local remote = rEvents:FindFirstChild("openCrystalRemote")
-	if not remote then return false, "No openCrystalRemote" end
+-- Título
+local shopTitle = Instance.new("TextLabel")
+shopTitle.Size = UDim2.new(1, -20, 0, 26)
+shopTitle.Position = UDim2.new(0, 10, 0, 0)
+shopTitle.BackgroundTransparency = 1
+shopTitle.Text = "Shop"
+shopTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+shopTitle.Font = Enum.Font.GothamBold
+shopTitle.TextSize = 20
+shopTitle.TextXAlignment = Enum.TextXAlignment.Left
+shopTitle.Parent = shopPage
 
-	local success, err = pcall(function()
-		if remote:IsA("RemoteFunction") then
-			remote:InvokeServer("openCrystal", crystalName)
-		else
-			remote:FireServer("openCrystal", crystalName)
-		end
-	end)
+local shopSub = Instance.new("TextLabel")
+shopSub.Size = UDim2.new(1, -20, 0, 16)
+shopSub.Position = UDim2.new(0, 10, 0, 26)
+shopSub.BackgroundTransparency = 1
+shopSub.Text = "Comprar Pets con Gems"
+shopSub.TextColor3 = Color3.fromRGB(130, 130, 155)
+shopSub.Font = Enum.Font.Gotham
+shopSub.TextSize = 12
+shopSub.TextXAlignment = Enum.TextXAlignment.Left
+shopSub.Parent = shopPage
 
-	return success, err
-end
+-- Gems
+local gemsFrame = Instance.new("Frame")
+gemsFrame.Size = UDim2.new(1, -16, 0, 40)
+gemsFrame.Position = UDim2.new(0, 8, 0, 52)
+gemsFrame.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
+gemsFrame.BorderSizePixel = 0
+gemsFrame.Parent = shopPage
+Instance.new("UICorner", gemsFrame).CornerRadius = UDim.new(0, 10)
 
--- Auto Buy loop
+local gemsLabel = Instance.new("TextLabel")
+gemsLabel.Size = UDim2.new(1, -20, 1, 0)
+gemsLabel.Position = UDim2.new(0, 14, 0, 0)
+gemsLabel.BackgroundTransparency = 1
+gemsLabel.Text = "Gems: cargando..."
+gemsLabel.TextColor3 = Color3.fromRGB(100, 220, 255)
+gemsLabel.Font = Enum.Font.GothamMedium
+gemsLabel.TextSize = 14
+gemsLabel.TextXAlignment = Enum.TextXAlignment.Left
+gemsLabel.Parent = gemsFrame
+
 task.spawn(function()
-	while true do
-		if AutoBuy then
-			local ok = buyCrystal(SelectedCrystal)
-			if not ok then
-				-- Si falla, espera un poco más para no spamear
-				task.wait(1.2)
-			else
-				task.wait(0.45) -- velocidad segura
-			end
-		else
-			task.wait(0.4)
-		end
+	while task.wait(1) do
+		gemsLabel.Text = "Gems: " .. tostring(getGems())
 	end
 end)
+
+-- Sección selector
+createSection(shopPage, 105, "Seleccionar Crystal")
+
+-- Contenedor de crystals (ScrollingFrame interno)
+local crystalContainer = Instance.new("ScrollingFrame")
+crystalContainer.Size = UDim2.new(1, -16, 0, 220)
+crystalContainer.Position = UDim2.new(0, 8, 0, 128)
+crystalContainer.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
+crystalContainer.BorderSizePixel = 0
+crystalContainer.ScrollBarThickness = 4
+crystalContainer.ScrollBarImageColor3 = Color3.fromRGB(110, 70, 220)
+crystalContainer.CanvasSize = UDim2.new(0, 0, 0, #CrystalList * 36 + 16)
+crystalContainer.Parent = shopPage
+Instance.new("UICorner", crystalContainer).CornerRadius = UDim.new(0, 10)
+
+local crystalLayout = Instance.new("UIListLayout")
+crystalLayout.Padding = UDim.new(0, 6)
+crystalLayout.SortOrder = Enum.SortOrder.LayoutOrder
+crystalLayout.Parent = crystalContainer
+
+local crystalPadding = Instance.new("UIPadding")
+crystalPadding.PaddingTop = UDim.new(0, 8)
+crystalPadding.PaddingBottom = UDim.new(0, 8)
+crystalPadding.PaddingLeft = UDim.new(0, 8)
+crystalPadding.PaddingRight = UDim.new(0, 8)
+crystalPadding.Parent = crystalContainer
+
+local selectedCrystalBtn = nil
+
+for i, crystalName in ipairs(CrystalList) do
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, 0, 0, 30)
+	btn.BackgroundColor3 = Color3.fromRGB(32, 30, 45)
+	btn.Text = crystalName
+	btn.TextColor3 = Color3.fromRGB(200, 200, 220)
+	btn.Font = Enum.Font.GothamMedium
+	btn.TextSize = 13
+	btn.LayoutOrder = i
+	btn.AutoButtonColor = false
+	btn.Parent = crystalContainer
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 7)
+
+	btn.MouseButton1Click:Connect(function()
+		SelectedCrystal = crystalName
+		if selectedCrystalBtn then
+			selectedCrystalBtn.BackgroundColor3 = Color3.fromRGB(32, 30, 45)
+			selectedCrystalBtn.TextColor3 = Color3.fromRGB(200, 200, 220)
+		end
+		btn.BackgroundColor3 = Color3.fromRGB(110, 60, 230)
+		btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+		selectedCrystalBtn = btn
+	end)
+
+	-- Seleccionar el primero por defecto
+	if i == 1 then
+		btn.BackgroundColor3 = Color3.fromRGB(110, 60, 230)
+		btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+		selectedCrystalBtn = btn
+		SelectedCrystal = crystalName
+	end
+end
+
+-- Sección Comprar
+createSection(shopPage, 365, "Comprar")
+
+-- Botón Comprar 1 vez
+local buyOnceBtn = Instance.new("TextButton")
+buyOnceBtn.Size = UDim2.new(1, -16, 0, 44)
+buyOnceBtn.Position = UDim2.new(0, 8, 0, 390)
+buyOnceBtn.BackgroundColor3 = Color3.fromRGB(40, 160, 90)
+buyOnceBtn.Text = "Comprar 1 vez"
+buyOnceBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+buyOnceBtn.Font = Enum.Font.GothamBold
+buyOnceBtn.TextSize = 15
+buyOnceBtn.Parent = shopPage
+Instance.new("UICorner", buyOnceBtn).CornerRadius = UDim.new(0, 10)
+
+buyOnceBtn.MouseButton1Click:Connect(function()
+	buyOnceBtn.Text = "Comprando..."
+	buyOnceBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+	
+	local ok = buyCrystal(SelectedCrystal)
+	
+	if ok then
+		buyOnceBtn.Text = "¡Comprado!"
+		buyOnceBtn.BackgroundColor3 = Color3.fromRGB(30, 170, 80)
+	else
+		buyOnceBtn.Text = "Error / Sin gems"
+		buyOnceBtn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+	end
+	
+	task.wait(1.3)
+	buyOnceBtn.Text = "Comprar 1 vez"
+	buyOnceBtn.BackgroundColor3 = Color3.fromRGB(40, 160, 90)
+end)
+
+-- Auto Buy
+createToggle(shopPage, 450, "Auto Buy", "Compra automáticamente el crystal seleccionado", false, function(s)
+	AutoBuy = s
+end)
+
+-- Info
+local shopInfo = Instance.new("TextLabel")
+shopInfo.Size = UDim2.new(1, -16, 0, 40)
+shopInfo.Position = UDim2.new(0, 8, 0, 520)
+shopInfo.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
+shopInfo.BorderSizePixel = 0
+shopInfo.Text = "  Selecciona un crystal → Comprar 1 vez o activa Auto Buy"
+shopInfo.TextColor3 = Color3.fromRGB(140, 140, 165)
+shopInfo.Font = Enum.Font.Gotham
+shopInfo.TextSize = 12
+shopInfo.TextXAlignment = Enum.TextXAlignment.Left
+shopInfo.Parent = shopPage
+Instance.new("UICorner", shopInfo).CornerRadius = UDim.new(0, 8)
 
 -- ==================== GUI MODERNO ====================
 local gui = Instance.new("ScreenGui")
