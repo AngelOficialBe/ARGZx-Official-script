@@ -127,10 +127,25 @@ local isOPMode = false
 local FarmPower = 50
 local AntiLagEnabled = false
 local PerformanceEnabled = false
+local AutoBuy = false
+local SelectedCrystal = "Blue Crystal"
 
 local startTime = tick()
 local sessionRebirths = 0
 local lastRebirths = Rebirths.Value
+
+-- Lista de crystals (puedes agregar más)
+local CrystalList = {
+	"Blue Crystal",
+	"Green Crystal",
+	"Frost Crystal",
+	"Inferno Crystal",
+	"Mythical Crystal",
+	"Jungle Crystal",
+	"Muscle Elite Crystal",
+	"Industrial Crystal",
+	"Overcharged Crystal" -- por si existe en el evento
+}
 
 -- ==================== HELPERS ====================
 local function getCharacter()
@@ -147,7 +162,12 @@ local function getRoot()
 	return char and char:FindFirstChild("HumanoidRootPart")
 end
 
--- ==================== FAST FARM (mejorado) ====================
+local function getGems()
+	local gems = LP:FindFirstChild("Gems") or (LP:FindFirstChild("leaderstats") and LP.leaderstats:FindFirstChild("Gems"))
+	return gems and tonumber(gems.Value) or 0
+end
+
+-- ==================== FAST FARM ====================
 task.spawn(function()
 	local cachedEvent = LP:FindFirstChild("muscleEvent")
 	LP.ChildAdded:Connect(function(child)
@@ -211,18 +231,8 @@ task.spawn(function()
 end)
 
 -- ==================== FAST REBIRTH + PETS ====================
---[[
-	Sistema Fast Rebirth:
-	1. Equipa las pets con mayor multiplicador de Repetición (para farmear fuerza rápido)
-	2. Cuando la fuerza es suficiente, cambia a pets de x2 / alto multiplicador de Rebirth
-	3. Hace el rebirth
-	4. Vuelve a equipar las de Repetición
-	5. Repite infinitamente
-]]
-
 local function getPetMultiplier(pet, keyword)
 	if not pet then return 0 end
-	-- Busca valores comunes en pets de Muscle Legends
 	for _, child in ipairs(pet:GetDescendants()) do
 		if child:IsA("NumberValue") or child:IsA("IntValue") or child:IsA("StringValue") then
 			local name = string.lower(child.Name)
@@ -231,27 +241,24 @@ local function getPetMultiplier(pet, keyword)
 			end
 		end
 	end
-	-- Fallback por nombre del pet
 	local n = string.lower(pet.Name)
 	if string.find(n, keyword) then return 2 end
 	return 0
 end
 
-local function equipBestPets(mode) -- "rep" o "rebirth"
+local function equipBestPets(mode)
 	local backpack = LP:FindFirstChild("Backpack")
 	local character = getCharacter()
 	if not backpack or not character then return end
-
 	local humanoid = getHumanoid()
 	if not humanoid then return end
 
-	-- Primero desequipar todo
 	for _, tool in ipairs(character:GetChildren()) do
 		if tool:IsA("Tool") then
 			pcall(function() tool.Parent = backpack end)
 		end
 	end
-	task.wait(0.1)
+	task.wait(0.08)
 
 	local pets = {}
 	for _, item in ipairs(backpack:GetChildren()) do
@@ -270,13 +277,11 @@ local function equipBestPets(mode) -- "rep" o "rebirth"
 
 	table.sort(pets, function(a, b) return a.score > b.score end)
 
-	-- Equipar las mejores (máximo 3-6 según el juego)
-	local maxEquip = 5
-	for i = 1, math.min(#pets, maxEquip) do
+	for i = 1, math.min(#pets, 5) do
 		pcall(function()
 			humanoid:EquipTool(pets[i].tool)
 		end)
-		task.wait(0.05)
+		task.wait(0.04)
 	end
 end
 
@@ -284,18 +289,13 @@ task.spawn(function()
 	local lastMode = "rep"
 	while true do
 		if FastRebirth then
-			-- Siempre intentar rebirth
 			doRebirth()
-
-			-- Detectar si acabamos de hacer rebirth
 			if Rebirths.Value > lastRebirths then
-				-- Acabamos de renacer → volver a pets de repetición
 				equipBestPets("rep")
 				lastMode = "rep"
 				lastRebirths = Rebirths.Value
 				sessionRebirths = sessionRebirths + 1
 			else
-				-- Mientras farmeamos fuerza, mantener pets de rep
 				if lastMode ~= "rep" then
 					equipBestPets("rep")
 					lastMode = "rep"
@@ -327,7 +327,6 @@ local originalSettings = {}
 local function setAntiLag(enabled)
 	AntiLagEnabled = enabled
 	if enabled then
-		-- Guardar y desactivar efectos pesados
 		for _, obj in ipairs(workspace:GetDescendants()) do
 			if obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Beam") or
 			   obj:IsA("Fire") or obj:IsA("Smoke") or obj:IsA("Sparkles") then
@@ -343,7 +342,6 @@ local function setAntiLag(enabled)
 			end
 		end
 	else
-		-- Restaurar
 		for obj, value in pairs(originalSettings) do
 			if obj and obj.Parent then
 				pcall(function()
@@ -377,6 +375,42 @@ local function setPerformance(enabled)
 	end)
 end
 
+-- ==================== SHOP / BUY PETS ====================
+local function buyCrystal(crystalName)
+	local rEvents = ReplicatedStorage:FindFirstChild("rEvents")
+	if not rEvents then return false, "No rEvents" end
+
+	local remote = rEvents:FindFirstChild("openCrystalRemote")
+	if not remote then return false, "No openCrystalRemote" end
+
+	local success, err = pcall(function()
+		if remote:IsA("RemoteFunction") then
+			remote:InvokeServer("openCrystal", crystalName)
+		else
+			remote:FireServer("openCrystal", crystalName)
+		end
+	end)
+
+	return success, err
+end
+
+-- Auto Buy loop
+task.spawn(function()
+	while true do
+		if AutoBuy then
+			local ok = buyCrystal(SelectedCrystal)
+			if not ok then
+				-- Si falla, espera un poco más para no spamear
+				task.wait(1.2)
+			else
+				task.wait(0.45) -- velocidad segura
+			end
+		else
+			task.wait(0.4)
+		end
+	end
+end)
+
 -- ==================== GUI MODERNO ====================
 local gui = Instance.new("ScreenGui")
 gui.Name = "ARGZx_Modern"
@@ -385,7 +419,7 @@ gui.IgnoreGuiInset = true
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.Parent = PlayerGui
 
--- Mini button (cuando está minimizado)
+-- Mini button
 local miniBtn = Instance.new("TextButton")
 miniBtn.Name = "MiniARGZ"
 miniBtn.Size = UDim2.new(0, 90, 0, 36)
@@ -409,8 +443,8 @@ miniStroke.Parent = miniBtn
 -- Main Frame
 local main = Instance.new("Frame")
 main.Name = "Main"
-main.Size = UDim2.new(0, 480, 0, 420)
-main.Position = UDim2.new(0.5, -240, 0.5, -210)
+main.Size = UDim2.new(0, 500, 0, 440)
+main.Position = UDim2.new(0.5, -250, 0.5, -220)
 main.BackgroundColor3 = Color3.fromRGB(16, 16, 22)
 main.BorderSizePixel = 0
 main.Active = true
@@ -423,7 +457,7 @@ mainStroke.Color = Color3.fromRGB(50, 40, 80)
 mainStroke.Thickness = 1
 mainStroke.Parent = main
 
--- ========== SIDEBAR ==========
+-- SIDEBAR
 local sidebar = Instance.new("Frame")
 sidebar.Size = UDim2.new(0, 148, 1, 0)
 sidebar.BackgroundColor3 = Color3.fromRGB(12, 12, 18)
@@ -431,7 +465,6 @@ sidebar.BorderSizePixel = 0
 sidebar.Parent = main
 Instance.new("UICorner", sidebar).CornerRadius = UDim.new(0, 14)
 
--- Logo
 local logoFrame = Instance.new("Frame")
 logoFrame.Size = UDim2.new(1, 0, 0, 68)
 logoFrame.BackgroundTransparency = 1
@@ -475,7 +508,6 @@ logoSub.TextSize = 11
 logoSub.TextXAlignment = Enum.TextXAlignment.Left
 logoSub.Parent = logoFrame
 
--- Nav
 local navContainer = Instance.new("Frame")
 navContainer.Size = UDim2.new(1, -12, 1, -80)
 navContainer.Position = UDim2.new(0, 6, 0, 72)
@@ -550,13 +582,14 @@ local function createNavButton(name, icon, order)
 end
 
 local farmingNav = createNavButton("Farming", "⚡", 1)
-createNavButton("Performance", "◆", 2)
-createNavButton("Settings", "⚙", 3)
+createNavButton("Shop", "💎", 2)
+createNavButton("Performance", "◆", 3)
+createNavButton("Settings", "⚙", 4)
 
 farmingNav.BackgroundColor3 = Color3.fromRGB(28, 22, 48)
 farmingNav:FindFirstChild("Indicator").Visible = true
 
--- ========== CONTENT ==========
+-- CONTENT
 local content = Instance.new("Frame")
 content.Size = UDim2.new(1, -148, 1, 0)
 content.Position = UDim2.new(0, 148, 0, 0)
@@ -564,7 +597,7 @@ content.BackgroundColor3 = Color3.fromRGB(16, 16, 22)
 content.BorderSizePixel = 0
 content.Parent = main
 
--- Header con minimizar
+-- Header
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 42)
 header.BackgroundTransparency = 1
@@ -592,7 +625,6 @@ closeBtn.TextSize = 13
 closeBtn.Parent = header
 Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 6)
 
--- Minimizar / Restaurar
 local function minimize()
 	main.Visible = false
 	miniBtn.Visible = true
@@ -605,12 +637,11 @@ end
 
 minBtn.MouseButton1Click:Connect(minimize)
 miniBtn.MouseButton1Click:Connect(restore)
-
 closeBtn.MouseButton1Click:Connect(function()
 	gui:Destroy()
 end)
 
--- ========== HELPERS GUI ==========
+-- HELPERS GUI
 local function createToggle(parent, yPos, titleText, descText, defaultState, callback)
 	local row = Instance.new("Frame")
 	row.Size = UDim2.new(1, -16, 0, 54)
@@ -734,7 +765,6 @@ createToggle(farmingPage, 74, "Fast Farm", "Farmeo automático de repeticiones",
 	FastFarm = s
 end)
 
--- Mode selector
 local modeRow = Instance.new("Frame")
 modeRow.Size = UDim2.new(1, -16, 0, 54)
 modeRow.Position = UDim2.new(0, 8, 0, 136)
@@ -806,15 +836,13 @@ mainModeBtn.MouseButton1Click:Connect(function() setMode(false) end)
 opModeBtn.MouseButton1Click:Connect(function() setMode(true) end)
 
 createSection(farmingPage, 205, "Rebirth")
-createToggle(farmingPage, 227, "Auto Rebirth", "Hace rebirth automáticamente al llegar a la fuerza", false, function(s)
+createToggle(farmingPage, 227, "Auto Rebirth", "Hace rebirth automáticamente", false, function(s)
 	AutoRebirth = s
 end)
 
-createToggle(farmingPage, 289, "Fast Rebirth + Pets", "Equipa pets de Rep → pets de Rebirth → loop infinito", false, function(s)
+createToggle(farmingPage, 289, "Fast Rebirth + Pets", "Equipa pets de Rep → loop infinito", false, function(s)
 	FastRebirth = s
-	if s then
-		equipBestPets("rep")
-	end
+	if s then equipBestPets("rep") end
 end)
 
 createSection(farmingPage, 360, "Session Stats")
@@ -872,6 +900,167 @@ task.spawn(function()
 	end
 end)
 
+-- ========== PAGE: SHOP ==========
+local shopPage = Instance.new("ScrollingFrame")
+shopPage.Name = "Shop"
+shopPage.Size = UDim2.new(1, -8, 1, -50)
+shopPage.Position = UDim2.new(0, 4, 0, 44)
+shopPage.BackgroundTransparency = 1
+shopPage.BorderSizePixel = 0
+shopPage.ScrollBarThickness = 3
+shopPage.ScrollBarImageColor3 = Color3.fromRGB(90, 60, 180)
+shopPage.CanvasSize = UDim2.new(0, 0, 0, 520)
+shopPage.Visible = false
+shopPage.Parent = content
+pages["Shop"] = shopPage
+
+local shopTitle = Instance.new("TextLabel")
+shopTitle.Size = UDim2.new(1, -20, 0, 26)
+shopTitle.Position = UDim2.new(0, 10, 0, 0)
+shopTitle.BackgroundTransparency = 1
+shopTitle.Text = "Shop"
+shopTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+shopTitle.Font = Enum.Font.GothamBold
+shopTitle.TextSize = 20
+shopTitle.TextXAlignment = Enum.TextXAlignment.Left
+shopTitle.Parent = shopPage
+
+local shopSub = Instance.new("TextLabel")
+shopSub.Size = UDim2.new(1, -20, 0, 16)
+shopSub.Position = UDim2.new(0, 10, 0, 26)
+shopSub.BackgroundTransparency = 1
+shopSub.Text = "Comprar Pets con Gems / OverCharged"
+shopSub.TextColor3 = Color3.fromRGB(130, 130, 155)
+shopSub.Font = Enum.Font.Gotham
+shopSub.TextSize = 12
+shopSub.TextXAlignment = Enum.TextXAlignment.Left
+shopSub.Parent = shopPage
+
+-- Gems display
+local gemsFrame = Instance.new("Frame")
+gemsFrame.Size = UDim2.new(1, -16, 0, 42)
+gemsFrame.Position = UDim2.new(0, 8, 0, 55)
+gemsFrame.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
+gemsFrame.BorderSizePixel = 0
+gemsFrame.Parent = shopPage
+Instance.new("UICorner", gemsFrame).CornerRadius = UDim.new(0, 10)
+
+local gemsLabel = Instance.new("TextLabel")
+gemsLabel.Size = UDim2.new(1, -20, 1, 0)
+gemsLabel.Position = UDim2.new(0, 14, 0, 0)
+gemsLabel.BackgroundTransparency = 1
+gemsLabel.Text = "Gems: cargando..."
+gemsLabel.TextColor3 = Color3.fromRGB(100, 220, 255)
+gemsLabel.Font = Enum.Font.GothamMedium
+gemsLabel.TextSize = 14
+gemsLabel.TextXAlignment = Enum.TextXAlignment.Left
+gemsLabel.Parent = gemsFrame
+
+task.spawn(function()
+	while true do
+		gemsLabel.Text = "Gems: " .. tostring(getGems())
+		task.wait(1)
+	end
+end)
+
+createSection(shopPage, 110, "Seleccionar Crystal")
+
+-- Crystal selector
+local crystalFrame = Instance.new("Frame")
+crystalFrame.Size = UDim2.new(1, -16, 0, 160)
+crystalFrame.Position = UDim2.new(0, 8, 0, 132)
+crystalFrame.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
+crystalFrame.BorderSizePixel = 0
+crystalFrame.Parent = shopPage
+Instance.new("UICorner", crystalFrame).CornerRadius = UDim.new(0, 10)
+
+local crystalLayout = Instance.new("UIListLayout")
+crystalLayout.Padding = UDim.new(0, 4)
+crystalLayout.Parent = crystalFrame
+
+local crystalPadding = Instance.new("UIPadding")
+crystalPadding.PaddingTop = UDim.new(0, 8)
+crystalPadding.PaddingLeft = UDim.new(0, 8)
+crystalPadding.PaddingRight = UDim.new(0, 8)
+crystalPadding.Parent = crystalFrame
+
+local selectedCrystalBtn = nil
+
+for i, crystalName in ipairs(CrystalList) do
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, 0, 0, 28)
+	btn.BackgroundColor3 = Color3.fromRGB(32, 30, 45)
+	btn.Text = crystalName
+	btn.TextColor3 = Color3.fromRGB(200, 200, 220)
+	btn.Font = Enum.Font.Gotham
+	btn.TextSize = 12
+	btn.Parent = crystalFrame
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+
+	btn.MouseButton1Click:Connect(function()
+		SelectedCrystal = crystalName
+		if selectedCrystalBtn then
+			selectedCrystalBtn.BackgroundColor3 = Color3.fromRGB(32, 30, 45)
+			selectedCrystalBtn.TextColor3 = Color3.fromRGB(200, 200, 220)
+		end
+		btn.BackgroundColor3 = Color3.fromRGB(110, 60, 230)
+		btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+		selectedCrystalBtn = btn
+	end)
+
+	if i == 1 then
+		btn.BackgroundColor3 = Color3.fromRGB(110, 60, 230)
+		btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+		selectedCrystalBtn = btn
+	end
+end
+
+createSection(shopPage, 310, "Comprar")
+
+-- Buy Once button
+local buyOnceBtn = Instance.new("TextButton")
+buyOnceBtn.Size = UDim2.new(1, -16, 0, 42)
+buyOnceBtn.Position = UDim2.new(0, 8, 0, 332)
+buyOnceBtn.BackgroundColor3 = Color3.fromRGB(40, 140, 90)
+buyOnceBtn.Text = "Comprar 1 vez"
+buyOnceBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+buyOnceBtn.Font = Enum.Font.GothamBold
+buyOnceBtn.TextSize = 14
+buyOnceBtn.Parent = shopPage
+Instance.new("UICorner", buyOnceBtn).CornerRadius = UDim.new(0, 10)
+
+buyOnceBtn.MouseButton1Click:Connect(function()
+	buyOnceBtn.Text = "Comprando..."
+	local ok, err = buyCrystal(SelectedCrystal)
+	if ok then
+		buyOnceBtn.Text = "¡Comprado!"
+		buyOnceBtn.BackgroundColor3 = Color3.fromRGB(30, 160, 80)
+	else
+		buyOnceBtn.Text = "Error / Sin gems"
+		buyOnceBtn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+	end
+	task.wait(1.2)
+	buyOnceBtn.Text = "Comprar 1 vez"
+	buyOnceBtn.BackgroundColor3 = Color3.fromRGB(40, 140, 90)
+end)
+
+createToggle(shopPage, 388, "Auto Buy", "Compra automáticamente el crystal seleccionado", false, function(s)
+	AutoBuy = s
+end)
+
+local shopInfo = Instance.new("TextLabel")
+shopInfo.Size = UDim2.new(1, -16, 0, 50)
+shopInfo.Position = UDim2.new(0, 8, 0, 455)
+shopInfo.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
+shopInfo.BorderSizePixel = 0
+shopInfo.Text = "Usa Gems normales. OverCharged Crystal solo funciona\nsi el evento está activo en el servidor."
+shopInfo.TextColor3 = Color3.fromRGB(140, 140, 165)
+shopInfo.Font = Enum.Font.Gotham
+shopInfo.TextSize = 11
+shopInfo.TextXAlignment = Enum.TextXAlignment.Left
+shopInfo.Parent = shopPage
+Instance.new("UICorner", shopInfo).CornerRadius = UDim.new(0, 8)
+
 -- ========== PAGE: PERFORMANCE ==========
 local perfPage = Instance.new("ScrollingFrame")
 perfPage.Name = "Performance"
@@ -908,11 +1097,11 @@ pSub.TextXAlignment = Enum.TextXAlignment.Left
 pSub.Parent = perfPage
 
 createSection(perfPage, 55, "Optimización")
-createToggle(perfPage, 77, "Anti-Lag", "Desactiva partículas, trails, sombras y efectos", false, function(s)
+createToggle(perfPage, 77, "Anti-Lag", "Desactiva partículas, trails y sombras", false, function(s)
 	setAntiLag(s)
 end)
 
-createToggle(perfPage, 139, "Rendimiento Máximo", "Baja calidad gráfica + desactiva sombras globales", false, function(s)
+createToggle(perfPage, 139, "Rendimiento Máximo", "Baja calidad gráfica + desactiva sombras", false, function(s)
 	setPerformance(s)
 end)
 
@@ -949,11 +1138,11 @@ sSub.TextXAlignment = Enum.TextXAlignment.Left
 sSub.Parent = settPage
 
 local infoBox = Instance.new("TextLabel")
-infoBox.Size = UDim2.new(1, -20, 0, 120)
+infoBox.Size = UDim2.new(1, -20, 0, 140)
 infoBox.Position = UDim2.new(0, 10, 0, 60)
 infoBox.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
 infoBox.BorderSizePixel = 0
-infoBox.Text = "• RightCtrl → Minimizar / Restaurar GUI\n• El botón flotante \"ARGZx\" es arrastrable\n• Fast Rebirth equipa automáticamente pets\n• Anti-Lag + Rendimiento mejoran FPS\n• Key system + Kill-switch activos"
+infoBox.Text = "• RightCtrl → Minimizar / Restaurar GUI\n• El botón flotante \"ARGZx\" es arrastrable\n• Shop usa openCrystalRemote (preciso)\n• Auto Buy tiene delay seguro para no ban\n• Fast Rebirth + Pets automático\n• Anti-Lag + Rendimiento mejoran FPS"
 infoBox.TextColor3 = Color3.fromRGB(160, 160, 185)
 infoBox.Font = Enum.Font.Gotham
 infoBox.TextSize = 13
@@ -979,4 +1168,4 @@ UserInputService.InputBegan:Connect(function(input, gp)
 	end
 end)
 
-print("ARGZx Modern GUI cargado | Fast Farm + Fast Rebirth + Anti-Lag")
+print("ARGZx Modern GUI + Shop cargado")
