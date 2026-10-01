@@ -1,5 +1,5 @@
--- ==================== CONFIGURACI脫N DE KEY ====================
-local ValidKey = "PRUEBA" -- <--- Cambia tu key aqu铆
+-- ==================== CONFIGURACION DE KEY ====================
+local ValidKey = "PRUEBA" -- <--- Cambia tu key here
 local ScriptURL = "https://raw.githubusercontent.com/AngelOficialBe/ARGZx-Official-script/refs/heads/main/ARGZx-Script.lua"
 -- ==============================================================
 
@@ -37,7 +37,7 @@ keyStroke.Parent = keyFrame
 local keyTitle = Instance.new("TextLabel")
 keyTitle.Size = UDim2.new(1, 0, 0, 40)
 keyTitle.BackgroundTransparency = 1
-keyTitle.Text = "馃攽 ARGZx Key System"
+keyTitle.Text = "ARGZx Key System"
 keyTitle.TextColor3 = Color3.fromRGB(255, 80, 80)
 keyTitle.Font = Enum.Font.GothamBold
 keyTitle.TextSize = 18
@@ -48,7 +48,7 @@ keyInput.Size = UDim2.new(0.85, 0, 0, 40)
 keyInput.Position = UDim2.new(0.075, 0, 0, 60)
 keyInput.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 keyInput.Text = ""
-keyInput.PlaceholderText = "Ingresa la Key aqu铆..."
+keyInput.PlaceholderText = "Enter Key here..."
 keyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
 keyInput.Font = Enum.Font.Gotham
 keyInput.TextSize = 14
@@ -59,7 +59,7 @@ local verifyBtn = Instance.new("TextButton")
 verifyBtn.Size = UDim2.new(0.85, 0, 0, 40)
 verifyBtn.Position = UDim2.new(0.075, 0, 0, 115)
 verifyBtn.BackgroundColor3 = Color3.fromRGB(180, 30, 30)
-verifyBtn.Text = "Verificar Key"
+verifyBtn.Text = "Verify Key"
 verifyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 verifyBtn.Font = Enum.Font.GothamBold
 verifyBtn.TextSize = 14
@@ -69,16 +69,16 @@ Instance.new("UICorner", verifyBtn).CornerRadius = UDim.new(0, 8)
 local isVerified = false
 verifyBtn.MouseButton1Click:Connect(function()
 	if keyInput.Text == ValidKey then
-		verifyBtn.Text = "隆Key Correcta!"
+		verifyBtn.Text = "Key Accepted!"
 		verifyBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
 		task.wait(1)
 		keyGui:Destroy()
 		isVerified = true
 	else
-		verifyBtn.Text = "Key Incorrecta"
+		verifyBtn.Text = "Invalid Key"
 		verifyBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
 		task.wait(1)
-		verifyBtn.Text = "Verificar Key"
+		verifyBtn.Text = "Verify Key"
 		verifyBtn.BackgroundColor3 = Color3.fromRGB(180, 30, 30)
 	end
 end)
@@ -98,7 +98,7 @@ task.spawn(function()
 					if keyGui then keyGui:Destroy() end
 					if gui then gui:Destroy() end
 				end)
-				LP:Kick("鈿狅笍 [ARGZx] La Key ha sido actualizada o tu acceso fue revocado.")
+				LP:Kick(" [ARGZx] La Key ha sido actualizada o tu acceso fue revocado.")
 				break
 			end
 		end
@@ -119,8 +119,6 @@ local Rebirths = LP.leaderstats.Rebirths
 -- ==================== VARIABLES GLOBALES ====================
 local FastFarm = false
 local AutoRebirth = false
-local isOPMode = false
-local FarmPower = 50
 
 local startTime = tick()
 local sessionRebirths = 0
@@ -150,15 +148,13 @@ local function formatExact(n)
 	else return tostring(math.floor(n)) end
 end
 
--- ==================== FAST FARM ESTABLE ====================
--- Usa un ritmo temporal uniforme en vez de r谩fagas enormes.
--- El servidor puede limitar la cantidad de reps aceptadas; este sistema no
--- puede garantizar una tasa concreta de reps aceptadas por segundo.
+-- ==================== OP FARM ESTABLE ====================
+-- Single farm mode. Target is 700 requests/second, kept inside the
+-- requested 600-800 range. The server can still throttle or reject requests.
 local FarmConfig = {
-	MainRate = 50,
-	FastRate = 600,       -- objetivo local; no garantiza 600 reps aceptadas
-	MaxBurst = 12,        -- evita acumulaciones que producen picos
-	Tick = 0.02,
+	OPRate = 700,
+	MaxPerFrame = 16,
+	MaxCatchUp = 24,
 }
 
 local function getMuscleEvent()
@@ -170,7 +166,8 @@ task.spawn(function()
 	local accumulator = 0
 	local last = os.clock()
 
-	while task.wait(FarmConfig.Tick) do
+	while true do
+		RunService.Heartbeat:Wait()
 		local now = os.clock()
 		local dt = math.clamp(now - last, 0, 0.10)
 		last = now
@@ -186,10 +183,9 @@ task.spawn(function()
 			continue
 		end
 
-		local rate = isOPMode and FarmConfig.FastRate or FarmConfig.MainRate
-		accumulator = math.min(accumulator + rate * dt, FarmConfig.MaxBurst)
+		accumulator = math.min(accumulator + FarmConfig.OPRate * dt, FarmConfig.MaxCatchUp)
+		local sends = math.min(math.floor(accumulator), FarmConfig.MaxPerFrame)
 
-		local sends = math.min(math.floor(accumulator), FarmConfig.MaxBurst)
 		if sends > 0 then
 			accumulator -= sends
 			for _ = 1, sends do
@@ -228,7 +224,7 @@ task.spawn(function()
 		end)
 	end
 
-	-- Eventos para reaccionar r谩pido.
+	-- Eventos para reaccionar rapido.
 	Strength:GetPropertyChangedSignal("Value"):Connect(tryRebirth)
 	Rebirths:GetPropertyChangedSignal("Value"):Connect(function()
 		if AutoRebirth then
@@ -236,13 +232,13 @@ task.spawn(function()
 		end
 	end)
 
-	-- Fallback peri贸dico: evita quedarse bloqueado si un cambio se pierde.
+	-- Fallback periodico: evita quedarse bloqueado si un cambio se pierde.
 	while task.wait(0.10) do
 		tryRebirth()
 	end
 end)
 
--- Contador sesi贸n
+-- Contador session
 task.spawn(function()
 	while true do
 		if Rebirths.Value > lastRebirths then
@@ -456,7 +452,7 @@ end
 function BossFarm:BeginBattle(boss)
 	if self.engagedBoss == boss then return true end
 
-	-- Pausar Fast Farm temporalmente
+	-- Pause OP Farm temporarily
 	local wasFarming = FastFarm
 	FastFarm = false
 
@@ -514,7 +510,7 @@ function BossFarm:RestoreBattle()
 	self.lastPlayerHealth = nil
 	self.safeAttackPosition = nil
 
-	-- Restaurar Fast Farm si estaba activo
+	-- Restore OP Farm if it was active
 	if self._wasFarming then
 		FastFarm = true
 		self._wasFarming = nil
@@ -602,7 +598,7 @@ function BossFarm:Fight(boss)
 			if self.lastPlayerHealth and humanoid.Health < self.lastPlayerHealth then
 				self.safetyTriggered = true
 				self.active = false
-				self.status = "Protecci贸n activada (te golpearon)"
+				self.status = "Proteccion activada (te golpearon)"
 				self:SetAntiLag(false)
 				self:UpdateUi()
 				break
@@ -643,7 +639,7 @@ function BossFarm:Fight(boss)
 			lastHealth = health
 
 			self.status = (workspace:GetAttribute("BossDisplayName") or "Boss")
-				.. " 路 da帽o " .. formatExact(self.confirmedDamage)
+				.. "  dano " .. formatExact(self.confirmedDamage)
 			self:UpdateUi()
 			task.wait(0.04)
 		end
@@ -651,7 +647,7 @@ function BossFarm:Fight(boss)
 
 	local defeated = workspace:GetAttribute("BossActive") ~= true or bossHealth() <= 0
 	if defeated and self.active then
-		self.status = "Boss derrotado 路 reclamando recompensa"
+		self.status = "Boss derrotado  reclamando recompensa"
 		self:UpdateUi()
 		self:CollectChest(12)
 	end
@@ -672,14 +668,14 @@ function BossFarm:Set(enabled)
 		return true
 	end
 
-	-- Verificar si el evento est谩 disponible
+	-- Verificar si el evento esta disponible
 	local config = ReplicatedStorage:FindFirstChild("shared")
 	config = config and config:FindFirstChild("config")
 	config = config and config:FindFirstChild("BossEventConfig")
 	local ok, values = pcall(function() return config and require(config) end)
 	if not ok or type(values) ~= "table" or values.ENABLED ~= true then
 		self.active = false
-		self.status = "El evento del boss no est谩 disponible"
+		self.status = "El evento del boss no esta disponible"
 		self:SetAntiLag(false)
 		self:UpdateUi()
 		return false
@@ -720,7 +716,7 @@ function BossFarm:UpdateUi()
 		if maximum > 0 and workspace:GetAttribute("BossActive") == true then
 			self.HealthLabel.Text = formatExact(health) .. " / " .. formatExact(maximum)
 		else
-			self.HealthLabel.Text = "鈥�"
+			self.HealthLabel.Text = "-"
 		end
 	end
 end
@@ -869,13 +865,13 @@ local function createNavButton(name, icon, order)
 	return btn
 end
 
-createNavButton("Home", "鈱�", 1)
-local farmingNav = createNavButton("Farming", "鈿�", 2)
-createNavButton("Teleports", "鈱�", 3)
-local bossNav = createNavButton("Boss", "鈿�", 4)
-createNavButton("Pets", "馃惥", 5)
-createNavButton("Misc", "鉁�", 6)
-createNavButton("Settings", "鈿�", 7)
+createNavButton("Home", "H", 1)
+local farmingNav = createNavButton("Farming", "F", 2)
+createNavButton("Teleports", "T", 3)
+local bossNav = createNavButton("Boss", "B", 4)
+createNavButton("Pets", "P", 5)
+createNavButton("Misc", "M", 6)
+createNavButton("Settings", "S", 7)
 
 farmingNav.BackgroundColor3 = Color3.fromRGB(28, 24, 45)
 farmingNav:FindFirstChild("Indicator").Visible = true
@@ -892,7 +888,7 @@ local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 28, 0, 28)
 closeBtn.Position = UDim2.new(1, -36, 0, 10)
 closeBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 38)
-closeBtn.Text = "鉁�"
+closeBtn.Text = "X"
 closeBtn.TextColor3 = Color3.fromRGB(180, 180, 200)
 closeBtn.Font = Enum.Font.GothamBold
 closeBtn.TextSize = 14
@@ -928,7 +924,7 @@ minimizeBtn.Name = "Minimize"
 minimizeBtn.Size = UDim2.new(0, 28, 0, 28)
 minimizeBtn.Position = UDim2.new(1, -70, 0, 10)
 minimizeBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 38)
-minimizeBtn.Text = "鈥�"
+minimizeBtn.Text = "-"
 minimizeBtn.TextColor3 = Color3.fromRGB(210, 210, 225)
 minimizeBtn.Font = Enum.Font.GothamBold
 minimizeBtn.TextSize = 16
@@ -1038,7 +1034,7 @@ farmingPage.BackgroundTransparency = 1
 farmingPage.BorderSizePixel = 0
 farmingPage.ScrollBarThickness = 4
 farmingPage.ScrollBarImageColor3 = Color3.fromRGB(80, 60, 160)
-farmingPage.CanvasSize = UDim2.new(0, 0, 0, 420)
+farmingPage.CanvasSize = UDim2.new(0, 0, 0, 350)
 farmingPage.Parent = content
 pages["Farming"] = farmingPage
 
@@ -1063,91 +1059,74 @@ farmingSub.TextSize = 12
 farmingSub.TextXAlignment = Enum.TextXAlignment.Left
 farmingSub.Parent = farmingPage
 
-createSection(farmingPage, 55, "FAST FARM")
-createToggle(farmingPage, 78, "Fast Farm", "Activa el farmeo autom谩tico de reps", false, function(state)
-	FastFarm = state
-end)
+-- Single OP Farm selector
+local opRow = Instance.new("Frame")
+opRow.Size = UDim2.new(1, -10, 0, 64)
+opRow.Position = UDim2.new(0, 0, 0, 55)
+opRow.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
+opRow.BorderSizePixel = 0
+opRow.Parent = farmingPage
+Instance.new("UICorner", opRow).CornerRadius = UDim.new(0, 8)
 
--- Mode selector
-local modeRow = Instance.new("Frame")
-modeRow.Size = UDim2.new(1, -10, 0, 52)
-modeRow.Position = UDim2.new(0, 0, 0, 138)
-modeRow.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
-modeRow.BorderSizePixel = 0
-modeRow.Parent = farmingPage
-Instance.new("UICorner", modeRow).CornerRadius = UDim.new(0, 8)
+local opTitle = Instance.new("TextLabel")
+opTitle.Size = UDim2.new(1, -110, 0, 22)
+opTitle.Position = UDim2.new(0, 14, 0, 8)
+opTitle.BackgroundTransparency = 1
+opTitle.Text = "OP Farm"
+opTitle.TextColor3 = Color3.fromRGB(240, 240, 250)
+opTitle.Font = Enum.Font.GothamBold
+opTitle.TextSize = 14
+opTitle.TextXAlignment = Enum.TextXAlignment.Left
+opTitle.Parent = opRow
 
-local modeTitle = Instance.new("TextLabel")
-modeTitle.Size = UDim2.new(1, -140, 0, 20)
-modeTitle.Position = UDim2.new(0, 14, 0, 8)
-modeTitle.BackgroundTransparency = 1
-modeTitle.Text = "Farm Mode"
-modeTitle.TextColor3 = Color3.fromRGB(240, 240, 250)
-modeTitle.Font = Enum.Font.GothamMedium
-modeTitle.TextSize = 13
-modeTitle.TextXAlignment = Enum.TextXAlignment.Left
-modeTitle.Parent = modeRow
+local opDesc = Instance.new("TextLabel")
+opDesc.Size = UDim2.new(1, -110, 0, 18)
+opDesc.Position = UDim2.new(0, 14, 0, 32)
+opDesc.BackgroundTransparency = 1
+opDesc.Text = "Target: 700 reps/s | Range: 600-800"
+opDesc.TextColor3 = Color3.fromRGB(135, 135, 155)
+opDesc.Font = Enum.Font.Gotham
+opDesc.TextSize = 11
+opDesc.TextXAlignment = Enum.TextXAlignment.Left
+opDesc.Parent = opRow
 
-local modeDesc = Instance.new("TextLabel")
-modeDesc.Size = UDim2.new(1, -140, 0, 16)
-modeDesc.Position = UDim2.new(0, 14, 0, 28)
-modeDesc.BackgroundTransparency = 1
-modeDesc.Text = "Main = estable  |  Fast = OP (m谩s poder)"
-modeDesc.TextColor3 = Color3.fromRGB(130, 130, 150)
-modeDesc.Font = Enum.Font.Gotham
-modeDesc.TextSize = 11
-modeDesc.TextXAlignment = Enum.TextXAlignment.Left
-modeDesc.Parent = modeRow
+local opButton = Instance.new("TextButton")
+opButton.Size = UDim2.new(0, 78, 0, 32)
+opButton.Position = UDim2.new(1, -90, 0.5, -16)
+opButton.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+opButton.Text = "OFF"
+opButton.TextColor3 = Color3.fromRGB(190, 190, 205)
+opButton.Font = Enum.Font.GothamBold
+opButton.TextSize = 12
+opButton.Parent = opRow
+Instance.new("UICorner", opButton).CornerRadius = UDim.new(0, 8)
 
-local mainModeBtn = Instance.new("TextButton")
-mainModeBtn.Size = UDim2.new(0, 55, 0, 28)
-mainModeBtn.Position = UDim2.new(1, -125, 0.5, -14)
-mainModeBtn.BackgroundColor3 = Color3.fromRGB(100, 70, 220)
-mainModeBtn.Text = "Main"
-mainModeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-mainModeBtn.Font = Enum.Font.GothamBold
-mainModeBtn.TextSize = 12
-mainModeBtn.Parent = modeRow
-Instance.new("UICorner", mainModeBtn).CornerRadius = UDim.new(0, 6)
-
-local opModeBtn = Instance.new("TextButton")
-opModeBtn.Size = UDim2.new(0, 55, 0, 28)
-opModeBtn.Position = UDim2.new(1, -62, 0.5, -14)
-opModeBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-opModeBtn.Text = "Fast"
-opModeBtn.TextColor3 = Color3.fromRGB(180, 180, 200)
-opModeBtn.Font = Enum.Font.GothamBold
-opModeBtn.TextSize = 12
-opModeBtn.Parent = modeRow
-Instance.new("UICorner", opModeBtn).CornerRadius = UDim.new(0, 6)
-
-local function setMode(op)
-	isOPMode = op
-	FarmPower = op and FarmConfig.FastRate or FarmConfig.MainRate
-	if op then
-		mainModeBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-		mainModeBtn.TextColor3 = Color3.fromRGB(180, 180, 200)
-		opModeBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
-		opModeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+local function updateOpButton(state)
+	if state then
+		opButton.Text = "ON"
+		opButton.BackgroundColor3 = Color3.fromRGB(100, 70, 220)
+		opButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 	else
-		mainModeBtn.BackgroundColor3 = Color3.fromRGB(100, 70, 220)
-		mainModeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-		opModeBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-		opModeBtn.TextColor3 = Color3.fromRGB(180, 180, 200)
+		opButton.Text = "OFF"
+		opButton.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+		opButton.TextColor3 = Color3.fromRGB(190, 190, 205)
 	end
 end
-mainModeBtn.MouseButton1Click:Connect(function() setMode(false) end)
-opModeBtn.MouseButton1Click:Connect(function() setMode(true) end)
 
-createSection(farmingPage, 205, "REBIRTH")
-createToggle(farmingPage, 228, "Auto Rebirth", "Invokes rebirth when strength hits threshold", false, function(state)
+opButton.MouseButton1Click:Connect(function()
+	FastFarm = not FastFarm
+	updateOpButton(FastFarm)
+end)
+
+createSection(farmingPage, 135, "REBIRTH")
+createToggle(farmingPage, 158, "Auto Rebirth", "Rebirth when strength reaches threshold", false, function(state)
 	AutoRebirth = state
 end)
 
-createSection(farmingPage, 295, "SESSION STATS")
+createSection(farmingPage, 225, "SESSION STATS")
 local statsFrame = Instance.new("Frame")
 statsFrame.Size = UDim2.new(1, -10, 0, 90)
-statsFrame.Position = UDim2.new(0, 0, 0, 318)
+statsFrame.Position = UDim2.new(0, 0, 0, 248)
 statsFrame.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
 statsFrame.BorderSizePixel = 0
 statsFrame.Parent = farmingPage
@@ -1157,7 +1136,7 @@ local rebirthsLabel = Instance.new("TextLabel")
 rebirthsLabel.Size = UDim2.new(1, -20, 0, 22)
 rebirthsLabel.Position = UDim2.new(0, 14, 0, 12)
 rebirthsLabel.BackgroundTransparency = 1
-rebirthsLabel.Text = "Rebirths sesi贸n: 0"
+rebirthsLabel.Text = "Session Rebirths: 0"
 rebirthsLabel.TextColor3 = Color3.fromRGB(160, 255, 160)
 rebirthsLabel.Font = Enum.Font.GothamMedium
 rebirthsLabel.TextSize = 13
@@ -1168,7 +1147,7 @@ local timeLabel = Instance.new("TextLabel")
 timeLabel.Size = UDim2.new(1, -20, 0, 20)
 timeLabel.Position = UDim2.new(0, 14, 0, 36)
 timeLabel.BackgroundTransparency = 1
-timeLabel.Text = "Tiempo: 0h 0m"
+timeLabel.Text = "Time: 0h 0m"
 timeLabel.TextColor3 = Color3.fromRGB(180, 180, 210)
 timeLabel.Font = Enum.Font.Gotham
 timeLabel.TextSize = 12
@@ -1179,7 +1158,7 @@ local rateLabel = Instance.new("TextLabel")
 rateLabel.Size = UDim2.new(1, -20, 0, 20)
 rateLabel.Position = UDim2.new(0, 14, 0, 58)
 rateLabel.BackgroundTransparency = 1
-rateLabel.Text = "Velocidad: 0 /h"
+rateLabel.Text = "Rate: 0 /h"
 rateLabel.TextColor3 = Color3.fromRGB(140, 190, 255)
 rateLabel.Font = Enum.Font.Gotham
 rateLabel.TextSize = 12
@@ -1192,9 +1171,9 @@ task.spawn(function()
 		local hours = math.floor(elapsed / 3600)
 		local minutes = math.floor((elapsed % 3600) / 60)
 		local rate = elapsed > 15 and math.floor((sessionRebirths / elapsed) * 3600) or 0
-		rebirthsLabel.Text = "Rebirths sesi贸n: " .. sessionRebirths
-		timeLabel.Text = string.format("Tiempo: %dh %dm", hours, minutes)
-		rateLabel.Text = "Velocidad: " .. rate .. " /h"
+		rebirthsLabel.Text = "Session Rebirths: " .. sessionRebirths
+		timeLabel.Text = string.format("Time: %dh %dm", hours, minutes)
+		rateLabel.Text = "Rate: " .. rate .. " /h"
 		task.wait(1)
 	end
 end)
@@ -1249,7 +1228,7 @@ local statusTitle = Instance.new("TextLabel")
 statusTitle.Size = UDim2.new(0, 70, 1, 0)
 statusTitle.Position = UDim2.new(0, 14, 0, 0)
 statusTitle.BackgroundTransparency = 1
-statusTitle.Text = "Estado:"
+statusTitle.Text = "Status:"
 statusTitle.TextColor3 = Color3.fromRGB(160, 160, 180)
 statusTitle.Font = Enum.Font.Gotham
 statusTitle.TextSize = 12
@@ -1280,7 +1259,7 @@ local healthTitle = Instance.new("TextLabel")
 healthTitle.Size = UDim2.new(0, 100, 1, 0)
 healthTitle.Position = UDim2.new(0, 14, 0, 0)
 healthTitle.BackgroundTransparency = 1
-healthTitle.Text = "Vida del boss:"
+healthTitle.Text = "Boss Health:"
 healthTitle.TextColor3 = Color3.fromRGB(160, 160, 180)
 healthTitle.Font = Enum.Font.Gotham
 healthTitle.TextSize = 12
@@ -1291,7 +1270,7 @@ BossFarm.HealthLabel = Instance.new("TextLabel")
 BossFarm.HealthLabel.Size = UDim2.new(1, -120, 1, 0)
 BossFarm.HealthLabel.Position = UDim2.new(0, 110, 0, 0)
 BossFarm.HealthLabel.BackgroundTransparency = 1
-BossFarm.HealthLabel.Text = "鈥�"
+BossFarm.HealthLabel.Text = "-"
 BossFarm.HealthLabel.TextColor3 = Color3.fromRGB(100, 200, 255)
 BossFarm.HealthLabel.Font = Enum.Font.GothamMedium
 BossFarm.HealthLabel.TextSize = 13
@@ -1299,10 +1278,10 @@ BossFarm.HealthLabel.TextXAlignment = Enum.TextXAlignment.Left
 BossFarm.HealthLabel.Parent = healthRow
 
 -- Toggle Auto Boss
-createToggle(bossPage, 185, "Atacar al boss", "Auto farm del evento Boss (pausa Fast Farm autom谩ticamente)", false, function(state)
+createToggle(bossPage, 185, "Attack Boss", "Auto farm for Boss event (pauses OP Farm)", false, function(state)
 	local accepted = BossFarm:Set(state)
 	if accepted == false then
-		-- Si fall贸, forzar el toggle visual a off (el createToggle no tiene Set, pero el estado se maneja)
+		-- Si fallo, forzar el toggle visual a off (el createToggle no tiene Set, pero el estado se maneja)
 	end
 end)
 
@@ -1312,7 +1291,7 @@ infoLabel.Size = UDim2.new(1, -10, 0, 80)
 infoLabel.Position = UDim2.new(0, 0, 0, 278)
 infoLabel.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
 infoLabel.BorderSizePixel = 0
-infoLabel.Text = "鈥� Detecta autom谩ticamente cuando aparece el Boss\n鈥� Cambia tama帽o a 5, ataca desde arriba\n鈥� Anti-lag + c谩mara estable\n鈥� Reclama el cofre al derrotarlo\n鈥� Se apaga si te hacen da帽o (protecci贸n)"
+infoLabel.Text = " Detecta automatically cuando aparece el Boss\n Cambia tamano a 5, ataca desde arriba\n Anti-lag + stable camera\n Reclama el cofre al derrotarlo\n Se apaga si te hacen dano (proteccion)"
 infoLabel.TextColor3 = Color3.fromRGB(150, 150, 170)
 infoLabel.Font = Enum.Font.Gotham
 infoLabel.TextSize = 12
@@ -1323,7 +1302,7 @@ Instance.new("UICorner", infoLabel).CornerRadius = UDim.new(0, 8)
 Instance.new("UIPadding", infoLabel).PaddingTop = UDim.new(0, 10)
 Instance.new("UIPadding", infoLabel).PaddingLeft = UDim.new(0, 12)
 
--- ========== P脕GINAS AUXILIARES ==========
+-- ========== PAGINAS AUXILIARES ==========
 local function createPlaceholderPage(name, titleText, subText)
 	local page = Instance.new("ScrollingFrame")
 	page.Name = name
@@ -1362,7 +1341,7 @@ local function createPlaceholderPage(name, titleText, subText)
 	coming.Size = UDim2.new(1, 0, 0, 30)
 	coming.Position = UDim2.new(0, 0, 0, 90)
 	coming.BackgroundTransparency = 1
-	coming.Text = "M贸dulo disponible pr贸ximamente"
+	coming.Text = "Module coming soon"
 	coming.TextColor3 = Color3.fromRGB(100, 100, 120)
 	coming.Font = Enum.Font.GothamMedium
 	coming.TextSize = 15
@@ -1374,7 +1353,7 @@ createPlaceholderPage("Teleports", "Teleports", "Quick travel locations")
 createPlaceholderPage("Pets", "Pets", "Pet management")
 createPlaceholderPage("Misc", "Misc", "Extra utilities")
 
--- Settings real: rendimiento y optimizaci贸n.
+-- Settings real: rendimiento y optimizacion.
 local settingsPage = Instance.new("ScrollingFrame")
 settingsPage.Name = "Settings"
 settingsPage.Size = UDim2.new(1, -20, 1, -50)
@@ -1401,7 +1380,7 @@ local settingsSub = Instance.new("TextLabel")
 settingsSub.Size = UDim2.new(1, 0, 0, 18)
 settingsSub.Position = UDim2.new(0, 0, 0, 28)
 settingsSub.BackgroundTransparency = 1
-settingsSub.Text = "Performance, UI y estabilidad"
+settingsSub.Text = "Performance, UI and stability"
 settingsSub.TextColor3 = Color3.fromRGB(140, 140, 160)
 settingsSub.Font = Enum.Font.Gotham
 settingsSub.TextSize = 12
@@ -1434,10 +1413,10 @@ local function setPerformance(enabled)
 end
 
 createSection(settingsPage, 58, "PERFORMANCE")
-createToggle(settingsPage, 82, "Performance Mode", "Reduce part铆culas, luces, highlights y sombras", false, setPerformance)
+createToggle(settingsPage, 82, "Performance Mode", "Reduce particulas, luces, highlights y sombras", false, setPerformance)
 
 createToggle(settingsPage, 145, "Stable UI", "Reduce animaciones visuales para bajar trabajo del cliente", true, function(state)
-	-- Las funciones de farmeo no dependen de esta opci贸n.
+	-- Las funciones de farmeo no dependen de esta opcion.
 	-- Se conserva como preferencia visual para futuras animaciones.
 	_G.ARGZxStableUI = state
 end)
@@ -1448,7 +1427,7 @@ rateInfo.Size = UDim2.new(1, -10, 0, 70)
 rateInfo.Position = UDim2.new(0, 0, 0, 234)
 rateInfo.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
 rateInfo.BorderSizePixel = 0
-rateInfo.Text = "Main: 50 reps/s objetivo local\nFast Farm OP: 600 reps/s objetivo local\nEl servidor puede aplicar sus propios l铆mites."
+rateInfo.Text = "OP Farm target: 700 reps/s\nTarget range: 600-800 reps/s\nThe server may apply its own limits."
 rateInfo.TextColor3 = Color3.fromRGB(155, 155, 175)
 rateInfo.Font = Enum.Font.Gotham
 rateInfo.TextSize = 12
@@ -1474,4 +1453,4 @@ UserInputService.InputBegan:Connect(function(input, gp)
 end)
 
 BossFarm:UpdateUi()
-print("ARGZx Aural GUI + Auto Boss cargado")
+print("ARGZx GUI + Auto Boss loaded")
