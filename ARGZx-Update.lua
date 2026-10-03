@@ -164,51 +164,53 @@ local function formatExact(n)
 end
 
 -- ==================== OP FARM ESTABLE ====================
--- Single farm mode. Target is 700 requests/second, kept inside the
--- requested 600-800 range. The server can still throttle or reject requests.
-local FarmConfig = {
-	OPRate = 800,
-	MaxPerFrame = 20,
-	MaxCatchUp = 28,
-}
-
-local function getMuscleEvent()
-	local event = LP:FindFirstChild("muscleEvent")
-	return event and event:IsA("RemoteEvent") and event or nil
-end
-
 task.spawn(function()
-	local accumulator = 0
-	local last = os.clock()
+    local cachedEvent = LP:FindFirstChild("muscleEvent")
 
-	while true do
-		RunService.Heartbeat:Wait()
-		local now = os.clock()
-		local dt = math.clamp(now - last, 0, 0.10)
-		last = now
+    LP.ChildAdded:Connect(function(child)
+        if child.Name == "muscleEvent" then
+            cachedEvent = child
+        end
+    end)
 
-		if not FastFarm then
-			accumulator = 0
-			continue
-		end
+    local RATE = 800
+    local BURST = 80
+    local INTERVAL = BURST / RATE
 
-		local event = getMuscleEvent()
-		if not event then
-			accumulator = 0
-			continue
-		end
+    while true do
+        if FastFarm then
+            if not cachedEvent or not cachedEvent.Parent then
+                cachedEvent = LP:FindFirstChild("muscleEvent")
+            end
 
-		accumulator = math.min(accumulator + FarmConfig.OPRate * dt, FarmConfig.MaxCatchUp)
-		local sends = math.min(math.floor(accumulator), FarmConfig.MaxPerFrame)
+            if cachedEvent then
+                local start = os.clock()
 
-		if sends > 0 then
-			accumulator -= sends
-			for _ = 1, sends do
-				if not FastFarm then break end
-				pcall(event.FireServer, event, "rep")
-			end
-		end
-	end
+                for i = 1, BURST do
+                    if not FastFarm then
+                        break
+                    end
+
+                    pcall(function()
+                        cachedEvent:FireServer("rep")
+                    end)
+                end
+
+                local elapsed = os.clock() - start
+                local remaining = INTERVAL - elapsed
+
+                if remaining > 0 then
+                    task.wait(remaining)
+                else
+                    task.wait()
+                end
+            else
+                task.wait(0.05)
+            end
+        else
+            task.wait(0.1)
+        end
+    end
 end)
 
 -- ==================== AUTO REBIRTH ESTABLE ====================
