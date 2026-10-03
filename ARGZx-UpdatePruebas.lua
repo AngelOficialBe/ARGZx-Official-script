@@ -126,6 +126,18 @@ local FastRebirthGeneration = 0
 local startTime = tick()
 local sessionRebirths = 0
 local lastRebirths = Rebirths.Value
+local totalStrengthGained = 0
+local lastStrengthValue = tonumber(Strength.Value) or 0
+
+Strength:GetPropertyChangedSignal("Value"):Connect(function()
+	local current = tonumber(Strength.Value) or 0
+	if current >= lastStrengthValue then
+		totalStrengthGained += current - lastStrengthValue
+	else
+		totalStrengthGained += lastStrengthValue
+	end
+	lastStrengthValue = current
+end)
 
 -- ==================== HELPERS ====================
 local function getCharacter()
@@ -940,13 +952,10 @@ local function createNavButton(name, icon, order)
 	return btn
 end
 
-createNavButton("Home", "H", 1)
-local farmingNav = createNavButton("Farming", "F", 2)
-createNavButton("Teleports", "T", 3)
-local bossNav = createNavButton("Boss", "B", 4)
-createNavButton("Pets", "P", 5)
-createNavButton("Misc", "M", 6)
-createNavButton("Settings", "S", 7)
+local farmingNav = createNavButton("Farming", "F", 1)
+local bossNav = createNavButton("Boss", "B", 2)
+local infoNav = createNavButton("Info", "I", 3)
+local settingsNav = createNavButton("Settings", "S", 4)
 
 farmingNav.BackgroundColor3 = Color3.fromRGB(28, 24, 45)
 farmingNav:FindFirstChild("Indicator").Visible = true
@@ -1279,6 +1288,11 @@ task.spawn(function()
 		if fastRebirthStatus then fastRebirthStatus.Text = "Fast Rebirth: " .. FastRebirthStage end
 		timeLabel.Text = string.format("Time: %dh %dm", hours, minutes)
 		rateLabel.Text = "Rate: " .. rate .. " /h"
+		local strengthRate = elapsed > 15 and math.floor((totalStrengthGained / elapsed) * 3600) or 0
+		local rebirthRate = elapsed > 15 and math.floor((sessionRebirths / elapsed) * 3600) or 0
+		if strengthHourLabel then strengthHourLabel.Text = "Strength per hour: " .. formatExact(strengthRate) end
+		if rebirthHourLabel then rebirthHourLabel.Text = "Rebirths per hour: " .. rebirthRate end
+		if sessionInfoLabel then sessionInfoLabel.Text = "Session time: " .. string.format("%dh %dm", hours, minutes) end
 		task.wait(1)
 	end
 end)
@@ -1407,56 +1421,98 @@ Instance.new("UICorner", infoLabel).CornerRadius = UDim.new(0, 8)
 Instance.new("UIPadding", infoLabel).PaddingTop = UDim.new(0, 10)
 Instance.new("UIPadding", infoLabel).PaddingLeft = UDim.new(0, 12)
 
--- ========== PAGINAS AUXILIARES ==========
-local function createPlaceholderPage(name, titleText, subText)
-	local page = Instance.new("ScrollingFrame")
-	page.Name = name
-	page.Size = UDim2.new(1, -20, 1, -50)
-	page.Position = UDim2.new(0, 10, 0, 45)
-	page.BackgroundTransparency = 1
-	page.BorderSizePixel = 0
-	page.ScrollBarThickness = 4
-	page.CanvasSize = UDim2.new(0, 0, 0, 260)
-	page.Visible = false
-	page.Parent = content
-	pages[name] = page
+-- ========== PAGE: INFO ==========
+local infoPage = Instance.new("ScrollingFrame")
+infoPage.Name = "Info"
+infoPage.Size = UDim2.new(1, -20, 1, -50)
+infoPage.Position = UDim2.new(0, 10, 0, 45)
+infoPage.BackgroundTransparency = 1
+infoPage.BorderSizePixel = 0
+infoPage.ScrollBarThickness = 4
+infoPage.ScrollBarImageColor3 = Color3.fromRGB(80, 60, 160)
+infoPage.CanvasSize = UDim2.new(0, 0, 0, 350)
+infoPage.Visible = false
+infoPage.Parent = content
+pages["Info"] = infoPage
 
-	local t = Instance.new("TextLabel")
-	t.Size = UDim2.new(1, 0, 0, 28)
-	t.BackgroundTransparency = 1
-	t.Text = titleText
-	t.TextColor3 = Color3.fromRGB(255, 255, 255)
-	t.Font = Enum.Font.GothamBold
-	t.TextSize = 20
-	t.TextXAlignment = Enum.TextXAlignment.Left
-	t.Parent = page
+local infoTitle = Instance.new("TextLabel")
+infoTitle.Size = UDim2.new(1, 0, 0, 28)
+infoTitle.BackgroundTransparency = 1
+infoTitle.Text = "Info"
+infoTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+infoTitle.Font = Enum.Font.GothamBold
+infoTitle.TextSize = 20
+infoTitle.TextXAlignment = Enum.TextXAlignment.Left
+infoTitle.Parent = infoPage
 
-	local sub = Instance.new("TextLabel")
-	sub.Size = UDim2.new(1, 0, 0, 18)
-	sub.Position = UDim2.new(0, 0, 0, 28)
-	sub.BackgroundTransparency = 1
-	sub.Text = subText
-	sub.TextColor3 = Color3.fromRGB(140, 140, 160)
-	sub.Font = Enum.Font.Gotham
-	sub.TextSize = 12
-	sub.TextXAlignment = Enum.TextXAlignment.Left
-	sub.Parent = page
+local infoSub = Instance.new("TextLabel")
+infoSub.Size = UDim2.new(1, 0, 0, 18)
+infoSub.Position = UDim2.new(0, 0, 0, 28)
+infoSub.BackgroundTransparency = 1
+infoSub.Text = "Session performance and farming rates"
+infoSub.TextColor3 = Color3.fromRGB(140, 140, 160)
+infoSub.Font = Enum.Font.Gotham
+infoSub.TextSize = 12
+infoSub.TextXAlignment = Enum.TextXAlignment.Left
+infoSub.Parent = infoPage
 
-	local coming = Instance.new("TextLabel")
-	coming.Size = UDim2.new(1, 0, 0, 30)
-	coming.Position = UDim2.new(0, 0, 0, 90)
-	coming.BackgroundTransparency = 1
-	coming.Text = "Module coming soon"
-	coming.TextColor3 = Color3.fromRGB(100, 100, 120)
-	coming.Font = Enum.Font.GothamMedium
-	coming.TextSize = 15
-	coming.Parent = page
-end
+createSection(infoPage, 58, "RATES PER HOUR")
+local infoFrame = Instance.new("Frame")
+infoFrame.Size = UDim2.new(1, -10, 0, 150)
+infoFrame.Position = UDim2.new(0, 0, 0, 84)
+infoFrame.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
+infoFrame.BorderSizePixel = 0
+infoFrame.Parent = infoPage
+Instance.new("UICorner", infoFrame).CornerRadius = UDim.new(0, 8)
 
-createPlaceholderPage("Home", "Home", "Overview & status")
-createPlaceholderPage("Teleports", "Teleports", "Quick travel locations")
-createPlaceholderPage("Pets", "Pets", "Pet management")
-createPlaceholderPage("Misc", "Misc", "Extra utilities")
+local strengthHourLabel = Instance.new("TextLabel")
+strengthHourLabel.Size = UDim2.new(1, -28, 0, 32)
+strengthHourLabel.Position = UDim2.new(0, 14, 0, 12)
+strengthHourLabel.BackgroundTransparency = 1
+strengthHourLabel.Text = "Strength per hour: 0"
+strengthHourLabel.TextColor3 = Color3.fromRGB(150, 210, 255)
+strengthHourLabel.Font = Enum.Font.GothamMedium
+strengthHourLabel.TextSize = 14
+strengthHourLabel.TextXAlignment = Enum.TextXAlignment.Left
+strengthHourLabel.Parent = infoFrame
+
+local rebirthHourLabel = Instance.new("TextLabel")
+rebirthHourLabel.Size = UDim2.new(1, -28, 0, 32)
+rebirthHourLabel.Position = UDim2.new(0, 14, 0, 52)
+rebirthHourLabel.BackgroundTransparency = 1
+rebirthHourLabel.Text = "Rebirths per hour: 0"
+rebirthHourLabel.TextColor3 = Color3.fromRGB(160, 255, 160)
+rebirthHourLabel.Font = Enum.Font.GothamMedium
+rebirthHourLabel.TextSize = 14
+rebirthHourLabel.TextXAlignment = Enum.TextXAlignment.Left
+rebirthHourLabel.Parent = infoFrame
+
+local sessionInfoLabel = Instance.new("TextLabel")
+sessionInfoLabel.Size = UDim2.new(1, -28, 0, 32)
+sessionInfoLabel.Position = UDim2.new(0, 14, 0, 92)
+sessionInfoLabel.BackgroundTransparency = 1
+sessionInfoLabel.Text = "Session time: 0m"
+sessionInfoLabel.TextColor3 = Color3.fromRGB(180, 180, 210)
+sessionInfoLabel.Font = Enum.Font.Gotham
+sessionInfoLabel.TextSize = 12
+sessionInfoLabel.TextXAlignment = Enum.TextXAlignment.Left
+sessionInfoLabel.Parent = infoFrame
+
+local infoNote = Instance.new("TextLabel")
+infoNote.Size = UDim2.new(1, -10, 0, 70)
+infoNote.Position = UDim2.new(0, 0, 0, 250)
+infoNote.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
+infoNote.BorderSizePixel = 0
+infoNote.Text = "Rates are calculated from this session.\nStrength counts cumulative gains, including strength earned before rebirth.\nShort sessions may show 0 until enough data is collected."
+infoNote.TextColor3 = Color3.fromRGB(150, 150, 170)
+infoNote.Font = Enum.Font.Gotham
+infoNote.TextSize = 11
+infoNote.TextXAlignment = Enum.TextXAlignment.Left
+infoNote.TextYAlignment = Enum.TextYAlignment.Center
+infoNote.Parent = infoPage
+Instance.new("UICorner", infoNote).CornerRadius = UDim.new(0, 8)
+local infoPad = Instance.new("UIPadding", infoNote)
+infoPad.PaddingLeft = UDim.new(0, 12)
 
 -- Settings real: rendimiento y optimizacion.
 local settingsPage = Instance.new("ScrollingFrame")
