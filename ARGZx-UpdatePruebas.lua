@@ -823,7 +823,7 @@ main.Position = UDim2.new(0.5, -280, 0.5, -215)
 main.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
 main.BorderSizePixel = 0
 main.Active = true
-main.Draggable = true
+main.Draggable = false
 main.Parent = gui
 Instance.new("UICorner", main).CornerRadius = UDim.new(0, 12)
 
@@ -831,6 +831,48 @@ local mainStroke = Instance.new("UIStroke")
 mainStroke.Color = Color3.fromRGB(40, 40, 50)
 mainStroke.Thickness = 1
 mainStroke.Parent = main
+
+-- Drag only from the top bar so scrolling inside pages does not move the whole GUI.
+local dragBar = Instance.new("Frame")
+dragBar.Name = "DragBar"
+dragBar.Size = UDim2.new(1, -160, 0, 44)
+dragBar.Position = UDim2.new(0, 160, 0, 0)
+dragBar.BackgroundTransparency = 1
+dragBar.Active = true
+dragBar.Parent = main
+
+local dragTitle = Instance.new("TextLabel")
+dragTitle.Size = UDim2.new(1, -70, 1, 0)
+dragTitle.Position = UDim2.new(0, 14, 0, 0)
+dragTitle.BackgroundTransparency = 1
+dragTitle.Text = "ARGZx"
+dragTitle.TextColor3 = Color3.fromRGB(150, 150, 170)
+dragTitle.Font = Enum.Font.GothamMedium
+dragTitle.TextSize = 12
+dragTitle.TextXAlignment = Enum.TextXAlignment.Left
+dragTitle.Parent = dragBar
+
+local dragging = false
+local dragStart = nil
+local startPos = nil
+
+dragBar.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+		dragStart = input.Position
+		startPos = main.Position
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then dragging = false end
+		end)
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if not dragging then return end
+	if input.UserInputType ~= Enum.UserInputType.MouseMovement and input.UserInputType ~= Enum.UserInputType.Touch then return end
+	local delta = input.Position - dragStart
+	main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end)
 
 -- SIDEBAR
 local sidebar = Instance.new("Frame")
@@ -1117,6 +1159,8 @@ farmingPage.Position = UDim2.new(0, 10, 0, 45)
 farmingPage.BackgroundTransparency = 1
 farmingPage.BorderSizePixel = 0
 farmingPage.ScrollBarThickness = 4
+farmingPage.ScrollingEnabled = true
+farmingPage.Active = true
 farmingPage.ScrollBarImageColor3 = Color3.fromRGB(80, 60, 160)
 farmingPage.CanvasSize = UDim2.new(0, 0, 0, 350)
 farmingPage.Parent = content
@@ -1278,24 +1322,6 @@ rateLabel.TextSize = 12
 rateLabel.TextXAlignment = Enum.TextXAlignment.Left
 rateLabel.Parent = statsFrame
 
-task.spawn(function()
-	while true do
-		local elapsed = tick() - startTime
-		local hours = math.floor(elapsed / 3600)
-		local minutes = math.floor((elapsed % 3600) / 60)
-		local rate = elapsed > 15 and math.floor((sessionRebirths / elapsed) * 3600) or 0
-		rebirthsLabel.Text = "Session Rebirths: " .. sessionRebirths
-		if fastRebirthStatus then fastRebirthStatus.Text = "Fast Rebirth: " .. FastRebirthStage end
-		timeLabel.Text = string.format("Time: %dh %dm", hours, minutes)
-		rateLabel.Text = "Rate: " .. rate .. " /h"
-		local strengthRate = elapsed > 15 and math.floor((totalStrengthGained / elapsed) * 3600) or 0
-		local rebirthRate = elapsed > 15 and math.floor((sessionRebirths / elapsed) * 3600) or 0
-		if strengthHourLabel then strengthHourLabel.Text = "Strength per hour: " .. formatExact(strengthRate) end
-		if rebirthHourLabel then rebirthHourLabel.Text = "Rebirths per hour: " .. rebirthRate end
-		if sessionInfoLabel then sessionInfoLabel.Text = "Session time: " .. string.format("%dh %dm", hours, minutes) end
-		task.wait(1)
-	end
-end)
 
 -- ========== PAGE: BOSS ==========
 local bossPage = Instance.new("ScrollingFrame")
@@ -1305,6 +1331,8 @@ bossPage.Position = UDim2.new(0, 10, 0, 45)
 bossPage.BackgroundTransparency = 1
 bossPage.BorderSizePixel = 0
 bossPage.ScrollBarThickness = 4
+bossPage.ScrollingEnabled = true
+bossPage.Active = true
 bossPage.ScrollBarImageColor3 = Color3.fromRGB(80, 60, 160)
 bossPage.CanvasSize = UDim2.new(0, 0, 0, 380)
 bossPage.Visible = false
@@ -1429,8 +1457,10 @@ infoPage.Position = UDim2.new(0, 10, 0, 45)
 infoPage.BackgroundTransparency = 1
 infoPage.BorderSizePixel = 0
 infoPage.ScrollBarThickness = 4
+infoPage.ScrollingEnabled = true
+infoPage.Active = true
 infoPage.ScrollBarImageColor3 = Color3.fromRGB(80, 60, 160)
-infoPage.CanvasSize = UDim2.new(0, 0, 0, 350)
+infoPage.CanvasSize = UDim2.new(0, 0, 0, 360)
 infoPage.Visible = false
 infoPage.Parent = content
 pages["Info"] = infoPage
@@ -1498,6 +1528,31 @@ sessionInfoLabel.TextSize = 12
 sessionInfoLabel.TextXAlignment = Enum.TextXAlignment.Left
 sessionInfoLabel.Parent = infoFrame
 
+-- Live session statistics. This is intentionally placed after the Info labels
+-- are created; the previous version tried to update local labels before they existed.
+local function updateSessionInfo()
+	local elapsed = math.max(0, tick() - startTime)
+	local hours = math.floor(elapsed / 3600)
+	local minutes = math.floor((elapsed % 3600) / 60)
+	local strengthRate = elapsed > 0 and math.floor((totalStrengthGained / elapsed) * 3600) or 0
+	local rebirthRate = elapsed > 0 and math.floor((sessionRebirths / elapsed) * 3600) or 0
+
+	if strengthHourLabel then strengthHourLabel.Text = "Strength per hour: " .. formatExact(strengthRate) end
+	if rebirthHourLabel then rebirthHourLabel.Text = "Rebirths per hour: " .. rebirthRate end
+	if sessionInfoLabel then sessionInfoLabel.Text = string.format("Session time: %dh %dm", hours, minutes) end
+	if rebirthsLabel then rebirthsLabel.Text = "Session Rebirths: " .. sessionRebirths end
+	if timeLabel then timeLabel.Text = string.format("Time: %dh %dm", hours, minutes) end
+	if rateLabel then rateLabel.Text = "Rate: " .. rebirthRate .. " /h" end
+	if fastRebirthStatus then fastRebirthStatus.Text = "Fast Rebirth: " .. FastRebirthStage end
+end
+
+task.spawn(function()
+	while gui and gui.Parent do
+		updateSessionInfo()
+		task.wait(1)
+	end
+end)
+
 local infoNote = Instance.new("TextLabel")
 infoNote.Size = UDim2.new(1, -10, 0, 70)
 infoNote.Position = UDim2.new(0, 0, 0, 250)
@@ -1522,6 +1577,8 @@ settingsPage.Position = UDim2.new(0, 10, 0, 45)
 settingsPage.BackgroundTransparency = 1
 settingsPage.BorderSizePixel = 0
 settingsPage.ScrollBarThickness = 4
+settingsPage.ScrollingEnabled = true
+settingsPage.Active = true
 settingsPage.CanvasSize = UDim2.new(0, 0, 0, 390)
 settingsPage.Visible = false
 settingsPage.Parent = content
@@ -1598,6 +1655,24 @@ rateInfo.Parent = settingsPage
 Instance.new("UICorner", rateInfo).CornerRadius = UDim.new(0, 8)
 local pad = Instance.new("UIPadding", rateInfo)
 pad.PaddingLeft = UDim.new(0, 12)
+
+-- Keep page scrolling available on mouse wheel and touch, and size the canvas
+-- from the actual content so new controls do not require moving the whole GUI.
+local function bindAutoCanvas(scroller, extra)
+	local layout = scroller:FindFirstChildOfClass("UIListLayout")
+	if layout then
+		local function refresh()
+			scroller.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + (extra or 16))
+		end
+		layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(refresh)
+		refresh()
+	end
+end
+
+bindAutoCanvas(farmingPage, 24)
+bindAutoCanvas(bossPage, 24)
+bindAutoCanvas(infoPage, 24)
+bindAutoCanvas(settingsPage, 24)
 
 -- Tecla para ocultar/mostrar
 UserInputService.InputBegan:Connect(function(input, gp)
