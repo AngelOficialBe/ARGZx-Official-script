@@ -1,4 +1,4 @@
-- ==================== CONFIGURACION DE KEY ====================
+-- ==================== CONFIGURACION DE KEY ====================
 local ValidKey = "PRUEBA" -- <--- Cambia tu key here
 local ScriptURL = "https://raw.githubusercontent.com/AngelOficialBe/ARGZx-Official-script/refs/heads/main/ARGZx-Script.lua"
 -- ==============================================================
@@ -166,7 +166,7 @@ end
 -- ==================== PING PROTECTION ====================
 local PingProtection = true
 local PING_PAUSE = 10000
-local PING_RESUME = 325
+local PING_RESUME = 200
 local PING_CHECK = 0.5
 local pingPaused = false
 local fastFarmBeforePing = false
