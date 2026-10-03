@@ -1,4 +1,4 @@
--- ==================== CONFIGURACION DE KEY ====================
+- ==================== CONFIGURACION DE KEY ====================
 local ValidKey = "PRUEBA" -- <--- Cambia tu key here
 local ScriptURL = "https://raw.githubusercontent.com/AngelOficialBe/ARGZx-Official-script/refs/heads/main/ARGZx-Script.lua"
 -- ==============================================================
@@ -163,14 +163,56 @@ local function formatExact(n)
 	else return tostring(math.floor(n)) end
 end
 
+-- ==================== PING PROTECTION ====================
+local PingProtection = true
+local PING_PAUSE = 10000
+local PING_RESUME = 325
+local PING_CHECK = 0.5
+local pingPaused = false
+local fastFarmBeforePing = false
+
+local Stats = game:GetService("Stats")
+
+local function getPing()
+    local success, ping = pcall(function()
+        local network = Stats:FindFirstChild("Network")
+        local serverStats = network and network:FindFirstChild("ServerStatsItem")
+        local dataPing = serverStats and serverStats:FindFirstChild("Data Ping")
+        if dataPing then
+            return tonumber(string.match(dataPing:GetValueString(), "%d+"))
+        end
+        return nil
+    end)
+    return success and ping or nil
+end
+
+task.spawn(function()
+    while true do
+        task.wait(PING_CHECK)
+        if PingProtection then
+            local ping = getPing()
+            if ping then
+                if not pingPaused and ping >= PING_PAUSE then
+                    pingPaused = true
+                    fastFarmBeforePing = FastFarm
+                    FastFarm = false
+                elseif pingPaused and ping <= PING_RESUME then
+                    pingPaused = false
+                    if fastFarmBeforePing then
+                        FastFarm = true
+                    end
+                    fastFarmBeforePing = false
+                end
+            end
+        end
+    end
+end)
+
 -- ==================== OP FARM ESTABLE ====================
 task.spawn(function()
     local cachedEvent = LP:FindFirstChild("muscleEvent")
-
     LP.ChildAdded:Connect(function(child)
-        if child.Name == "muscleEvent" then
-            cachedEvent = child
-        end
+        if child.Name == "muscleEvent" then cachedEvent = child end
     end)
 
     local RATE = 800
@@ -182,28 +224,14 @@ task.spawn(function()
             if not cachedEvent or not cachedEvent.Parent then
                 cachedEvent = LP:FindFirstChild("muscleEvent")
             end
-
             if cachedEvent then
                 local start = os.clock()
-
                 for i = 1, BURST do
-                    if not FastFarm then
-                        break
-                    end
-
-                    pcall(function()
-                        cachedEvent:FireServer("rep")
-                    end)
+                    if not FastFarm then break end
+                    pcall(function() cachedEvent:FireServer("rep") end)
                 end
-
-                local elapsed = os.clock() - start
-                local remaining = INTERVAL - elapsed
-
-                if remaining > 0 then
-                    task.wait(remaining)
-                else
-                    task.wait()
-                end
+                local remaining = INTERVAL - (os.clock() - start)
+                if remaining > 0 then task.wait(remaining) else task.wait() end
             else
                 task.wait(0.05)
             end
