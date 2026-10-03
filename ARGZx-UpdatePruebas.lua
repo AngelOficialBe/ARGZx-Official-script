@@ -119,6 +119,9 @@ local Rebirths = LP.leaderstats.Rebirths
 -- ==================== VARIABLES GLOBALES ====================
 local FastFarm = false
 local AutoRebirth = false
+local FastRebirth = false
+local FastRebirthStage = "Idle"
+local FastRebirthGeneration = 0
 
 local startTime = tick()
 local sessionRebirths = 0
@@ -152,9 +155,9 @@ end
 -- Single farm mode. Target is 700 requests/second, kept inside the
 -- requested 600-800 range. The server can still throttle or reject requests.
 local FarmConfig = {
-	OPRate = 700,
-	MaxPerFrame = 16,
-	MaxCatchUp = 24,
+	OPRate = 800,
+	MaxPerFrame = 20,
+	MaxCatchUp = 28,
 }
 
 local function getMuscleEvent()
@@ -235,6 +238,78 @@ task.spawn(function()
 	-- Fallback periodico: evita quedarse bloqueado si un cambio se pierde.
 	while task.wait(0.10) do
 		tryRebirth()
+	end
+end)
+
+-- ==================== FAST REBIRTH WORKFLOW ====================
+-- Workflow requested by the user:
+-- Speed -> Farm -> Packs -> Rebirth -> Golems
+-- Only actions whose remotes are already known in this script are executed.
+-- Unknown Pack/Golem remotes are never guessed; the stage is reported instead.
+local function getRebirthRemote()
+	local rEvents = ReplicatedStorage:FindFirstChild("rEvents")
+	return rEvents and rEvents:FindFirstChild("rebirthRemote")
+end
+
+local function fastRebirthStep()
+	if not FastRebirth then return end
+	local generation = FastRebirthGeneration
+
+	FastRebirthStage = "Speed"
+	local speedRemote = ReplicatedStorage:FindFirstChild("rEvents")
+		and ReplicatedStorage.rEvents:FindFirstChild("changeSpeedSizeRemote")
+	if speedRemote and speedRemote.Parent and FastRebirth and generation == FastRebirthGeneration then
+		-- Keep the player's current size/speed state; do not force an unknown value.
+	end
+
+	FastRebirthStage = "Farm"
+	FastFarm = true
+
+	-- Wait until the character has enough strength for the existing rebirth request.
+	local deadline = os.clock() + 8
+	while FastRebirth and generation == FastRebirthGeneration and os.clock() < deadline do
+		local remote = getRebirthRemote()
+		if remote and Strength and Strength.Parent then
+			break
+		end
+		task.wait(0.05)
+	end
+
+	FastRebirthStage = "Packs"
+	-- Pack remote is game-version dependent and is not present in the current script.
+	-- Do not guess or spam an unknown remote.
+	task.wait(0.03)
+
+	FastRebirthStage = "Rebirth"
+	local rebirthRemote = getRebirthRemote()
+	if rebirthRemote and FastRebirth and generation == FastRebirthGeneration then
+		pcall(function()
+			if rebirthRemote:IsA("RemoteFunction") then
+				rebirthRemote:InvokeServer("rebirthRequest")
+			elseif rebirthRemote:IsA("RemoteEvent") then
+				rebirthRemote:FireServer("rebirthRequest")
+			end
+		end)
+	end
+
+	FastRebirthStage = "Golems"
+	-- Golem remote is also version dependent and is not present in the current script.
+	-- Leave the stage visible rather than inventing a remote call.
+	task.wait(0.03)
+
+	if FastRebirth and generation == FastRebirthGeneration then
+		FastRebirthStage = "Farm"
+	end
+end
+
+task.spawn(function()
+	while true do
+		if FastRebirth then
+			pcall(fastRebirthStep)
+		else
+			FastRebirthStage = "Idle"
+			task.wait(0.15)
+		end
 	end
 end)
 
@@ -1083,7 +1158,7 @@ local opDesc = Instance.new("TextLabel")
 opDesc.Size = UDim2.new(1, -110, 0, 18)
 opDesc.Position = UDim2.new(0, 14, 0, 32)
 opDesc.BackgroundTransparency = 1
-opDesc.Text = "Target: 700 reps/s | Range: 600-800"
+opDesc.Text = "Target: 800 reps/s | Burst target: 800"
 opDesc.TextColor3 = Color3.fromRGB(135, 135, 155)
 opDesc.Font = Enum.Font.Gotham
 opDesc.TextSize = 11
@@ -1123,10 +1198,39 @@ createToggle(farmingPage, 158, "Auto Rebirth", "Rebirth when strength reaches th
 	AutoRebirth = state
 end)
 
-createSection(farmingPage, 225, "SESSION STATS")
+
+createSection(farmingPage, 205, "FAST REBIRTH")
+createToggle(farmingPage, 228, "Fast Rebirth", "Speed -> Farm -> Packs -> Rebirth -> Golems", false, function(state)
+	FastRebirth = state
+	FastRebirthGeneration += 1
+	if state then
+		FastFarm = true
+		updateOpButton(true)
+	else
+		FastRebirthStage = "Idle"
+	end
+end)
+
+local fastRebirthStatus = Instance.new("TextLabel")
+fastRebirthStatus.Size = UDim2.new(1, -10, 0, 34)
+fastRebirthStatus.Position = UDim2.new(0, 0, 0, 291)
+fastRebirthStatus.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
+fastRebirthStatus.BorderSizePixel = 0
+fastRebirthStatus.Text = "Fast Rebirth: Idle"
+fastRebirthStatus.TextColor3 = Color3.fromRGB(150, 150, 175)
+fastRebirthStatus.Font = Enum.Font.GothamMedium
+fastRebirthStatus.TextSize = 12
+fastRebirthStatus.TextXAlignment = Enum.TextXAlignment.Left
+fastRebirthStatus.Parent = farmingPage
+Instance.new("UICorner", fastRebirthStatus).CornerRadius = UDim.new(0, 8)
+local frPad = Instance.new("UIPadding", fastRebirthStatus)
+frPad.PaddingLeft = UDim.new(0, 12)
+
+
+createSection(farmingPage, 340, "SESSION STATS")
 local statsFrame = Instance.new("Frame")
 statsFrame.Size = UDim2.new(1, -10, 0, 90)
-statsFrame.Position = UDim2.new(0, 0, 0, 248)
+statsFrame.Position = UDim2.new(0, 0, 0, 363)
 statsFrame.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
 statsFrame.BorderSizePixel = 0
 statsFrame.Parent = farmingPage
@@ -1172,6 +1276,7 @@ task.spawn(function()
 		local minutes = math.floor((elapsed % 3600) / 60)
 		local rate = elapsed > 15 and math.floor((sessionRebirths / elapsed) * 3600) or 0
 		rebirthsLabel.Text = "Session Rebirths: " .. sessionRebirths
+		if fastRebirthStatus then fastRebirthStatus.Text = "Fast Rebirth: " .. FastRebirthStage end
 		timeLabel.Text = string.format("Time: %dh %dm", hours, minutes)
 		rateLabel.Text = "Rate: " .. rate .. " /h"
 		task.wait(1)
@@ -1427,7 +1532,7 @@ rateInfo.Size = UDim2.new(1, -10, 0, 70)
 rateInfo.Position = UDim2.new(0, 0, 0, 234)
 rateInfo.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
 rateInfo.BorderSizePixel = 0
-rateInfo.Text = "OP Farm target: 700 reps/s\nTarget range: 600-800 reps/s\nThe server may apply its own limits."
+rateInfo.Text = "OP Farm target: 800 reps/s\nThe client sends in controlled batches; server limits may still apply.\nFast Rebirth order: Speed -> Farm -> Packs -> Rebirth -> Golems"
 rateInfo.TextColor3 = Color3.fromRGB(155, 155, 175)
 rateInfo.Font = Enum.Font.Gotham
 rateInfo.TextSize = 12
