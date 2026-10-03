@@ -818,8 +818,8 @@ gui.Parent = PlayerGui
 
 local main = Instance.new("Frame")
 main.Name = "Main"
-main.Size = UDim2.new(0, 480, 0, 360)
-main.Position = UDim2.new(0.5, -240, 0.5, -180)
+main.Size = UDim2.new(0, 360, 0, 270)
+main.Position = UDim2.new(0.5, -180, 0.5, -135)
 main.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
 main.BorderSizePixel = 0
 main.Active = true
@@ -835,8 +835,8 @@ mainStroke.Parent = main
 -- Drag only from the top bar so scrolling inside pages does not move the whole GUI.
 local dragBar = Instance.new("Frame")
 dragBar.Name = "DragBar"
-dragBar.Size = UDim2.new(1, -130, 0, 38)
-dragBar.Position = UDim2.new(0, 130, 0, 0)
+dragBar.Size = UDim2.new(1, -100, 0, 32)
+dragBar.Position = UDim2.new(0, 100, 0, 0)
 dragBar.BackgroundTransparency = 1
 dragBar.Active = true
 dragBar.Parent = main
@@ -876,53 +876,53 @@ end)
 
 -- SIDEBAR
 local sidebar = Instance.new("Frame")
-sidebar.Size = UDim2.new(0, 130, 1, 0)
+sidebar.Size = UDim2.new(0, 100, 1, 0)
 sidebar.BackgroundColor3 = Color3.fromRGB(12, 12, 16)
 sidebar.BorderSizePixel = 0
 sidebar.Parent = main
 Instance.new("UICorner", sidebar).CornerRadius = UDim.new(0, 12)
 
 local logoFrame = Instance.new("Frame")
-logoFrame.Size = UDim2.new(1, 0, 0, 70)
+logoFrame.Size = UDim2.new(1, 0, 0, 56)
 logoFrame.BackgroundTransparency = 1
 logoFrame.Parent = sidebar
 
 local logoIcon = Instance.new("TextLabel")
-logoIcon.Size = UDim2.new(0, 24, 0, 24)
-logoIcon.Position = UDim2.new(0, 10, 0, 12)
+logoIcon.Size = UDim2.new(0, 20, 0, 20)
+logoIcon.Position = UDim2.new(0, 7, 0, 10)
 logoIcon.BackgroundColor3 = Color3.fromRGB(90, 60, 220)
 logoIcon.Text = "A"
 logoIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
 logoIcon.Font = Enum.Font.GothamBold
-logoIcon.TextSize = 14
+logoIcon.TextSize = 12
 logoIcon.Parent = logoFrame
 Instance.new("UICorner", logoIcon).CornerRadius = UDim.new(0, 6)
 
 local logoTitle = Instance.new("TextLabel")
-logoTitle.Size = UDim2.new(1, -42, 0, 18)
-logoTitle.Position = UDim2.new(0, 42, 0, 10)
+logoTitle.Size = UDim2.new(1, -32, 0, 16)
+logoTitle.Position = UDim2.new(0, 31, 0, 8)
 logoTitle.BackgroundTransparency = 1
 logoTitle.Text = "ARGZx Paid"
 logoTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 logoTitle.Font = Enum.Font.GothamBold
-logoTitle.TextSize = 12
+logoTitle.TextSize = 10
 logoTitle.TextXAlignment = Enum.TextXAlignment.Left
 logoTitle.Parent = logoFrame
 
 local logoSub = Instance.new("TextLabel")
-logoSub.Size = UDim2.new(1, -42, 0, 14)
-logoSub.Position = UDim2.new(0, 42, 0, 28)
+logoSub.Size = UDim2.new(1, -32, 0, 12)
+logoSub.Position = UDim2.new(0, 31, 0, 23)
 logoSub.BackgroundTransparency = 1
 logoSub.Text = "Muscle Legends"
 logoSub.TextColor3 = Color3.fromRGB(140, 140, 160)
 logoSub.Font = Enum.Font.Gotham
-logoSub.TextSize = 9
+logoSub.TextSize = 8
 logoSub.TextXAlignment = Enum.TextXAlignment.Left
 logoSub.Parent = logoFrame
 
 local navContainer = Instance.new("Frame")
-navContainer.Size = UDim2.new(1, -12, 1, -68)
-navContainer.Position = UDim2.new(0, 6, 0, 62)
+navContainer.Size = UDim2.new(1, -10, 1, -58)
+navContainer.Position = UDim2.new(0, 5, 0, 56)
 navContainer.BackgroundTransparency = 1
 navContainer.Parent = sidebar
 
@@ -936,7 +936,7 @@ local currentPage = "Farming"
 local function createNavButton(name, icon, order)
 	local btn = Instance.new("TextButton")
 	btn.Name = name
-	btn.Size = UDim2.new(1, 0, 0, 32)
+	btn.Size = UDim2.new(1, 0, 0, 29)
 	btn.BackgroundColor3 = Color3.fromRGB(12, 12, 16)
 	btn.BorderSizePixel = 0
 	btn.Text = ""
@@ -946,23 +946,23 @@ local function createNavButton(name, icon, order)
 	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
 
 	local iconLabel = Instance.new("TextLabel")
-	iconLabel.Size = UDim2.new(0, 24, 1, 0)
-	iconLabel.Position = UDim2.new(0, 5, 0, 0)
+	iconLabel.Size = UDim2.new(0, 20, 1, 0)
+	iconLabel.Position = UDim2.new(0, 3, 0, 0)
 	iconLabel.BackgroundTransparency = 1
 	iconLabel.Text = icon
 	iconLabel.TextColor3 = Color3.fromRGB(160, 160, 180)
 	iconLabel.Font = Enum.Font.GothamBold
-	iconLabel.TextSize = 12
+	iconLabel.TextSize = 10
 	iconLabel.Parent = btn
 
 	local textLabel = Instance.new("TextLabel")
-	textLabel.Size = UDim2.new(1, -34, 1, 0)
-	textLabel.Position = UDim2.new(0, 30, 0, 0)
+	textLabel.Size = UDim2.new(1, -27, 1, 0)
+	textLabel.Position = UDim2.new(0, 25, 0, 0)
 	textLabel.BackgroundTransparency = 1
 	textLabel.Text = name
 	textLabel.TextColor3 = Color3.fromRGB(180, 180, 200)
 	textLabel.Font = Enum.Font.GothamMedium
-	textLabel.TextSize = 11
+	textLabel.TextSize = 10
 	textLabel.TextXAlignment = Enum.TextXAlignment.Left
 	textLabel.Parent = btn
 
@@ -1004,8 +1004,8 @@ farmingNav:FindFirstChild("Indicator").Visible = true
 
 -- CONTENT
 local content = Instance.new("Frame")
-content.Size = UDim2.new(1, -130, 1, 0)
-content.Position = UDim2.new(0, 130, 0, 0)
+content.Size = UDim2.new(1, -100, 1, 0)
+content.Position = UDim2.new(0, 100, 0, 0)
 content.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
 content.BorderSizePixel = 0
 content.Parent = main
