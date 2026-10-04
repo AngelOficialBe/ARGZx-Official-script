@@ -1,6 +1,6 @@
 -- ==================== CONFIGURACION DE KEY ====================
 local ValidKey = "ARGE" -- <--- Cambia tu key here
-local ScriptURL = "https://raw.githubusercontent.com/AngelOficialBe/ARGZx-Official-script/refs/heads/main/ARGZx-Script.lua"
+local ScriptURL = "https://raw.githubusercontent.com/AngelOficialBe/ARGZx-Official-script/refs/heads/main/ARGZx-Update.lua"
 -- ==============================================================
 
 local Players = game:GetService("Players")
