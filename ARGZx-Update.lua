@@ -1,4 +1,4 @@
--- ==================== CONFIGURACION DE KEY ====================
+========= CONFIGURACION DE KEY =====
 local ValidKey = "ARGE" -- <--- Cambia tu key here
 local ScriptURL = "https://raw.githubusercontent.com/AngelOficialBe/ARGZx-Official-script/refs/heads/main/ARGZx-Update.lua"
 -- ==============================================================
@@ -14,7 +14,7 @@ local CollectionService = game:GetService("CollectionService")
 local LP = Players.LocalPlayer
 local PlayerGui = LP:WaitForChild("PlayerGui")
 
--- ==================== KEY SYSTEM ====================
+-- ===== KEY SYSTEM =======
 local keyGui = Instance.new("ScreenGui")
 keyGui.Name = "ARGZ_KeySystem"
 keyGui.ResetOnSpawn = false
@@ -126,7 +126,7 @@ repeat task.wait(0.3) until LP:FindFirstChild("muscleEvent") and LP:FindFirstChi
 local Strength = LP.leaderstats.Strength
 local Rebirths = LP.leaderstats.Rebirths
 
--- ==================== VARIABLES GLOBALES ====================
+-- ==== VARIABLES GLOBALES ======
 local FastFarm = false
 local AutoRebirth = false
 local FastRebirth = false
