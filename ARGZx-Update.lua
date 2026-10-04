@@ -1,5 +1,5 @@
 -- ==================== CONFIGURACION DE KEY ====================
-local ValidKey = "LALE" -- <--- Cambia tu key here
+local ValidKey = "ARGE" -- <--- Cambia tu key here
 local ScriptURL = "https://raw.githubusercontent.com/AngelOficialBe/ARGZx-Official-script/refs/heads/main/ARGZx-Update.lua"
 -- ==============================================================
 
