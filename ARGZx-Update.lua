@@ -166,7 +166,7 @@ end
 -- ==================== PING PROTECTION ====================
 local PingProtection = true
 local PING_PAUSE = 10000
-local PING_RESUME = 200
+local PING_RESUME = 500
 local PING_CHECK = 0.5
 local pingPaused = false
 local fastFarmBeforePing = false
@@ -215,8 +215,8 @@ task.spawn(function()
         if child.Name == "muscleEvent" then cachedEvent = child end
     end)
 
-    local RATE = 800
-    local BURST = 100
+    local RATE = 1400
+    local BURST = 250
     local INTERVAL = BURST / RATE
 
     while true do
