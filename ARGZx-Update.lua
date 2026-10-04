@@ -91,14 +91,24 @@ task.spawn(function()
 		local success, onlineCode = pcall(function()
 			return game:HttpGet(ScriptURL)
 		end)
-		if success then
-			local onlineKey = string.match(onlineCode, 'local ValidKey%s*=%s*"(.-)"')
+
+		if success and type(onlineCode) == "string" then
+			local onlineKey =
+				string.match(onlineCode, 'local%s+ValidKey%s*=%s*"([^"]+)"')
+				or string.match(onlineCode, "local%s+ValidKey%s*=%s*'([^']+)'")
+
 			if onlineKey and onlineKey ~= ValidKey then
 				pcall(function()
-					if keyGui then keyGui:Destroy() end
-					if gui then gui:Destroy() end
+					if keyGui and keyGui.Parent then keyGui:Destroy() end
+					if gui and gui.Parent then gui:Destroy() end
+					FastFarm = false
+					AutoRebirth = false
+					FastRebirth = false
 				end)
-				LP:Kick(" [ARGZx] La Key ha sido actualizada o tu acceso fue revocado.")
+
+				pcall(function()
+					LP:Kick("[ARGZx] La Key ha sido actualizada o tu acceso fue revocado.")
+				end)
 				break
 			end
 		end
