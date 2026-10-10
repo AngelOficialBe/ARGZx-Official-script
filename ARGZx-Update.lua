@@ -1,5 +1,5 @@
 -- ==================== CONFIGURACION DE KEY ====================
-local ValidKey = "ARGE" -- <--- Cambia tu key here
+local ValidKey = "SLK" -- <--- Cambia tu key here
 local ScriptURL = "https://raw.githubusercontent.com/AngelOficialBe/ARGZx-Official-script/refs/heads/main/ARGZx-Update.lua"
 -- ==============================================================
 
@@ -16,7 +16,7 @@ local PlayerGui = LP:WaitForChild("PlayerGui")
 
 -- ==================== KEY SYSTEM ====================
 local keyGui = Instance.new("ScreenGui")
-keyGui.Name = "ARGZ_KeySystem"
+keyGui.Name = "SLKSystem"
 keyGui.ResetOnSpawn = false
 keyGui.IgnoreGuiInset = true
 keyGui.Parent = PlayerGui
@@ -107,7 +107,7 @@ task.spawn(function()
 				end)
 
 				pcall(function()
-					LP:Kick("[ARGZx] La Key ha sido actualizada o tu acceso fue revocado.")
+					LP:Kick("[SLK] La Key ha sido actualizada o tu acceso fue revocado.")
 				end)
 				break
 			end
@@ -394,7 +394,7 @@ local BossFarm = {
 	antiLag = false,
 	antiLagOriginals = setmetatable({}, { __mode = "k" }),
 	antiLagConnection = nil,
-	cameraRenderName = "ARGZBossStableCamera",
+	cameraRenderName = "SLKBossStableCamera",
 	cameraSaved = nil,
 	cameraFocusPosition = nil,
 	cameraStableCFrame = nil,
@@ -850,7 +850,7 @@ end
 
 -- ==================== GUI ESTILO AURAL ====================
 local gui = Instance.new("ScreenGui")
-gui.Name = "ARGZx_AuralGUI_Improved"
+gui.Name = "SLK_AuralGUI_Improved"
 gui.ResetOnSpawn = false
 gui.IgnoreGuiInset = true
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -885,7 +885,7 @@ local dragTitle = Instance.new("TextLabel")
 dragTitle.Size = UDim2.new(1, -70, 1, 0)
 dragTitle.Position = UDim2.new(0, 12, 0, 0)
 dragTitle.BackgroundTransparency = 1
-dragTitle.Text = "ARGZx"
+dragTitle.Text = "SLK"
 dragTitle.TextColor3 = Color3.fromRGB(150, 150, 170)
 dragTitle.Font = Enum.Font.GothamMedium
 dragTitle.TextSize = 11
@@ -942,7 +942,7 @@ local logoTitle = Instance.new("TextLabel")
 logoTitle.Size = UDim2.new(1, -32, 0, 16)
 logoTitle.Position = UDim2.new(0, 31, 0, 8)
 logoTitle.BackgroundTransparency = 1
-logoTitle.Text = "ARGZx Paid"
+logoTitle.Text = "SLK Paid"
 logoTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 logoTitle.Font = Enum.Font.GothamBold
 logoTitle.TextSize = 10
@@ -1067,12 +1067,12 @@ end)
 
 -- ==================== MINIMIZAR ARGZx ====================
 local miniButton = Instance.new("TextButton")
-miniButton.Name = "ARGZxMini"
+miniButton.Name = "SLKMini"
 miniButton.Size = UDim2.new(0, 118, 0, 42)
 miniButton.Position = UDim2.new(1, -132, 0, 18)
 miniButton.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
 miniButton.BorderSizePixel = 0
-miniButton.Text = "ARGZx"
+miniButton.Text = "SLK"
 miniButton.TextColor3 = Color3.fromRGB(235, 235, 255)
 miniButton.Font = Enum.Font.GothamBold
 miniButton.TextSize = 15
@@ -1251,7 +1251,7 @@ local opDesc = Instance.new("TextLabel")
 opDesc.Size = UDim2.new(1, -110, 0, 18)
 opDesc.Position = UDim2.new(0, 14, 0, 32)
 opDesc.BackgroundTransparency = 1
-opDesc.Text = "Target: 800 reps/s | Burst target: 800"
+opDesc.Text = "Target:  OP |FARM"
 opDesc.TextColor3 = Color3.fromRGB(135, 135, 155)
 opDesc.Font = Enum.Font.Gotham
 opDesc.TextSize = 11
