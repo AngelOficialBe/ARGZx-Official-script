@@ -13,33 +13,33 @@
         https://BloxDen.com
 --]]
 
-local x = "SLK";
-local n = "https://raw.githubusercontent.com/AngelOficialBe/ARGZx-Official-script/refs/heads/main/ARGZx-Update.lua";
-local z = game:GetService("Players");
-local u = game:GetService("ReplicatedStorage");
-local h = game:GetService("VirtualUser");
-local j = game:GetService("TweenService");
-local g = game:GetService("UserInputService");
-local X = game:GetService("RunService");
-local s = game:GetService("CollectionService");
-local H = z.LocalPlayer;
-local A = H:WaitForChild("PlayerGui");
-local l = Instance.new("ScreenGui");
-l.Name = "SLKSystem";
-l.ResetOnSpawn = false;
-l.IgnoreGuiInset = true;
-l.Parent = A;
-local t = Instance.new("Frame");
-t.Size = UDim2.new(0, 300, 0, 180);
-t.Position = UDim2.new(.5, -150, .5, -90);
-t.BackgroundColor3 = Color3.fromRGB(10, 10, 15);
-t.BorderSizePixel = 0;
-t.Parent = l;
-(Instance.new("UICorner", t)).CornerRadius = UDim.new(0, 12);
-local S = Instance.new("UIStroke");
-S.Color = Color3.fromRGB(180, 0, 0);
-S.Thickness = 2;
-S.Parent = t;
+local s = "SLK";
+local h = "https://raw.githubusercontent.com/AngelOficialBe/ARGZx-Official-script/refs/heads/main/ARGZx-Update.lua";
+local P = game:GetService("Players");
+local I = game:GetService("ReplicatedStorage");
+local T = game:GetService("VirtualUser");
+local V = game:GetService("TweenService");
+local k = game:GetService("UserInputService");
+local v = game:GetService("RunService");
+local O = game:GetService("CollectionService");
+local p = P.LocalPlayer;
+local D = p:WaitForChild("PlayerGui");
+local G = Instance.new("ScreenGui");
+G.Name = "SLKSystem";
+G.ResetOnSpawn = false;
+G.IgnoreGuiInset = true;
+G.Parent = D;
+local F = Instance.new("Frame");
+F.Size = UDim2.new(0, 300, 0, 180);
+F.Position = UDim2.new(.5, -150, .5, -90);
+F.BackgroundColor3 = Color3.fromRGB(10, 10, 15);
+F.BorderSizePixel = 0;
+F.Parent = G;
+(Instance.new("UICorner", F)).CornerRadius = UDim.new(0, 12);
+local A = Instance.new("UIStroke");
+A.Color = Color3.fromRGB(180, 0, 0);
+A.Thickness = 2;
+A.Parent = F;
 local q = Instance.new("TextLabel");
 q.Size = UDim2.new(1, 0, 0, 40);
 q.BackgroundTransparency = 1;
@@ -47,58 +47,58 @@ q.Text = "SLK Key System";
 q.TextColor3 = Color3.fromRGB(255, 80, 80);
 q.Font = Enum.Font.GothamBold;
 q.TextSize = 18;
-q.Parent = t;
-local W = Instance.new("TextBox");
-W.Size = UDim2.new(.85, 0, 0, 40);
-W.Position = UDim2.new(.075, 0, 0, 60);
-W.BackgroundColor3 = Color3.fromRGB(20, 20, 25);
-W.Text = "";
-W.PlaceholderText = "Enter Key here...";
-W.TextColor3 = Color3.fromRGB(255, 255, 255);
-W.Font = Enum.Font.Gotham;
-W.TextSize = 14;
-W.Parent = t;
-(Instance.new("UICorner", W)).CornerRadius = UDim.new(0, 8);
-local d = Instance.new("TextButton");
-d.Size = UDim2.new(.85, 0, 0, 40);
-d.Position = UDim2.new(.075, 0, 0, 115);
-d.BackgroundColor3 = Color3.fromRGB(180, 30, 30);
-d.Text = "Verify Key";
-d.TextColor3 = Color3.fromRGB(255, 255, 255);
-d.Font = Enum.Font.GothamBold;
-d.TextSize = 14;
-d.Parent = t;
-(Instance.new("UICorner", d)).CornerRadius = UDim.new(0, 8);
-local L = false;
-d.MouseButton1Click:Connect(function()
-	if W.Text == x then
-		d.Text = "Key Accepted!";
-		d.BackgroundColor3 = Color3.fromRGB(0, 180, 0);
+q.Parent = F;
+local E = Instance.new("TextBox");
+E.Size = UDim2.new(.85, 0, 0, 40);
+E.Position = UDim2.new(.075, 0, 0, 60);
+E.BackgroundColor3 = Color3.fromRGB(20, 20, 25);
+E.Text = "";
+E.PlaceholderText = "Enter Key here...";
+E.TextColor3 = Color3.fromRGB(255, 255, 255);
+E.Font = Enum.Font.Gotham;
+E.TextSize = 14;
+E.Parent = F;
+(Instance.new("UICorner", E)).CornerRadius = UDim.new(0, 8);
+local U = Instance.new("TextButton");
+U.Size = UDim2.new(.85, 0, 0, 40);
+U.Position = UDim2.new(.075, 0, 0, 115);
+U.BackgroundColor3 = Color3.fromRGB(180, 30, 30);
+U.Text = "Verify Key";
+U.TextColor3 = Color3.fromRGB(255, 255, 255);
+U.Font = Enum.Font.GothamBold;
+U.TextSize = 14;
+U.Parent = F;
+(Instance.new("UICorner", U)).CornerRadius = UDim.new(0, 8);
+local B = false;
+U.MouseButton1Click:Connect(function()
+	if E.Text == s then
+		U.Text = "Key Accepted!";
+		U.BackgroundColor3 = Color3.fromRGB(0, 180, 0);
 		task.wait(1);
-		l:Destroy();
-		L = true;
+		G:Destroy();
+		B = true;
 	else
-		d.Text = "Invalid Key";
-		d.BackgroundColor3 = Color3.fromRGB(180, 0, 0);
+		U.Text = "Invalid Key";
+		U.BackgroundColor3 = Color3.fromRGB(180, 0, 0);
 		task.wait(1);
-		d.Text = "Verify Key";
-		d.BackgroundColor3 = Color3.fromRGB(180, 30, 30);
+		U.Text = "Verify Key";
+		U.BackgroundColor3 = Color3.fromRGB(180, 30, 30);
 	end;
 end);
 repeat
 	task.wait(.2);
-until L;
+until B;
 task.spawn(function()
 	while task.wait(10) do
-		local z, u = pcall(function()
-				return game:HttpGet(n);
+		local P, I = pcall(function()
+				return game:HttpGet(h);
 			end);
-		if z and type(u) == "string" then
-			local n = string.match(u, "local%s+ValidKey%s*=%s*\"([^\"]+)\"") or string.match(u, "local%s+ValidKey%s*=%s*\'([^\']+)\'");
-			if n and n ~= x then
+		if P and type(I) == "string" then
+			local h = string.match(I, "local%s+ValidKey%s*=%s*\"([^\"]+)\"") or string.match(I, "local%s+ValidKey%s*=%s*\'([^\']+)\'");
+			if h and h ~= s then
 				pcall(function()
-					if l and l.Parent then
-						l:Destroy();
+					if G and G.Parent then
+						G:Destroy();
 					end;
 					if gui and gui.Parent then
 						gui:Destroy();
@@ -108,134 +108,134 @@ task.spawn(function()
 					FastRebirth = false;
 				end);
 				pcall(function()
-					H:Kick("[SLK] La Key ha sido actualizada o tu acceso fue revocado.");
+					p:Kick("[SLK] La Key ha sido actualizada o tu acceso fue revocado.");
 				end);
 				break;
 			end;
 		end;
 	end;
 end);
-H.Idled:Connect(function()
-	h:CaptureController();
-	h:ClickButton2(Vector2.new());
+p.Idled:Connect(function()
+	T:CaptureController();
+	T:ClickButton2(Vector2.new());
 end);
 repeat
 	task.wait(.3);
-until H:FindFirstChild("muscleEvent") and H:FindFirstChild("leaderstats");
-local f = H.leaderstats.Strength;
-local p = H.leaderstats.Rebirths;
-local r = false;
-local Q = false;
-local y = false;
-local w = "Idle";
-local c = 0;
-local b = tick();
+until p:FindFirstChild("muscleEvent") and p:FindFirstChild("leaderstats");
+local J = p.leaderstats.Strength;
+local g = p.leaderstats.Rebirths;
+local R = false;
+local W = false;
+local N = false;
+local C = "Idle";
+local t = 0;
+local H = tick();
 local m = 0;
-local k = p.Value;
-local B = 0;
-local J = tonumber(f.Value) or 0;
-(f:GetPropertyChangedSignal("Value")):Connect(function()
-	local x = tonumber(f.Value) or 0;
-	if x >= J then
-		B = B + ((x - J));
+local j = g.Value;
+local S = 0;
+local Q = tonumber(J.Value) or 0;
+(J:GetPropertyChangedSignal("Value")):Connect(function()
+	local s = tonumber(J.Value) or 0;
+	if s >= Q then
+		S = S + ((s - Q));
 	else
-		B = B + (J);
+		S = S + (Q);
 	end;
-	J = x;
+	Q = s;
 end);
-local function R()
-	return H.Character;
+local function c()
+	return p.Character;
 end;
-local function D()
-	local x = R();
-	return x and x:FindFirstChildOfClass("Humanoid");
+local function e()
+	local s = c();
+	return s and s:FindFirstChildOfClass("Humanoid");
 end;
-local function P()
-	local x = R();
-	return x and x:FindFirstChild("HumanoidRootPart");
+local function Y()
+	local s = c();
+	return s and s:FindFirstChild("HumanoidRootPart");
 end;
-local function Y(x)
-	x = tonumber(x) or 0;
-	if x >= 1000000000000 then
-		return string.format("%.2fT", x / 1000000000000);
-	elseif x >= 1000000000 then
-		return string.format("%.2fB", x / 1000000000);
-	elseif x >= 1000000 then
-		return string.format("%.2fM", x / 1000000);
-	elseif x >= 1000 then
-		return string.format("%.1fK", x / 1000);
+local function b(s)
+	s = tonumber(s) or 0;
+	if s >= 1000000000000 then
+		return string.format("%.2fT", s / 1000000000000);
+	elseif s >= 1000000000 then
+		return string.format("%.2fB", s / 1000000000);
+	elseif s >= 1000000 then
+		return string.format("%.2fM", s / 1000000);
+	elseif s >= 1000 then
+		return string.format("%.1fK", s / 1000);
 	else
-		return tostring(math.floor(x));
+		return tostring(math.floor(s));
 	end;
 end;
-local N = true;
-local M = 5000;
-local O = 350;
-local V = .5;
-local i = false;
-local C = false;
-local a = game:GetService("Stats");
-local function o()
-	local x, n = pcall(function()
-			local x = a:FindFirstChild("Network");
-			local n = x and x:FindFirstChild("ServerStatsItem");
-			local z = n and n:FindFirstChild("Data Ping");
-			if z then
-				return tonumber(string.match(z:GetValueString(), "%d+"));
+local z = true;
+local n = 5000;
+local x = 350;
+local l = .5;
+local o = false;
+local M = false;
+local L = game:GetService("Stats");
+local function r()
+	local s, h = pcall(function()
+			local s = L:FindFirstChild("Network");
+			local h = s and s:FindFirstChild("ServerStatsItem");
+			local P = h and h:FindFirstChild("Data Ping");
+			if P then
+				return tonumber(string.match(P:GetValueString(), "%d+"));
 			end;
 			return nil;
 		end);
-	return x and n or nil;
+	return s and h or nil;
 end;
 task.spawn(function()
 	while true do
-		task.wait(V);
-		if N then
-			local x = o();
-			if x then
-				if not i and x >= M then
-					i = true;
-					C = r;
-					r = false;
-				elseif i and x <= O then
-					i = false;
-					if C then
-						r = true;
+		task.wait(l);
+		if z then
+			local s = r();
+			if s then
+				if not o and s >= n then
+					o = true;
+					M = R;
+					R = false;
+				elseif o and s <= x then
+					o = false;
+					if M then
+						R = true;
 					end;
-					C = false;
+					M = false;
 				end;
 			end;
 		end;
 	end;
 end);
 task.spawn(function()
-	local x = H:FindFirstChild("muscleEvent");
-	H.ChildAdded:Connect(function(n)
-		if n.Name == "muscleEvent" then
-			x = n;
+	local s = p:FindFirstChild("muscleEvent");
+	p.ChildAdded:Connect(function(h)
+		if h.Name == "muscleEvent" then
+			s = h;
 		end;
 	end);
-	local n = 1000;
-	local z = 100;
-	local u = z / n;
+	local h = 1000;
+	local P = 100;
+	local I = P / h;
 	while true do
-		if r then
-			if not x or not x.Parent then
-				x = H:FindFirstChild("muscleEvent");
+		if R then
+			if not s or not s.Parent then
+				s = p:FindFirstChild("muscleEvent");
 			end;
-			if x then
-				local n = os.clock();
-				for n = 1, z, 1 do
-					if not r then
+			if s then
+				local h = os.clock();
+				for h = 1, P, 1 do
+					if not R then
 						break;
 					end;
 					pcall(function()
-						x:FireServer("rep");
+						s:FireServer("rep");
 					end);
 				end;
-				local h = u - ((os.clock() - n));
-				if h > 0 then
-					task.wait(h);
+				local T = I - ((os.clock() - h));
+				if T > 0 then
+					task.wait(T);
 				else
 					task.wait();
 				end;
@@ -248,108 +248,108 @@ task.spawn(function()
 	end;
 end);
 task.spawn(function()
-	local x = 0;
-	local n = .2;
-	local function z()
-		local x = u:FindFirstChild("rEvents");
-		return x and x:FindFirstChild("rebirthRemote");
+	local s = 0;
+	local h = .2;
+	local function P()
+		local s = I:FindFirstChild("rEvents");
+		return s and s:FindFirstChild("rebirthRemote");
 	end;
-	local function h()
-		if not Q then
+	local function T()
+		if not W then
 			return;
 		end;
-		local u = os.clock();
-		if u - x < n then
+		local I = os.clock();
+		if I - s < h then
 			return;
 		end;
-		local h = z();
-		if not h then
+		local T = P();
+		if not T then
 			return;
 		end;
-		x = u;
+		s = I;
 		pcall(function()
-			if h:IsA("RemoteFunction") then
-				h:InvokeServer("rebirthRequest");
-			elseif h:IsA("RemoteEvent") then
-				h:FireServer("rebirthRequest");
+			if T:IsA("RemoteFunction") then
+				T:InvokeServer("rebirthRequest");
+			elseif T:IsA("RemoteEvent") then
+				T:FireServer("rebirthRequest");
 			end;
 		end);
 	end;
-	(f:GetPropertyChangedSignal("Value")):Connect(h);
-	(p:GetPropertyChangedSignal("Value")):Connect(function()
-		if Q then
-			task.defer(h);
+	(J:GetPropertyChangedSignal("Value")):Connect(T);
+	(g:GetPropertyChangedSignal("Value")):Connect(function()
+		if W then
+			task.defer(T);
 		end;
 	end);
 	while task.wait(.1) do
-		h();
+		T();
 	end;
 end);
-local function F()
-	local x = u:FindFirstChild("rEvents");
-	return x and x:FindFirstChild("rebirthRemote");
+local function d()
+	local s = I:FindFirstChild("rEvents");
+	return s and s:FindFirstChild("rebirthRemote");
 end;
-local function e()
-	if not y then
+local function i()
+	if not N then
 		return;
 	end;
-	local x = c;
-	w = "Speed";
-	local n = u:FindFirstChild("rEvents") and u.rEvents:FindFirstChild("changeSpeedSizeRemote");
-	if n and (n.Parent and (y and x == c)) then
+	local s = t;
+	C = "Speed";
+	local h = I:FindFirstChild("rEvents") and I.rEvents:FindFirstChild("changeSpeedSizeRemote");
+	if h and (h.Parent and (N and s == t)) then
  
 	end;
-	w = "Farm";
-	r = true;
-	local z = os.clock() + 8;
-	while y and (x == c and os.clock() < z) do
-		local x = F();
-		if x and (f and f.Parent) then
+	C = "Farm";
+	R = true;
+	local P = os.clock() + 8;
+	while N and (s == t and os.clock() < P) do
+		local s = d();
+		if s and (J and J.Parent) then
 			break;
 		end;
 		task.wait(.05);
 	end;
-	w = "Packs";
+	C = "Packs";
 	task.wait(.03);
-	w = "Rebirth";
-	local h = F();
-	if h and (y and x == c) then
+	C = "Rebirth";
+	local T = d();
+	if T and (N and s == t) then
 		pcall(function()
-			if h:IsA("RemoteFunction") then
-				h:InvokeServer("rebirthRequest");
-			elseif h:IsA("RemoteEvent") then
-				h:FireServer("rebirthRequest");
+			if T:IsA("RemoteFunction") then
+				T:InvokeServer("rebirthRequest");
+			elseif T:IsA("RemoteEvent") then
+				T:FireServer("rebirthRequest");
 			end;
 		end);
 	end;
-	w = "Golems";
+	C = "Golems";
 	task.wait(.03);
-	if y and x == c then
-		w = "Farm";
+	if N and s == t then
+		C = "Farm";
 	end;
 end;
 task.spawn(function()
 	while true do
-		if y then
-			pcall(e);
+		if N then
+			pcall(i);
 		else
-			w = "Idle";
+			C = "Idle";
 			task.wait(.15);
 		end;
 	end;
 end);
 task.spawn(function()
 	while true do
-		if p.Value > k then
-			m = m + ((p.Value - k));
-			k = p.Value;
-		elseif p.Value < k then
-			k = p.Value;
+		if g.Value > j then
+			m = m + ((g.Value - j));
+			j = g.Value;
+		elseif g.Value < j then
+			j = g.Value;
 		end;
 		task.wait(.4);
 	end;
 end);
-local K = {
+local a = {
 		active = false,
 		generation = 0,
 		status = "Sin boss activo",
@@ -372,1242 +372,1242 @@ local K = {
 		safetyTriggered = false,
 		safeAttackPosition = nil,
 	};
-local function I()
-	for x, n in ipairs(s:GetTagged("BossEventBoss")) do
-		if n and n.Parent then
-			local x = n:FindFirstChild("BossDamageHitbox", true) or n.PrimaryPart or n:FindFirstChild("Boss", true) or n:FindFirstChild("Head", true) or n:FindFirstChildWhichIsA("BasePart", true);
-			if x and x:IsA("BasePart") then
-				local z = n:FindFirstChild("Boss") or n:FindFirstChild("Head", true) or n.PrimaryPart or x;
-				if not z:IsA("BasePart") then
-					z = x;
+local function Z()
+	for s, h in ipairs(O:GetTagged("BossEventBoss")) do
+		if h and h.Parent then
+			local s = h:FindFirstChild("BossDamageHitbox", true) or h.PrimaryPart or h:FindFirstChild("Boss", true) or h:FindFirstChild("Head", true) or h:FindFirstChildWhichIsA("BasePart", true);
+			if s and s:IsA("BasePart") then
+				local P = h:FindFirstChild("Boss") or h:FindFirstChild("Head", true) or h.PrimaryPart or s;
+				if not P:IsA("BasePart") then
+					P = s;
 				end;
-				return n, x, z;
+				return h, s, P;
 			end;
 		end;
 	end;
 	return nil, nil, nil;
 end;
-local function T()
+local function X()
 	return math.max(0, tonumber(workspace:GetAttribute("BossHealth")) or 0);
 end;
-local function v(x)
-	local n = u:FindFirstChild("rEvents");
-	local z = n and n:FindFirstChild("changeSpeedSizeRemote");
-	x = math.clamp(math.floor(((tonumber(x) or 2)) + .5), 1, 100);
-	if not z then
+local function y(s)
+	local h = I:FindFirstChild("rEvents");
+	local P = h and h:FindFirstChild("changeSpeedSizeRemote");
+	s = math.clamp(math.floor(((tonumber(s) or 2)) + .5), 1, 100);
+	if not P then
 		return false;
 	end;
-	if z:IsA("RemoteEvent") then
-		return pcall(z.FireServer, z, "changeSize", x);
-	elseif z:IsA("RemoteFunction") then
-		return pcall(z.InvokeServer, z, "changeSize", x);
+	if P:IsA("RemoteEvent") then
+		return pcall(P.FireServer, P, "changeSize", s);
+	elseif P:IsA("RemoteFunction") then
+		return pcall(P.InvokeServer, P, "changeSize", s);
 	end;
 	return false;
 end;
-local function E()
-	local x = D();
-	local n = x and x:FindFirstChild("BodyHeightScale");
-	return math.clamp(math.floor((((n and n.Value) or 2)) + .5), 1, 100);
+local function f()
+	local s = e();
+	local h = s and s:FindFirstChild("BodyHeightScale");
+	return math.clamp(math.floor((((h and h.Value) or 2)) + .5), 1, 100);
 end;
-local function Z()
-	local x = R();
-	local n = D();
-	local z = H:FindFirstChild("Backpack");
-	local u = x and x:FindFirstChild("Punch") or (z and z:FindFirstChild("Punch"));
-	if u and (n and u.Parent ~= x) then
-		pcall(n.EquipTool, n, u);
-		X.Heartbeat:Wait();
+local function w()
+	local s = c();
+	local h = e();
+	local P = p:FindFirstChild("Backpack");
+	local I = s and s:FindFirstChild("Punch") or (P and P:FindFirstChild("Punch"));
+	if I and (h and I.Parent ~= s) then
+		pcall(h.EquipTool, h, I);
+		v.Heartbeat:Wait();
 	end;
-	local h = u and u:FindFirstChild("attackTime");
-	if h and h:IsA("ValueBase") then
-		h.Value = 0;
+	local T = I and I:FindFirstChild("attackTime");
+	if T and T:IsA("ValueBase") then
+		T.Value = 0;
 	end;
-	return u;
+	return I;
 end;
-function K.ApplyAntiLagObject(n, x)
-	if not n.antiLag or not x then
+function a.ApplyAntiLagObject(h, s)
+	if not h.antiLag or not s then
 		return;
 	end;
-	local z;
-	if x:IsA("ParticleEmitter") or x:IsA("Trail") or x:IsA("Beam") or x:IsA("Fire") or x:IsA("Smoke") or x:IsA("Sparkles") or x:IsA("PointLight") or x:IsA("SpotLight") or x:IsA("SurfaceLight") or x:IsA("Highlight") then
-		z = "Enabled";
-	elseif x:IsA("BasePart") then
-		z = "CastShadow";
+	local P;
+	if s:IsA("ParticleEmitter") or s:IsA("Trail") or s:IsA("Beam") or s:IsA("Fire") or s:IsA("Smoke") or s:IsA("Sparkles") or s:IsA("PointLight") or s:IsA("SpotLight") or s:IsA("SurfaceLight") or s:IsA("Highlight") then
+		P = "Enabled";
+	elseif s:IsA("BasePart") then
+		P = "CastShadow";
 	end;
-	if z and n.antiLagOriginals[x] == nil then
-		n.antiLagOriginals[x] = { property = z, value = x[z] };
+	if P and h.antiLagOriginals[s] == nil then
+		h.antiLagOriginals[s] = { property = P, value = s[P] };
 		pcall(function()
-			x[z] = false;
+			s[P] = false;
 		end);
 	end;
 end;
-function K.SetAntiLag(n, x)
-	x = x == true;
-	n.antiLag = x;
-	if n.antiLagConnection then
-		n.antiLagConnection:Disconnect();
-		n.antiLagConnection = nil;
+function a.SetAntiLag(h, s)
+	s = s == true;
+	h.antiLag = s;
+	if h.antiLagConnection then
+		h.antiLagConnection:Disconnect();
+		h.antiLagConnection = nil;
 	end;
-	if not x then
-		for x, z in pairs(n.antiLagOriginals) do
-			if x and x.Parent then
+	if not s then
+		for s, P in pairs(h.antiLagOriginals) do
+			if s and s.Parent then
 				pcall(function()
-					x[z.property] = z.value;
+					s[P.property] = P.value;
 				end);
 			end;
-			n.antiLagOriginals[x] = nil;
+			h.antiLagOriginals[s] = nil;
 		end;
 		return true;
 	end;
-	local z = workspace:FindFirstChild("Events");
-	local u = z and z:FindFirstChild("BossArena");
-	if not u then
-		n.antiLag = false;
+	local P = workspace:FindFirstChild("Events");
+	local I = P and P:FindFirstChild("BossArena");
+	if not I then
+		h.antiLag = false;
 		return false;
 	end;
-	for x, z in ipairs(u:GetDescendants()) do
-		n:ApplyAntiLagObject(z);
+	for s, P in ipairs(I:GetDescendants()) do
+		h:ApplyAntiLagObject(P);
 	end;
-	n.antiLagConnection = u.DescendantAdded:Connect(function(x)
+	h.antiLagConnection = I.DescendantAdded:Connect(function(s)
 			task.defer(function()
-				n:ApplyAntiLagObject(x);
+				h:ApplyAntiLagObject(s);
 			end);
 		end);
 	return true;
 end;
-function K.StopStableCamera(x)
-	pcall(X.UnbindFromRenderStep, X, x.cameraRenderName);
-	local n = workspace.CurrentCamera;
-	local z = x.cameraSaved;
-	if n and z then
+function a.StopStableCamera(s)
+	pcall(v.UnbindFromRenderStep, v, s.cameraRenderName);
+	local h = workspace.CurrentCamera;
+	local P = s.cameraSaved;
+	if h and P then
 		pcall(function()
-			n.CameraType = Enum.CameraType.Scriptable;
-			n.CFrame = z.cframe;
-			n.Focus = z.focus;
-			if z.subject and z.subject.Parent then
-				n.CameraSubject = z.subject;
+			h.CameraType = Enum.CameraType.Scriptable;
+			h.CFrame = P.cframe;
+			h.Focus = P.focus;
+			if P.subject and P.subject.Parent then
+				h.CameraSubject = P.subject;
 			end;
-			n.CameraType = z.cameraType;
+			h.CameraType = P.cameraType;
 		end);
 	end;
-	x.cameraSaved = nil;
-	x.cameraFocusPosition = nil;
-	x.cameraStableCFrame = nil;
+	s.cameraSaved = nil;
+	s.cameraFocusPosition = nil;
+	s.cameraStableCFrame = nil;
 end;
-function K.StartStableCamera(x)
-	x:StopStableCamera();
-	local n = workspace.CurrentCamera;
-	if not n then
+function a.StartStableCamera(s)
+	s:StopStableCamera();
+	local h = workspace.CurrentCamera;
+	if not h then
 		return;
 	end;
-	x.cameraSaved = {
-			cameraType = n.CameraType,
-			subject = n.CameraSubject,
-			cframe = n.CFrame,
-			focus = n.Focus,
+	s.cameraSaved = {
+			cameraType = h.CameraType,
+			subject = h.CameraSubject,
+			cframe = h.CFrame,
+			focus = h.Focus,
 		};
-	n.CameraType = Enum.CameraType.Scriptable;
-	X:BindToRenderStep(x.cameraRenderName, Enum.RenderPriority.Camera.Value + 50, function(n)
-		local z = x.cameraFocusPosition;
-		local u = workspace.CurrentCamera;
-		if not x.engagedBoss or not z or not u then
+	h.CameraType = Enum.CameraType.Scriptable;
+	v:BindToRenderStep(s.cameraRenderName, Enum.RenderPriority.Camera.Value + 50, function(h)
+		local P = s.cameraFocusPosition;
+		local I = workspace.CurrentCamera;
+		if not s.engagedBoss or not P or not I then
 			return;
 		end;
-		local h = CFrame.lookAt(z + Vector3.new(0, 34, 48), z + Vector3.new(0, -5, 0));
-		x.cameraStableCFrame = x.cameraStableCFrame and x.cameraStableCFrame:Lerp(h, math.clamp(n * 4, .04, .22)) or h;
-		u.CameraType = Enum.CameraType.Scriptable;
-		u.CFrame = x.cameraStableCFrame;
-		u.Focus = CFrame.new(z);
+		local T = CFrame.lookAt(P + Vector3.new(0, 34, 48), P + Vector3.new(0, -5, 0));
+		s.cameraStableCFrame = s.cameraStableCFrame and s.cameraStableCFrame:Lerp(T, math.clamp(h * 4, .04, .22)) or T;
+		I.CameraType = Enum.CameraType.Scriptable;
+		I.CFrame = s.cameraStableCFrame;
+		I.Focus = CFrame.new(P);
 	end);
 end;
-function K.WaitForReadyCharacter(n, x)
-	local z = os.clock() + ((tonumber(x) or 8));
-	local u, h, j;
-	while n.active and os.clock() < z do
-		local x = R();
-		local n = x and x:FindFirstChild("HumanoidRootPart");
-		local z = x and x:FindFirstChildWhichIsA("Humanoid");
-		local g = H:FindFirstChild("machineInUse");
-		local X = x and ((x:GetAttribute("IsRebirthing") == true or x:GetAttribute("LastMapCFrame") ~= nil));
-		local s = (g and g.Value ~= nil) or (z and z.SeatPart ~= nil);
-		if x and (n and (z and (z.Health > 0 and (not X and not s)))) then
-			if x ~= u or n ~= h then
-				u, h, j = x, n, os.clock();
-			elseif os.clock() - j >= .18 then
-				return x, n, z;
+function a.WaitForReadyCharacter(h, s)
+	local P = os.clock() + ((tonumber(s) or 8));
+	local I, T, V;
+	while h.active and os.clock() < P do
+		local s = c();
+		local h = s and s:FindFirstChild("HumanoidRootPart");
+		local P = s and s:FindFirstChildWhichIsA("Humanoid");
+		local k = p:FindFirstChild("machineInUse");
+		local v = s and ((s:GetAttribute("IsRebirthing") == true or s:GetAttribute("LastMapCFrame") ~= nil));
+		local O = (k and k.Value ~= nil) or (P and P.SeatPart ~= nil);
+		if s and (h and (P and (P.Health > 0 and (not v and not O)))) then
+			if s ~= I or h ~= T then
+				I, T, V = s, h, os.clock();
+			elseif os.clock() - V >= .18 then
+				return s, h, P;
 			end;
 		else
-			u, h, j = nil, nil, nil;
+			I, T, V = nil, nil, nil;
 		end;
 		task.wait(.05);
 	end;
 	return nil, nil, nil;
 end;
-function K.BeginBattle(n, x)
-	if n.engagedBoss == x then
+function a.BeginBattle(h, s)
+	if h.engagedBoss == s then
 		return true;
 	end;
-	local z = r;
-	r = false;
-	local u, h = n:WaitForReadyCharacter(8);
-	if not u or not h or x.Parent == nil or workspace:GetAttribute("BossActive") ~= true then
-		r = z;
-		n:RestoreBattle();
+	local P = R;
+	R = false;
+	local I, T = h:WaitForReadyCharacter(8);
+	if not I or not T or s.Parent == nil or workspace:GetAttribute("BossActive") ~= true then
+		R = P;
+		h:RestoreBattle();
 		return false;
 	end;
-	n.originalCharacter = u;
-	n.originalPivot = u:GetPivot();
-	n.originalSize = E();
-	n.originalRootAnchored = h.Anchored;
-	n.engagedBoss = x;
-	n.confirmedDamage = 0;
-	n.attacks = 0;
-	n.safetyTriggered = false;
-	n.lastPlayerHealth = nil;
-	n.safeAttackPosition = nil;
-	n._wasFarming = z;
-	n:StartStableCamera();
-	v(5);
+	h.originalCharacter = I;
+	h.originalPivot = I:GetPivot();
+	h.originalSize = f();
+	h.originalRootAnchored = T.Anchored;
+	h.engagedBoss = s;
+	h.confirmedDamage = 0;
+	h.attacks = 0;
+	h.safetyTriggered = false;
+	h.lastPlayerHealth = nil;
+	h.safeAttackPosition = nil;
+	h._wasFarming = P;
+	h:StartStableCamera();
+	y(5);
 	task.wait(.55);
-	local j = D();
-	n.lastPlayerHealth = j and j.Health or nil;
+	local V = e();
+	h.lastPlayerHealth = V and V.Health or nil;
 	return true;
 end;
-function K.RestoreBattle(x)
-	local n = H.Character;
-	local z = n and n:FindFirstChild("HumanoidRootPart");
-	if n and (n == x.originalCharacter and (z and x.originalPivot)) then
-		n:PivotTo(x.originalPivot);
-		z.AssemblyLinearVelocity = Vector3.zero;
-		z.AssemblyAngularVelocity = Vector3.zero;
-		if x.originalRootAnchored ~= nil then
-			z.Anchored = x.originalRootAnchored;
+function a.RestoreBattle(s)
+	local h = p.Character;
+	local P = h and h:FindFirstChild("HumanoidRootPart");
+	if h and (h == s.originalCharacter and (P and s.originalPivot)) then
+		h:PivotTo(s.originalPivot);
+		P.AssemblyLinearVelocity = Vector3.zero;
+		P.AssemblyAngularVelocity = Vector3.zero;
+		if s.originalRootAnchored ~= nil then
+			P.Anchored = s.originalRootAnchored;
 		end;
 	end;
-	if x.originalSize then
-		v(x.originalSize);
+	if s.originalSize then
+		y(s.originalSize);
 	end;
-	x:StopStableCamera();
-	local u = H:FindFirstChild("Backpack");
-	local h = n and n:FindFirstChild("Punch");
-	if h and u then
-		h.Parent = u;
+	s:StopStableCamera();
+	local I = p:FindFirstChild("Backpack");
+	local T = h and h:FindFirstChild("Punch");
+	if T and I then
+		T.Parent = I;
 	end;
-	x.originalCharacter = nil;
-	x.originalPivot = nil;
-	x.originalSize = nil;
-	x.originalRootAnchored = nil;
-	x.engagedBoss = nil;
-	x.lastPlayerHealth = nil;
-	x.safeAttackPosition = nil;
-	if x._wasFarming then
-		r = true;
-		x._wasFarming = nil;
+	s.originalCharacter = nil;
+	s.originalPivot = nil;
+	s.originalSize = nil;
+	s.originalRootAnchored = nil;
+	s.engagedBoss = nil;
+	s.lastPlayerHealth = nil;
+	s.safeAttackPosition = nil;
+	if s._wasFarming then
+		R = true;
+		s._wasFarming = nil;
 	end;
 end;
-function K.CollectChest(n, x)
+function a.CollectChest(h, s)
 	if type(fireproximityprompt) ~= "function" then
 		return false;
 	end;
-	local z = false;
-	local h;
-	local j = u:FindFirstChild("rEvents");
-	local g = j and j:FindFirstChild("bossChestOpenedEvent");
-	if g and g:IsA("RemoteEvent") then
-		h = g.OnClientEvent:Connect(function()
-				z = true;
+	local P = false;
+	local T;
+	local V = I:FindFirstChild("rEvents");
+	local k = V and V:FindFirstChild("bossChestOpenedEvent");
+	if k and k:IsA("RemoteEvent") then
+		T = k.OnClientEvent:Connect(function()
+				P = true;
 			end);
 	end;
-	local function X(x)
-		if h then
-			h:Disconnect();
+	local function v(s)
+		if T then
+			T:Disconnect();
 		end;
-		return x;
+		return s;
 	end;
-	local A = os.clock() + ((tonumber(x) or 15));
-	local l, t, S = false, false, 0;
-	while n.active and os.clock() < A do
-		if z then
-			return X(true);
+	local D = os.clock() + ((tonumber(s) or 15));
+	local G, F, A = false, false, 0;
+	while h.active and os.clock() < D do
+		if P then
+			return v(true);
 		end;
-		local x, n;
-		for z, u in ipairs(s:GetTagged("BossEventChest")) do
-			n = u:FindFirstChild("bossChestPrompt", true);
-			if n then
-				x = u;
+		local s, h;
+		for P, I in ipairs(O:GetTagged("BossEventChest")) do
+			h = I:FindFirstChild("bossChestPrompt", true);
+			if h then
+				s = I;
 				break;
 			end;
 		end;
-		if not n then
-			local z = workspace:FindFirstChild("Events");
-			n = z and z:FindFirstChild("bossChestPrompt", true);
-			x = n and n:FindFirstAncestorOfClass("Model");
+		if not h then
+			local P = workspace:FindFirstChild("Events");
+			h = P and P:FindFirstChild("bossChestPrompt", true);
+			s = h and h:FindFirstAncestorOfClass("Model");
 		end;
-		local u = H:GetAttribute("BossChestEligible") == true;
-		local h = H:GetAttribute("BossChestPending") == true;
-		if h then
-			l = true;
-		elseif t and l then
-			return X(true);
+		local I = p:GetAttribute("BossChestEligible") == true;
+		local T = p:GetAttribute("BossChestPending") == true;
+		if T then
+			G = true;
+		elseif F and G then
+			return v(true);
 		end;
-		local j = x and x:GetAttribute("BossChestEmerging") == true;
-		if n and (n:IsA("ProximityPrompt") and (u and (h and not j))) then
-			local x = R();
-			local z = P();
-			local u = n.Parent;
-			if x and (z and (u and u:IsA("BasePart"))) then
-				x:PivotTo(u.CFrame * CFrame.new(0, math.max(4, u.Size.Y * .5 + 3), 0));
-				z.AssemblyLinearVelocity = Vector3.zero;
-				z.AssemblyAngularVelocity = Vector3.zero;
+		local V = s and s:GetAttribute("BossChestEmerging") == true;
+		if h and (h:IsA("ProximityPrompt") and (I and (T and not V))) then
+			local s = c();
+			local P = Y();
+			local I = h.Parent;
+			if s and (P and (I and I:IsA("BasePart"))) then
+				s:PivotTo(I.CFrame * CFrame.new(0, math.max(4, I.Size.Y * .5 + 3), 0));
+				P.AssemblyLinearVelocity = Vector3.zero;
+				P.AssemblyAngularVelocity = Vector3.zero;
 				task.wait(.12);
 			end;
-			if n.Enabled and os.clock() - S >= .45 then
-				S = os.clock();
-				t = pcall(fireproximityprompt, n) or t;
+			if h.Enabled and os.clock() - A >= .45 then
+				A = os.clock();
+				F = pcall(fireproximityprompt, h) or F;
 			end;
 		end;
 		task.wait(.1);
 	end;
-	return X(z or (t and (l and H:GetAttribute("BossChestPending") ~= true)));
+	return v(P or (F and (G and p:GetAttribute("BossChestPending") ~= true)));
 end;
-function K.Fight(n, x)
-	if not n:BeginBattle(x) then
+function a.Fight(h, s)
+	if not h:BeginBattle(s) then
 		return;
 	end;
-	local z = T();
-	local u = 0;
-	while n.active and (x.Parent and workspace:GetAttribute("BossActive") == true) do
-		local h, j, g = I();
-		if h ~= x or not j or not g then
+	local P = X();
+	local I = 0;
+	while h.active and (s.Parent and workspace:GetAttribute("BossActive") == true) do
+		local T, V, k = Z();
+		if T ~= s or not V or not k then
 			break;
 		end;
-		local X = R();
-		local s = P();
-		local H = D();
-		local A = Z();
-		if not X or not s or not H or H.Health <= 0 or not A then
-			n.status = "Esperando personaje";
-			n:UpdateUi();
+		local v = c();
+		local O = Y();
+		local p = e();
+		local D = w();
+		if not v or not O or not p or p.Health <= 0 or not D then
+			h.status = "Esperando personaje";
+			h:UpdateUi();
 			task.wait(.25);
 		else
-			if n.lastPlayerHealth and H.Health < n.lastPlayerHealth then
-				n.safetyTriggered = true;
-				n.active = false;
-				n.status = "Proteccion activada (te golpearon)";
-				n:SetAntiLag(false);
-				n:UpdateUi();
+			if h.lastPlayerHealth and p.Health < h.lastPlayerHealth then
+				h.safetyTriggered = true;
+				h.active = false;
+				h.status = "Proteccion activada (te golpearon)";
+				h:SetAntiLag(false);
+				h:UpdateUi();
 				break;
 			end;
-			n.lastPlayerHealth = H.Health;
-			local x = g.Position.Y + g.Size.Y * .5;
-			local h = math.max(6, s.Size.Y * .5 + 4);
-			local l = Vector3.new(j.Position.X, x + h, j.Position.Z);
-			if not n.safeAttackPosition or ((l - n.safeAttackPosition)).Magnitude > 45 then
-				n.safeAttackPosition = l;
+			h.lastPlayerHealth = p.Health;
+			local s = k.Position.Y + k.Size.Y * .5;
+			local T = math.max(6, O.Size.Y * .5 + 4);
+			local G = Vector3.new(V.Position.X, s + T, V.Position.Z);
+			if not h.safeAttackPosition or ((G - h.safeAttackPosition)).Magnitude > 45 then
+				h.safeAttackPosition = G;
 			else
-				n.safeAttackPosition = n.safeAttackPosition:Lerp(l, .16);
+				h.safeAttackPosition = h.safeAttackPosition:Lerp(G, .16);
 			end;
-			local t = n.safeAttackPosition;
-			local S = g.Position + Vector3.new(0, g.Size.Y * .32, 0);
-			n.cameraFocusPosition = n.cameraFocusPosition and n.cameraFocusPosition:Lerp(S, .08) or S;
-			X:PivotTo(CFrame.lookAt(t, S));
-			s.AssemblyLinearVelocity = Vector3.zero;
-			s.AssemblyAngularVelocity = Vector3.zero;
+			local F = h.safeAttackPosition;
+			local A = k.Position + Vector3.new(0, k.Size.Y * .32, 0);
+			h.cameraFocusPosition = h.cameraFocusPosition and h.cameraFocusPosition:Lerp(A, .08) or A;
+			v:PivotTo(CFrame.lookAt(F, A));
+			O.AssemblyLinearVelocity = Vector3.zero;
+			O.AssemblyAngularVelocity = Vector3.zero;
 			local q = os.clock();
-			if q - u >= n.hitInterval then
-				u = q;
-				pcall(A.Deactivate, A);
-				pcall(A.Activate, A);
-				n.attacks = n.attacks + (1);
+			if q - I >= h.hitInterval then
+				I = q;
+				pcall(D.Deactivate, D);
+				pcall(D.Activate, D);
+				h.attacks = h.attacks + (1);
 			end;
-			local W = T();
-			if W < z then
-				n.confirmedDamage = n.confirmedDamage + ((z - W));
+			local E = X();
+			if E < P then
+				h.confirmedDamage = h.confirmedDamage + ((P - E));
 			end;
-			z = W;
-			n.status = ((workspace:GetAttribute("BossDisplayName") or "Boss")) .. ("  dano " .. Y(n.confirmedDamage));
-			n:UpdateUi();
+			P = E;
+			h.status = ((workspace:GetAttribute("BossDisplayName") or "Boss")) .. ("  dano " .. b(h.confirmedDamage));
+			h:UpdateUi();
 			task.wait(.04);
 		end;
 	end;
-	local h = workspace:GetAttribute("BossActive") ~= true or T() <= 0;
-	if h and n.active then
-		n.status = "Boss derrotado  reclamando recompensa";
-		n:UpdateUi();
-		n:CollectChest(12);
+	local T = workspace:GetAttribute("BossActive") ~= true or X() <= 0;
+	if T and h.active then
+		h.status = "Boss derrotado  reclamando recompensa";
+		h:UpdateUi();
+		h:CollectChest(12);
 	end;
-	n:RestoreBattle();
+	h:RestoreBattle();
 end;
-function K.Set(n, x)
-	x = x == true;
-	n.generation = n.generation + (1);
-	local z = n.generation;
-	n.active = x;
-	if not x then
-		n.status = "Sin boss activo";
-		n:RestoreBattle();
-		n:SetAntiLag(false);
-		n:UpdateUi();
+function a.Set(h, s)
+	s = s == true;
+	h.generation = h.generation + (1);
+	local P = h.generation;
+	h.active = s;
+	if not s then
+		h.status = "Sin boss activo";
+		h:RestoreBattle();
+		h:SetAntiLag(false);
+		h:UpdateUi();
 		return true;
 	end;
-	local h = u:FindFirstChild("shared");
-	h = h and h:FindFirstChild("config");
-	h = h and h:FindFirstChild("BossEventConfig");
-	local j, g = pcall(function()
-			return h and require(h);
+	local T = I:FindFirstChild("shared");
+	T = T and T:FindFirstChild("config");
+	T = T and T:FindFirstChild("BossEventConfig");
+	local V, k = pcall(function()
+			return T and require(T);
 		end);
-	if not j or type(g) ~= "table" or g.ENABLED ~= true then
-		n.active = false;
-		n.status = "El evento del boss no esta disponible";
-		n:SetAntiLag(false);
-		n:UpdateUi();
+	if not V or type(k) ~= "table" or k.ENABLED ~= true then
+		h.active = false;
+		h.status = "El evento del boss no esta disponible";
+		h:SetAntiLag(false);
+		h:UpdateUi();
 		return false;
 	end;
-	n:SetAntiLag(true);
-	n.hitInterval = math.max(.31, ((tonumber(g.MIN_HIT_INTERVAL) or .3)) + .01);
+	h:SetAntiLag(true);
+	h.hitInterval = math.max(.31, ((tonumber(k.MIN_HIT_INTERVAL) or .3)) + .01);
 	task.spawn(function()
-		while n.active and n.generation == z do
-			local x = I();
-			if x and workspace:GetAttribute("BossActive") == true then
-				n:Fight(x);
+		while h.active and h.generation == P do
+			local s = Z();
+			if s and workspace:GetAttribute("BossActive") == true then
+				h:Fight(s);
 			else
-				n.engagedBoss = nil;
-				n.status = "Sin boss activo";
-				n:UpdateUi();
+				h.engagedBoss = nil;
+				h.status = "Sin boss activo";
+				h:UpdateUi();
 				task.wait(.4);
 			end;
 		end;
-		if n.generation == z then
-			n:RestoreBattle();
+		if h.generation == P then
+			h:RestoreBattle();
 		end;
 	end);
-	n:UpdateUi();
+	h:UpdateUi();
 	return true;
 end;
-function K.UpdateUi(x)
-	if x.StatusLabel then
-		x.StatusLabel.Text = x.status;
-		x.StatusLabel.TextColor3 = x.engagedBoss and Color3.fromRGB(100, 255, 140) or Color3.fromRGB(160, 160, 180);
+function a.UpdateUi(s)
+	if s.StatusLabel then
+		s.StatusLabel.Text = s.status;
+		s.StatusLabel.TextColor3 = s.engagedBoss and Color3.fromRGB(100, 255, 140) or Color3.fromRGB(160, 160, 180);
 	end;
-	if x.HealthLabel then
-		local n = T();
-		local z = math.max(n, tonumber(workspace:GetAttribute("BossMaxHealth")) or 0);
-		if z > 0 and workspace:GetAttribute("BossActive") == true then
-			x.HealthLabel.Text = Y(n) .. (" / " .. Y(z));
+	if s.HealthLabel then
+		local h = X();
+		local P = math.max(h, tonumber(workspace:GetAttribute("BossMaxHealth")) or 0);
+		if P > 0 and workspace:GetAttribute("BossActive") == true then
+			s.HealthLabel.Text = b(h) .. (" / " .. b(P));
 		else
-			x.HealthLabel.Text = "-";
+			s.HealthLabel.Text = "-";
 		end;
 	end;
 end;
-local G = Instance.new("ScreenGui");
-G.Name = "SLK_AuralGUI_Improved";
-G.ResetOnSpawn = false;
-G.IgnoreGuiInset = true;
-G.ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
-G.Parent = A;
-local U = Instance.new("Frame");
-U.Name = "Main";
-U.Size = UDim2.new(0, 360, 0, 270);
-U.Position = UDim2.new(.5, -180, .5, -135);
-U.BackgroundColor3 = Color3.fromRGB(18, 18, 22);
-U.BorderSizePixel = 0;
-U.Active = true;
-U.Draggable = false;
-U.Parent = G;
-(Instance.new("UICorner", U)).CornerRadius = UDim.new(0, 12);
-local x1 = Instance.new("UIStroke");
-x1.Color = Color3.fromRGB(40, 40, 50);
-x1.Thickness = 1;
-x1.Parent = U;
-local n1 = Instance.new("Frame");
-n1.Name = "DragBar";
-n1.Size = UDim2.new(1, -100, 0, 32);
-n1.Position = UDim2.new(0, 100, 0, 0);
-n1.BackgroundTransparency = 1;
-n1.Active = true;
-n1.Parent = U;
-local z1 = Instance.new("TextLabel");
-z1.Size = UDim2.new(1, -70, 1, 0);
-z1.Position = UDim2.new(0, 12, 0, 0);
-z1.BackgroundTransparency = 1;
-z1.Text = "SLK";
-z1.TextColor3 = Color3.fromRGB(150, 150, 170);
-z1.Font = Enum.Font.GothamMedium;
-z1.TextSize = 11;
-z1.TextXAlignment = Enum.TextXAlignment.Left;
-z1.Parent = n1;
-local u1 = false;
-local h1 = nil;
-local j1 = nil;
-n1.InputBegan:Connect(function(x)
-	if x.UserInputType == Enum.UserInputType.MouseButton1 or x.UserInputType == Enum.UserInputType.Touch then
-		u1 = true;
-		h1 = x.Position;
-		j1 = U.Position;
-		x.Changed:Connect(function()
-			if x.UserInputState == Enum.UserInputState.End then
-				u1 = false;
+local K = Instance.new("ScreenGui");
+K.Name = "SLK_AuralGUI_Improved";
+K.ResetOnSpawn = false;
+K.IgnoreGuiInset = true;
+K.ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
+K.Parent = D;
+local u = Instance.new("Frame");
+u.Name = "Main";
+u.Size = UDim2.new(0, 360, 0, 270);
+u.Position = UDim2.new(.5, -180, .5, -135);
+u.BackgroundColor3 = Color3.fromRGB(18, 18, 22);
+u.BorderSizePixel = 0;
+u.Active = true;
+u.Draggable = false;
+u.Parent = K;
+(Instance.new("UICorner", u)).CornerRadius = UDim.new(0, 12);
+local sq = Instance.new("UIStroke");
+sq.Color = Color3.fromRGB(40, 40, 50);
+sq.Thickness = 1;
+sq.Parent = u;
+local hq = Instance.new("Frame");
+hq.Name = "DragBar";
+hq.Size = UDim2.new(1, -100, 0, 32);
+hq.Position = UDim2.new(0, 100, 0, 0);
+hq.BackgroundTransparency = 1;
+hq.Active = true;
+hq.Parent = u;
+local Pq = Instance.new("TextLabel");
+Pq.Size = UDim2.new(1, -70, 1, 0);
+Pq.Position = UDim2.new(0, 12, 0, 0);
+Pq.BackgroundTransparency = 1;
+Pq.Text = "SLK";
+Pq.TextColor3 = Color3.fromRGB(150, 150, 170);
+Pq.Font = Enum.Font.GothamMedium;
+Pq.TextSize = 11;
+Pq.TextXAlignment = Enum.TextXAlignment.Left;
+Pq.Parent = hq;
+local Iq = false;
+local Tq = nil;
+local Vq = nil;
+hq.InputBegan:Connect(function(s)
+	if s.UserInputType == Enum.UserInputType.MouseButton1 or s.UserInputType == Enum.UserInputType.Touch then
+		Iq = true;
+		Tq = s.Position;
+		Vq = u.Position;
+		s.Changed:Connect(function()
+			if s.UserInputState == Enum.UserInputState.End then
+				Iq = false;
 			end;
 		end);
 	end;
 end);
-g.InputChanged:Connect(function(x)
-	if not u1 then
+k.InputChanged:Connect(function(s)
+	if not Iq then
 		return;
 	end;
-	if x.UserInputType ~= Enum.UserInputType.MouseMovement and x.UserInputType ~= Enum.UserInputType.Touch then
+	if s.UserInputType ~= Enum.UserInputType.MouseMovement and s.UserInputType ~= Enum.UserInputType.Touch then
 		return;
 	end;
-	local n = x.Position - h1;
-	U.Position = UDim2.new(j1.X.Scale, j1.X.Offset + n.X, j1.Y.Scale, j1.Y.Offset + n.Y);
+	local h = s.Position - Tq;
+	u.Position = UDim2.new(Vq.X.Scale, Vq.X.Offset + h.X, Vq.Y.Scale, Vq.Y.Offset + h.Y);
 end);
-local g1 = Instance.new("Frame");
-g1.Size = UDim2.new(0, 100, 1, 0);
-g1.BackgroundColor3 = Color3.fromRGB(12, 12, 16);
-g1.BorderSizePixel = 0;
-g1.Parent = U;
-(Instance.new("UICorner", g1)).CornerRadius = UDim.new(0, 12);
-local X1 = Instance.new("Frame");
-X1.Size = UDim2.new(1, 0, 0, 56);
-X1.BackgroundTransparency = 1;
-X1.Parent = g1;
-local s1 = Instance.new("TextLabel");
-s1.Size = UDim2.new(0, 20, 0, 20);
-s1.Position = UDim2.new(0, 7, 0, 10);
-s1.BackgroundColor3 = Color3.fromRGB(90, 60, 220);
-s1.Text = "A";
-s1.TextColor3 = Color3.fromRGB(255, 255, 255);
-s1.Font = Enum.Font.GothamBold;
-s1.TextSize = 12;
-s1.Parent = X1;
-(Instance.new("UICorner", s1)).CornerRadius = UDim.new(0, 6);
-local H1 = Instance.new("TextLabel");
-H1.Size = UDim2.new(1, -32, 0, 16);
-H1.Position = UDim2.new(0, 31, 0, 8);
-H1.BackgroundTransparency = 1;
-H1.Text = "SLK Paid";
-H1.TextColor3 = Color3.fromRGB(255, 255, 255);
-H1.Font = Enum.Font.GothamBold;
-H1.TextSize = 10;
-H1.TextXAlignment = Enum.TextXAlignment.Left;
-H1.Parent = X1;
-local A1 = Instance.new("TextLabel");
-A1.Size = UDim2.new(1, -32, 0, 12);
-A1.Position = UDim2.new(0, 31, 0, 23);
-A1.BackgroundTransparency = 1;
-A1.Text = "Muscle Legends";
-A1.TextColor3 = Color3.fromRGB(140, 140, 160);
-A1.Font = Enum.Font.Gotham;
-A1.TextSize = 8;
-A1.TextXAlignment = Enum.TextXAlignment.Left;
-A1.Parent = X1;
-local l1 = Instance.new("Frame");
-l1.Size = UDim2.new(1, -10, 1, -58);
-l1.Position = UDim2.new(0, 5, 0, 56);
-l1.BackgroundTransparency = 1;
-l1.Parent = g1;
-local t1 = Instance.new("UIListLayout");
-t1.Padding = UDim.new(0, 4);
-t1.Parent = l1;
-local S1 = {};
-local q1 = "Farming";
-local function W1(x, n, z)
-	local u = Instance.new("TextButton");
-	u.Name = x;
-	u.Size = UDim2.new(1, 0, 0, 29);
-	u.BackgroundColor3 = Color3.fromRGB(12, 12, 16);
-	u.BorderSizePixel = 0;
-	u.Text = "";
-	u.AutoButtonColor = false;
-	u.LayoutOrder = z;
-	u.Parent = l1;
-	(Instance.new("UICorner", u)).CornerRadius = UDim.new(0, 8);
-	local h = Instance.new("TextLabel");
-	h.Size = UDim2.new(0, 20, 1, 0);
-	h.Position = UDim2.new(0, 3, 0, 0);
-	h.BackgroundTransparency = 1;
-	h.Text = n;
-	h.TextColor3 = Color3.fromRGB(160, 160, 180);
-	h.Font = Enum.Font.GothamBold;
-	h.TextSize = 10;
-	h.Parent = u;
-	local j = Instance.new("TextLabel");
-	j.Size = UDim2.new(1, -27, 1, 0);
-	j.Position = UDim2.new(0, 25, 0, 0);
-	j.BackgroundTransparency = 1;
-	j.Text = x;
-	j.TextColor3 = Color3.fromRGB(180, 180, 200);
-	j.Font = Enum.Font.GothamMedium;
-	j.TextSize = 10;
-	j.TextXAlignment = Enum.TextXAlignment.Left;
-	j.Parent = u;
-	local g = Instance.new("Frame");
-	g.Name = "Indicator";
-	g.Size = UDim2.new(0, 3, 0, 20);
-	g.Position = UDim2.new(0, 0, .5, -10);
-	g.BackgroundColor3 = Color3.fromRGB(120, 80, 255);
-	g.BorderSizePixel = 0;
-	g.Visible = false;
-	g.Parent = u;
-	(Instance.new("UICorner", g)).CornerRadius = UDim.new(0, 2);
-	u.MouseButton1Click:Connect(function()
-		for x, n in pairs(S1) do
-			n.Visible = false;
+local kq = Instance.new("Frame");
+kq.Size = UDim2.new(0, 100, 1, 0);
+kq.BackgroundColor3 = Color3.fromRGB(12, 12, 16);
+kq.BorderSizePixel = 0;
+kq.Parent = u;
+(Instance.new("UICorner", kq)).CornerRadius = UDim.new(0, 12);
+local vq = Instance.new("Frame");
+vq.Size = UDim2.new(1, 0, 0, 56);
+vq.BackgroundTransparency = 1;
+vq.Parent = kq;
+local Oq = Instance.new("TextLabel");
+Oq.Size = UDim2.new(0, 20, 0, 20);
+Oq.Position = UDim2.new(0, 7, 0, 10);
+Oq.BackgroundColor3 = Color3.fromRGB(90, 60, 220);
+Oq.Text = "A";
+Oq.TextColor3 = Color3.fromRGB(255, 255, 255);
+Oq.Font = Enum.Font.GothamBold;
+Oq.TextSize = 12;
+Oq.Parent = vq;
+(Instance.new("UICorner", Oq)).CornerRadius = UDim.new(0, 6);
+local pq = Instance.new("TextLabel");
+pq.Size = UDim2.new(1, -32, 0, 16);
+pq.Position = UDim2.new(0, 31, 0, 8);
+pq.BackgroundTransparency = 1;
+pq.Text = "SLK Paid";
+pq.TextColor3 = Color3.fromRGB(255, 255, 255);
+pq.Font = Enum.Font.GothamBold;
+pq.TextSize = 10;
+pq.TextXAlignment = Enum.TextXAlignment.Left;
+pq.Parent = vq;
+local Dq = Instance.new("TextLabel");
+Dq.Size = UDim2.new(1, -32, 0, 12);
+Dq.Position = UDim2.new(0, 31, 0, 23);
+Dq.BackgroundTransparency = 1;
+Dq.Text = "Muscle Legends";
+Dq.TextColor3 = Color3.fromRGB(140, 140, 160);
+Dq.Font = Enum.Font.Gotham;
+Dq.TextSize = 8;
+Dq.TextXAlignment = Enum.TextXAlignment.Left;
+Dq.Parent = vq;
+local Gq = Instance.new("Frame");
+Gq.Size = UDim2.new(1, -10, 1, -58);
+Gq.Position = UDim2.new(0, 5, 0, 56);
+Gq.BackgroundTransparency = 1;
+Gq.Parent = kq;
+local Fq = Instance.new("UIListLayout");
+Fq.Padding = UDim.new(0, 4);
+Fq.Parent = Gq;
+local Aq = {};
+local qq = "Farming";
+local function Eq(s, h, P)
+	local I = Instance.new("TextButton");
+	I.Name = s;
+	I.Size = UDim2.new(1, 0, 0, 29);
+	I.BackgroundColor3 = Color3.fromRGB(12, 12, 16);
+	I.BorderSizePixel = 0;
+	I.Text = "";
+	I.AutoButtonColor = false;
+	I.LayoutOrder = P;
+	I.Parent = Gq;
+	(Instance.new("UICorner", I)).CornerRadius = UDim.new(0, 8);
+	local T = Instance.new("TextLabel");
+	T.Size = UDim2.new(0, 20, 1, 0);
+	T.Position = UDim2.new(0, 3, 0, 0);
+	T.BackgroundTransparency = 1;
+	T.Text = h;
+	T.TextColor3 = Color3.fromRGB(160, 160, 180);
+	T.Font = Enum.Font.GothamBold;
+	T.TextSize = 10;
+	T.Parent = I;
+	local V = Instance.new("TextLabel");
+	V.Size = UDim2.new(1, -27, 1, 0);
+	V.Position = UDim2.new(0, 25, 0, 0);
+	V.BackgroundTransparency = 1;
+	V.Text = s;
+	V.TextColor3 = Color3.fromRGB(180, 180, 200);
+	V.Font = Enum.Font.GothamMedium;
+	V.TextSize = 10;
+	V.TextXAlignment = Enum.TextXAlignment.Left;
+	V.Parent = I;
+	local k = Instance.new("Frame");
+	k.Name = "Indicator";
+	k.Size = UDim2.new(0, 3, 0, 20);
+	k.Position = UDim2.new(0, 0, .5, -10);
+	k.BackgroundColor3 = Color3.fromRGB(120, 80, 255);
+	k.BorderSizePixel = 0;
+	k.Visible = false;
+	k.Parent = I;
+	(Instance.new("UICorner", k)).CornerRadius = UDim.new(0, 2);
+	I.MouseButton1Click:Connect(function()
+		for s, h in pairs(Aq) do
+			h.Visible = false;
 		end;
-		if S1[x] then
-			S1[x].Visible = true;
+		if Aq[s] then
+			Aq[s].Visible = true;
 		end;
-		q1 = x;
-		for x, n in ipairs(l1:GetChildren()) do
-			if n:IsA("TextButton") then
-				n.BackgroundColor3 = Color3.fromRGB(12, 12, 16);
-				local x = n:FindFirstChild("Indicator");
-				if x then
-					x.Visible = false;
+		qq = s;
+		for s, h in ipairs(Gq:GetChildren()) do
+			if h:IsA("TextButton") then
+				h.BackgroundColor3 = Color3.fromRGB(12, 12, 16);
+				local s = h:FindFirstChild("Indicator");
+				if s then
+					s.Visible = false;
 				end;
 			end;
 		end;
-		u.BackgroundColor3 = Color3.fromRGB(28, 24, 45);
-		g.Visible = true;
+		I.BackgroundColor3 = Color3.fromRGB(28, 24, 45);
+		k.Visible = true;
 	end);
-	return u;
+	return I;
 end;
-local d1 = W1("Farming", "F", 1);
-local L1 = W1("Boss", "B", 2);
-local f1 = W1("Info", "I", 3);
-local p1 = W1("Settings", "S", 4);
-d1.BackgroundColor3 = Color3.fromRGB(28, 24, 45);
-(d1:FindFirstChild("Indicator")).Visible = true;
-local r1 = Instance.new("Frame");
-r1.Size = UDim2.new(1, -100, 1, 0);
-r1.Position = UDim2.new(0, 100, 0, 0);
-r1.BackgroundColor3 = Color3.fromRGB(18, 18, 22);
-r1.BorderSizePixel = 0;
-r1.Parent = U;
-local Q1 = Instance.new("TextButton");
-Q1.Size = UDim2.new(0, 28, 0, 28);
-Q1.Position = UDim2.new(1, -36, 0, 10);
-Q1.BackgroundColor3 = Color3.fromRGB(30, 30, 38);
-Q1.Text = "X";
-Q1.TextColor3 = Color3.fromRGB(180, 180, 200);
-Q1.Font = Enum.Font.GothamBold;
-Q1.TextSize = 14;
-Q1.Parent = r1;
-(Instance.new("UICorner", Q1)).CornerRadius = UDim.new(0, 6);
-Q1.MouseButton1Click:Connect(function()
-	K:Set(false);
-	G:Destroy();
+local Uq = Eq("Farming", "F", 1);
+local Bq = Eq("Boss", "B", 2);
+local Jq = Eq("Info", "I", 3);
+local gq = Eq("Settings", "S", 4);
+Uq.BackgroundColor3 = Color3.fromRGB(28, 24, 45);
+(Uq:FindFirstChild("Indicator")).Visible = true;
+local Rq = Instance.new("Frame");
+Rq.Size = UDim2.new(1, -100, 1, 0);
+Rq.Position = UDim2.new(0, 100, 0, 0);
+Rq.BackgroundColor3 = Color3.fromRGB(18, 18, 22);
+Rq.BorderSizePixel = 0;
+Rq.Parent = u;
+local Wq = Instance.new("TextButton");
+Wq.Size = UDim2.new(0, 28, 0, 28);
+Wq.Position = UDim2.new(1, -36, 0, 10);
+Wq.BackgroundColor3 = Color3.fromRGB(30, 30, 38);
+Wq.Text = "X";
+Wq.TextColor3 = Color3.fromRGB(180, 180, 200);
+Wq.Font = Enum.Font.GothamBold;
+Wq.TextSize = 14;
+Wq.Parent = Rq;
+(Instance.new("UICorner", Wq)).CornerRadius = UDim.new(0, 6);
+Wq.MouseButton1Click:Connect(function()
+	a:Set(false);
+	K:Destroy();
 end);
-local y1 = Instance.new("TextButton");
-y1.Name = "SLKMini";
-y1.Size = UDim2.new(0, 118, 0, 42);
-y1.Position = UDim2.new(1, -132, 0, 18);
-y1.BackgroundColor3 = Color3.fromRGB(22, 22, 30);
-y1.BorderSizePixel = 0;
-y1.Text = "SLK";
-y1.TextColor3 = Color3.fromRGB(235, 235, 255);
-y1.Font = Enum.Font.GothamBold;
-y1.TextSize = 15;
-y1.Visible = false;
-y1.AutoButtonColor = false;
-y1.Parent = G;
-(Instance.new("UICorner", y1)).CornerRadius = UDim.new(0, 12);
-local w1 = Instance.new("UIStroke");
-w1.Color = Color3.fromRGB(95, 70, 190);
-w1.Thickness = 1.5;
-w1.Parent = y1;
-local c1 = Instance.new("TextButton");
-c1.Name = "Minimize";
-c1.Size = UDim2.new(0, 28, 0, 28);
-c1.Position = UDim2.new(1, -70, 0, 10);
-c1.BackgroundColor3 = Color3.fromRGB(30, 30, 38);
-c1.Text = "-";
-c1.TextColor3 = Color3.fromRGB(210, 210, 225);
-c1.Font = Enum.Font.GothamBold;
-c1.TextSize = 16;
-c1.Parent = r1;
-(Instance.new("UICorner", c1)).CornerRadius = UDim.new(0, 6);
-c1.MouseButton1Click:Connect(function()
-	U.Visible = false;
-	y1.Visible = true;
+local Nq = Instance.new("TextButton");
+Nq.Name = "SLKMini";
+Nq.Size = UDim2.new(0, 118, 0, 42);
+Nq.Position = UDim2.new(1, -132, 0, 18);
+Nq.BackgroundColor3 = Color3.fromRGB(22, 22, 30);
+Nq.BorderSizePixel = 0;
+Nq.Text = "SLK";
+Nq.TextColor3 = Color3.fromRGB(235, 235, 255);
+Nq.Font = Enum.Font.GothamBold;
+Nq.TextSize = 15;
+Nq.Visible = false;
+Nq.AutoButtonColor = false;
+Nq.Parent = K;
+(Instance.new("UICorner", Nq)).CornerRadius = UDim.new(0, 12);
+local Cq = Instance.new("UIStroke");
+Cq.Color = Color3.fromRGB(95, 70, 190);
+Cq.Thickness = 1.5;
+Cq.Parent = Nq;
+local tq = Instance.new("TextButton");
+tq.Name = "Minimize";
+tq.Size = UDim2.new(0, 28, 0, 28);
+tq.Position = UDim2.new(1, -70, 0, 10);
+tq.BackgroundColor3 = Color3.fromRGB(30, 30, 38);
+tq.Text = "-";
+tq.TextColor3 = Color3.fromRGB(210, 210, 225);
+tq.Font = Enum.Font.GothamBold;
+tq.TextSize = 16;
+tq.Parent = Rq;
+(Instance.new("UICorner", tq)).CornerRadius = UDim.new(0, 6);
+tq.MouseButton1Click:Connect(function()
+	u.Visible = false;
+	Nq.Visible = true;
 end);
-y1.MouseButton1Click:Connect(function()
-	y1.Visible = false;
-	U.Visible = true;
+Nq.MouseButton1Click:Connect(function()
+	Nq.Visible = false;
+	u.Visible = true;
 end);
-local function b1(x, n, z, u, h, g)
-	local X = Instance.new("Frame");
-	X.Size = UDim2.new(1, -10, 0, 52);
-	X.Position = UDim2.new(0, 0, 0, n);
-	X.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
-	X.BorderSizePixel = 0;
-	X.Parent = x;
-	(Instance.new("UICorner", X)).CornerRadius = UDim.new(0, 8);
-	local s = Instance.new("TextLabel");
-	s.Size = UDim2.new(1, -70, 0, 20);
-	s.Position = UDim2.new(0, 14, 0, 8);
-	s.BackgroundTransparency = 1;
-	s.Text = z;
-	s.TextColor3 = Color3.fromRGB(240, 240, 250);
-	s.Font = Enum.Font.GothamMedium;
-	s.TextSize = 13;
-	s.TextXAlignment = Enum.TextXAlignment.Left;
-	s.Parent = X;
-	local H = Instance.new("TextLabel");
-	H.Size = UDim2.new(1, -70, 0, 16);
-	H.Position = UDim2.new(0, 14, 0, 28);
-	H.BackgroundTransparency = 1;
-	H.Text = u;
-	H.TextColor3 = Color3.fromRGB(130, 130, 150);
-	H.Font = Enum.Font.Gotham;
-	H.TextSize = 11;
-	H.TextXAlignment = Enum.TextXAlignment.Left;
-	H.Parent = X;
-	local A = Instance.new("Frame");
-	A.Size = UDim2.new(0, 42, 0, 24);
-	A.Position = UDim2.new(1, -56, .5, -12);
-	A.BackgroundColor3 = h and Color3.fromRGB(100, 70, 220) or Color3.fromRGB(50, 50, 60);
-	A.BorderSizePixel = 0;
-	A.Parent = X;
-	(Instance.new("UICorner", A)).CornerRadius = UDim.new(1, 0);
-	local l = Instance.new("Frame");
-	l.Size = UDim2.new(0, 18, 0, 18);
-	l.Position = h and UDim2.new(1, -21, .5, -9) or UDim2.new(0, 3, .5, -9);
-	l.BackgroundColor3 = Color3.fromRGB(255, 255, 255);
-	l.BorderSizePixel = 0;
-	l.Parent = A;
-	(Instance.new("UICorner", l)).CornerRadius = UDim.new(1, 0);
-	local t = h;
-	local S = Instance.new("TextButton");
-	S.Size = UDim2.new(1, 0, 1, 0);
-	S.BackgroundTransparency = 1;
-	S.Text = "";
-	S.Parent = X;
-	S.MouseButton1Click:Connect(function()
-		t = not t;
-		local x = TweenInfo.new(.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out);
-		if t then
-			(j:Create(A, x, { BackgroundColor3 = Color3.fromRGB(100, 70, 220) })):Play();
-			(j:Create(l, x, { Position = UDim2.new(1, -21, .5, -9) })):Play();
+local function Hq(s, h, P, I, T, k)
+	local v = Instance.new("Frame");
+	v.Size = UDim2.new(1, -10, 0, 52);
+	v.Position = UDim2.new(0, 0, 0, h);
+	v.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
+	v.BorderSizePixel = 0;
+	v.Parent = s;
+	(Instance.new("UICorner", v)).CornerRadius = UDim.new(0, 8);
+	local O = Instance.new("TextLabel");
+	O.Size = UDim2.new(1, -70, 0, 20);
+	O.Position = UDim2.new(0, 14, 0, 8);
+	O.BackgroundTransparency = 1;
+	O.Text = P;
+	O.TextColor3 = Color3.fromRGB(240, 240, 250);
+	O.Font = Enum.Font.GothamMedium;
+	O.TextSize = 13;
+	O.TextXAlignment = Enum.TextXAlignment.Left;
+	O.Parent = v;
+	local p = Instance.new("TextLabel");
+	p.Size = UDim2.new(1, -70, 0, 16);
+	p.Position = UDim2.new(0, 14, 0, 28);
+	p.BackgroundTransparency = 1;
+	p.Text = I;
+	p.TextColor3 = Color3.fromRGB(130, 130, 150);
+	p.Font = Enum.Font.Gotham;
+	p.TextSize = 11;
+	p.TextXAlignment = Enum.TextXAlignment.Left;
+	p.Parent = v;
+	local D = Instance.new("Frame");
+	D.Size = UDim2.new(0, 42, 0, 24);
+	D.Position = UDim2.new(1, -56, .5, -12);
+	D.BackgroundColor3 = T and Color3.fromRGB(100, 70, 220) or Color3.fromRGB(50, 50, 60);
+	D.BorderSizePixel = 0;
+	D.Parent = v;
+	(Instance.new("UICorner", D)).CornerRadius = UDim.new(1, 0);
+	local G = Instance.new("Frame");
+	G.Size = UDim2.new(0, 18, 0, 18);
+	G.Position = T and UDim2.new(1, -21, .5, -9) or UDim2.new(0, 3, .5, -9);
+	G.BackgroundColor3 = Color3.fromRGB(255, 255, 255);
+	G.BorderSizePixel = 0;
+	G.Parent = D;
+	(Instance.new("UICorner", G)).CornerRadius = UDim.new(1, 0);
+	local F = T;
+	local A = Instance.new("TextButton");
+	A.Size = UDim2.new(1, 0, 1, 0);
+	A.BackgroundTransparency = 1;
+	A.Text = "";
+	A.Parent = v;
+	A.MouseButton1Click:Connect(function()
+		F = not F;
+		local s = TweenInfo.new(.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out);
+		if F then
+			(V:Create(D, s, { BackgroundColor3 = Color3.fromRGB(100, 70, 220) })):Play();
+			(V:Create(G, s, { Position = UDim2.new(1, -21, .5, -9) })):Play();
 		else
-			(j:Create(A, x, { BackgroundColor3 = Color3.fromRGB(50, 50, 60) })):Play();
-			(j:Create(l, x, { Position = UDim2.new(0, 3, .5, -9) })):Play();
+			(V:Create(D, s, { BackgroundColor3 = Color3.fromRGB(50, 50, 60) })):Play();
+			(V:Create(G, s, { Position = UDim2.new(0, 3, .5, -9) })):Play();
 		end;
-		if g then
-			g(t);
+		if k then
+			k(F);
 		end;
 	end);
-	return X;
+	return v;
 end;
-local function m1(x, n, z)
-	local u = Instance.new("TextLabel");
-	u.Size = UDim2.new(1, 0, 0, 20);
-	u.Position = UDim2.new(0, 0, 0, n);
-	u.BackgroundTransparency = 1;
-	u.Text = z;
-	u.TextColor3 = Color3.fromRGB(120, 100, 200);
-	u.Font = Enum.Font.GothamBold;
-	u.TextSize = 11;
-	u.TextXAlignment = Enum.TextXAlignment.Left;
-	u.Parent = x;
-	return u;
+local function mq(s, h, P)
+	local I = Instance.new("TextLabel");
+	I.Size = UDim2.new(1, 0, 0, 20);
+	I.Position = UDim2.new(0, 0, 0, h);
+	I.BackgroundTransparency = 1;
+	I.Text = P;
+	I.TextColor3 = Color3.fromRGB(120, 100, 200);
+	I.Font = Enum.Font.GothamBold;
+	I.TextSize = 11;
+	I.TextXAlignment = Enum.TextXAlignment.Left;
+	I.Parent = s;
+	return I;
 end;
-local k1 = Instance.new("ScrollingFrame");
-k1.Name = "Farming";
-k1.Size = UDim2.new(1, -20, 1, -50);
-k1.Position = UDim2.new(0, 10, 0, 45);
-k1.BackgroundTransparency = 1;
-k1.BorderSizePixel = 0;
-k1.ScrollBarThickness = 4;
-k1.ScrollingEnabled = true;
-k1.Active = true;
-k1.ScrollBarImageColor3 = Color3.fromRGB(80, 60, 160);
-k1.CanvasSize = UDim2.new(0, 0, 0, 350);
-k1.Parent = r1;
-S1.Farming = k1;
-local B1 = Instance.new("TextLabel");
-B1.Size = UDim2.new(1, 0, 0, 28);
-B1.BackgroundTransparency = 1;
-B1.Text = "Farming";
-B1.TextColor3 = Color3.fromRGB(255, 255, 255);
-B1.Font = Enum.Font.GothamBold;
-B1.TextSize = 20;
-B1.TextXAlignment = Enum.TextXAlignment.Left;
-B1.Parent = k1;
-local J1 = Instance.new("TextLabel");
-J1.Size = UDim2.new(1, 0, 0, 18);
-J1.Position = UDim2.new(0, 0, 0, 26);
-J1.BackgroundTransparency = 1;
-J1.Text = "Strength, rebirth, boosts";
-J1.TextColor3 = Color3.fromRGB(140, 140, 160);
-J1.Font = Enum.Font.Gotham;
-J1.TextSize = 12;
-J1.TextXAlignment = Enum.TextXAlignment.Left;
-J1.Parent = k1;
-local R1 = Instance.new("Frame");
-R1.Size = UDim2.new(1, -10, 0, 64);
-R1.Position = UDim2.new(0, 0, 0, 55);
-R1.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
-R1.BorderSizePixel = 0;
-R1.Parent = k1;
-(Instance.new("UICorner", R1)).CornerRadius = UDim.new(0, 8);
-local D1 = Instance.new("TextLabel");
-D1.Size = UDim2.new(1, -110, 0, 22);
-D1.Position = UDim2.new(0, 14, 0, 8);
-D1.BackgroundTransparency = 1;
-D1.Text = "OP Farm";
-D1.TextColor3 = Color3.fromRGB(240, 240, 250);
-D1.Font = Enum.Font.GothamBold;
-D1.TextSize = 14;
-D1.TextXAlignment = Enum.TextXAlignment.Left;
-D1.Parent = R1;
-local P1 = Instance.new("TextLabel");
-P1.Size = UDim2.new(1, -110, 0, 18);
-P1.Position = UDim2.new(0, 14, 0, 32);
-P1.BackgroundTransparency = 1;
-P1.Text = "Target:  OP |FARM";
-P1.TextColor3 = Color3.fromRGB(135, 135, 155);
-P1.Font = Enum.Font.Gotham;
-P1.TextSize = 11;
-P1.TextXAlignment = Enum.TextXAlignment.Left;
-P1.Parent = R1;
-local Y1 = Instance.new("TextButton");
-Y1.Size = UDim2.new(0, 78, 0, 32);
-Y1.Position = UDim2.new(1, -90, .5, -16);
-Y1.BackgroundColor3 = Color3.fromRGB(45, 45, 55);
-Y1.Text = "OFF";
-Y1.TextColor3 = Color3.fromRGB(190, 190, 205);
-Y1.Font = Enum.Font.GothamBold;
-Y1.TextSize = 12;
-Y1.Parent = R1;
-(Instance.new("UICorner", Y1)).CornerRadius = UDim.new(0, 8);
-local function N1(x)
-	if x then
-		Y1.Text = "ON";
-		Y1.BackgroundColor3 = Color3.fromRGB(100, 70, 220);
-		Y1.TextColor3 = Color3.fromRGB(255, 255, 255);
+local jq = Instance.new("ScrollingFrame");
+jq.Name = "Farming";
+jq.Size = UDim2.new(1, -20, 1, -50);
+jq.Position = UDim2.new(0, 10, 0, 45);
+jq.BackgroundTransparency = 1;
+jq.BorderSizePixel = 0;
+jq.ScrollBarThickness = 4;
+jq.ScrollingEnabled = true;
+jq.Active = true;
+jq.ScrollBarImageColor3 = Color3.fromRGB(80, 60, 160);
+jq.CanvasSize = UDim2.new(0, 0, 0, 350);
+jq.Parent = Rq;
+Aq.Farming = jq;
+local Sq = Instance.new("TextLabel");
+Sq.Size = UDim2.new(1, 0, 0, 28);
+Sq.BackgroundTransparency = 1;
+Sq.Text = "Farming";
+Sq.TextColor3 = Color3.fromRGB(255, 255, 255);
+Sq.Font = Enum.Font.GothamBold;
+Sq.TextSize = 20;
+Sq.TextXAlignment = Enum.TextXAlignment.Left;
+Sq.Parent = jq;
+local Qq = Instance.new("TextLabel");
+Qq.Size = UDim2.new(1, 0, 0, 18);
+Qq.Position = UDim2.new(0, 0, 0, 26);
+Qq.BackgroundTransparency = 1;
+Qq.Text = "Strength, rebirth, boosts";
+Qq.TextColor3 = Color3.fromRGB(140, 140, 160);
+Qq.Font = Enum.Font.Gotham;
+Qq.TextSize = 12;
+Qq.TextXAlignment = Enum.TextXAlignment.Left;
+Qq.Parent = jq;
+local cq = Instance.new("Frame");
+cq.Size = UDim2.new(1, -10, 0, 64);
+cq.Position = UDim2.new(0, 0, 0, 55);
+cq.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
+cq.BorderSizePixel = 0;
+cq.Parent = jq;
+(Instance.new("UICorner", cq)).CornerRadius = UDim.new(0, 8);
+local eq = Instance.new("TextLabel");
+eq.Size = UDim2.new(1, -110, 0, 22);
+eq.Position = UDim2.new(0, 14, 0, 8);
+eq.BackgroundTransparency = 1;
+eq.Text = "OP Farm";
+eq.TextColor3 = Color3.fromRGB(240, 240, 250);
+eq.Font = Enum.Font.GothamBold;
+eq.TextSize = 14;
+eq.TextXAlignment = Enum.TextXAlignment.Left;
+eq.Parent = cq;
+local Yq = Instance.new("TextLabel");
+Yq.Size = UDim2.new(1, -110, 0, 18);
+Yq.Position = UDim2.new(0, 14, 0, 32);
+Yq.BackgroundTransparency = 1;
+Yq.Text = "Target:  OP |FARM";
+Yq.TextColor3 = Color3.fromRGB(135, 135, 155);
+Yq.Font = Enum.Font.Gotham;
+Yq.TextSize = 11;
+Yq.TextXAlignment = Enum.TextXAlignment.Left;
+Yq.Parent = cq;
+local bq = Instance.new("TextButton");
+bq.Size = UDim2.new(0, 78, 0, 32);
+bq.Position = UDim2.new(1, -90, .5, -16);
+bq.BackgroundColor3 = Color3.fromRGB(45, 45, 55);
+bq.Text = "OFF";
+bq.TextColor3 = Color3.fromRGB(190, 190, 205);
+bq.Font = Enum.Font.GothamBold;
+bq.TextSize = 12;
+bq.Parent = cq;
+(Instance.new("UICorner", bq)).CornerRadius = UDim.new(0, 8);
+local function zq(s)
+	if s then
+		bq.Text = "ON";
+		bq.BackgroundColor3 = Color3.fromRGB(100, 70, 220);
+		bq.TextColor3 = Color3.fromRGB(255, 255, 255);
 	else
-		Y1.Text = "OFF";
-		Y1.BackgroundColor3 = Color3.fromRGB(45, 45, 55);
-		Y1.TextColor3 = Color3.fromRGB(190, 190, 205);
+		bq.Text = "OFF";
+		bq.BackgroundColor3 = Color3.fromRGB(45, 45, 55);
+		bq.TextColor3 = Color3.fromRGB(190, 190, 205);
 	end;
 end;
-Y1.MouseButton1Click:Connect(function()
-	r = not r;
-	N1(r);
+bq.MouseButton1Click:Connect(function()
+	R = not R;
+	zq(R);
 end);
-m1(k1, 135, "REBIRTH");
-b1(k1, 158, "Auto Rebirth", "Rebirth when strength reaches threshold", false, function(x)
-	Q = x;
+mq(jq, 135, "REBIRTH");
+Hq(jq, 158, "Auto Rebirth", "Rebirth when strength reaches threshold", false, function(s)
+	W = s;
 end);
-m1(k1, 205, "FAST REBIRTH");
-b1(k1, 228, "Fast Rebirth", "Speed -> Farm -> Packs -> Rebirth -> Golems", false, function(x)
-	y = x;
-	c = c + (1);
-	if x then
-		r = true;
-		N1(true);
+mq(jq, 205, "FAST REBIRTH");
+Hq(jq, 228, "Fast Rebirth", "Speed -> Farm -> Packs -> Rebirth -> Golems", false, function(s)
+	N = s;
+	t = t + (1);
+	if s then
+		R = true;
+		zq(true);
 	else
-		w = "Idle";
+		C = "Idle";
 	end;
 end);
-local M1 = Instance.new("TextLabel");
-M1.Size = UDim2.new(1, -10, 0, 34);
-M1.Position = UDim2.new(0, 0, 0, 291);
-M1.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
-M1.BorderSizePixel = 0;
-M1.Text = "Fast Rebirth: Idle";
-M1.TextColor3 = Color3.fromRGB(150, 150, 175);
-M1.Font = Enum.Font.GothamMedium;
-M1.TextSize = 12;
-M1.TextXAlignment = Enum.TextXAlignment.Left;
-M1.Parent = k1;
-(Instance.new("UICorner", M1)).CornerRadius = UDim.new(0, 8);
-local O1 = Instance.new("UIPadding", M1);
-O1.PaddingLeft = UDim.new(0, 12);
-m1(k1, 340, "SESSION STATS");
-local V1 = Instance.new("Frame");
-V1.Size = UDim2.new(1, -10, 0, 90);
-V1.Position = UDim2.new(0, 0, 0, 363);
-V1.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
-V1.BorderSizePixel = 0;
-V1.Parent = k1;
-(Instance.new("UICorner", V1)).CornerRadius = UDim.new(0, 8);
-local i1 = Instance.new("TextLabel");
-i1.Size = UDim2.new(1, -20, 0, 22);
-i1.Position = UDim2.new(0, 14, 0, 12);
-i1.BackgroundTransparency = 1;
-i1.Text = "Session Rebirths: 0";
-i1.TextColor3 = Color3.fromRGB(160, 255, 160);
-i1.Font = Enum.Font.GothamMedium;
-i1.TextSize = 13;
-i1.TextXAlignment = Enum.TextXAlignment.Left;
-i1.Parent = V1;
-local C1 = Instance.new("TextLabel");
-C1.Size = UDim2.new(1, -20, 0, 20);
-C1.Position = UDim2.new(0, 14, 0, 36);
-C1.BackgroundTransparency = 1;
-C1.Text = "Time: 0h 0m";
-C1.TextColor3 = Color3.fromRGB(180, 180, 210);
-C1.Font = Enum.Font.Gotham;
-C1.TextSize = 12;
-C1.TextXAlignment = Enum.TextXAlignment.Left;
-C1.Parent = V1;
-local a1 = Instance.new("TextLabel");
-a1.Size = UDim2.new(1, -20, 0, 20);
-a1.Position = UDim2.new(0, 14, 0, 58);
-a1.BackgroundTransparency = 1;
-a1.Text = "Rate: 0 /h";
-a1.TextColor3 = Color3.fromRGB(140, 190, 255);
-a1.Font = Enum.Font.Gotham;
-a1.TextSize = 12;
-a1.TextXAlignment = Enum.TextXAlignment.Left;
-a1.Parent = V1;
-local o1 = Instance.new("ScrollingFrame");
-o1.Name = "Boss";
-o1.Size = UDim2.new(1, -20, 1, -50);
-o1.Position = UDim2.new(0, 10, 0, 45);
-o1.BackgroundTransparency = 1;
-o1.BorderSizePixel = 0;
-o1.ScrollBarThickness = 4;
-o1.ScrollingEnabled = true;
-o1.Active = true;
-o1.ScrollBarImageColor3 = Color3.fromRGB(80, 60, 160);
-o1.CanvasSize = UDim2.new(0, 0, 0, 380);
-o1.Visible = false;
-o1.Parent = r1;
-S1.Boss = o1;
-local F1 = Instance.new("TextLabel");
-F1.Size = UDim2.new(1, 0, 0, 28);
-F1.BackgroundTransparency = 1;
-F1.Text = "Boss";
-F1.TextColor3 = Color3.fromRGB(255, 255, 255);
-F1.Font = Enum.Font.GothamBold;
-F1.TextSize = 20;
-F1.TextXAlignment = Enum.TextXAlignment.Left;
-F1.Parent = o1;
-local e1 = Instance.new("TextLabel");
-e1.Size = UDim2.new(1, 0, 0, 18);
-e1.Position = UDim2.new(0, 0, 0, 26);
-e1.BackgroundTransparency = 1;
-e1.Text = "Auto Boss Event";
-e1.TextColor3 = Color3.fromRGB(140, 140, 160);
-e1.Font = Enum.Font.Gotham;
-e1.TextSize = 12;
-e1.TextXAlignment = Enum.TextXAlignment.Left;
-e1.Parent = o1;
-m1(o1, 55, "AUTO BOSS");
-local K1 = Instance.new("Frame");
-K1.Size = UDim2.new(1, -10, 0, 42);
-K1.Position = UDim2.new(0, 0, 0, 78);
-K1.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
-K1.BorderSizePixel = 0;
-K1.Parent = o1;
-(Instance.new("UICorner", K1)).CornerRadius = UDim.new(0, 8);
-local I1 = Instance.new("TextLabel");
-I1.Size = UDim2.new(0, 70, 1, 0);
-I1.Position = UDim2.new(0, 14, 0, 0);
-I1.BackgroundTransparency = 1;
-I1.Text = "Status:";
-I1.TextColor3 = Color3.fromRGB(160, 160, 180);
-I1.Font = Enum.Font.Gotham;
-I1.TextSize = 12;
-I1.TextXAlignment = Enum.TextXAlignment.Left;
-I1.Parent = K1;
-K.StatusLabel = Instance.new("TextLabel");
-K.StatusLabel.Size = UDim2.new(1, -90, 1, 0);
-K.StatusLabel.Position = UDim2.new(0, 80, 0, 0);
-K.StatusLabel.BackgroundTransparency = 1;
-K.StatusLabel.Text = "Sin boss activo";
-K.StatusLabel.TextColor3 = Color3.fromRGB(160, 160, 180);
-K.StatusLabel.Font = Enum.Font.GothamMedium;
-K.StatusLabel.TextSize = 13;
-K.StatusLabel.TextXAlignment = Enum.TextXAlignment.Left;
-K.StatusLabel.Parent = K1;
-local T1 = Instance.new("Frame");
-T1.Size = UDim2.new(1, -10, 0, 42);
-T1.Position = UDim2.new(0, 0, 0, 128);
-T1.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
-T1.BorderSizePixel = 0;
-T1.Parent = o1;
-(Instance.new("UICorner", T1)).CornerRadius = UDim.new(0, 8);
-local v1 = Instance.new("TextLabel");
-v1.Size = UDim2.new(0, 100, 1, 0);
-v1.Position = UDim2.new(0, 14, 0, 0);
-v1.BackgroundTransparency = 1;
-v1.Text = "Boss Health:";
-v1.TextColor3 = Color3.fromRGB(160, 160, 180);
-v1.Font = Enum.Font.Gotham;
-v1.TextSize = 12;
-v1.TextXAlignment = Enum.TextXAlignment.Left;
-v1.Parent = T1;
-K.HealthLabel = Instance.new("TextLabel");
-K.HealthLabel.Size = UDim2.new(1, -120, 1, 0);
-K.HealthLabel.Position = UDim2.new(0, 110, 0, 0);
-K.HealthLabel.BackgroundTransparency = 1;
-K.HealthLabel.Text = "-";
-K.HealthLabel.TextColor3 = Color3.fromRGB(100, 200, 255);
-K.HealthLabel.Font = Enum.Font.GothamMedium;
-K.HealthLabel.TextSize = 13;
-K.HealthLabel.TextXAlignment = Enum.TextXAlignment.Left;
-K.HealthLabel.Parent = T1;
-b1(o1, 185, "Attack Boss", "Auto farm for Boss event (pauses OP Farm)", false, function(x)
-	local n = K:Set(x);
-	if n == false then
+local nq = Instance.new("TextLabel");
+nq.Size = UDim2.new(1, -10, 0, 34);
+nq.Position = UDim2.new(0, 0, 0, 291);
+nq.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
+nq.BorderSizePixel = 0;
+nq.Text = "Fast Rebirth: Idle";
+nq.TextColor3 = Color3.fromRGB(150, 150, 175);
+nq.Font = Enum.Font.GothamMedium;
+nq.TextSize = 12;
+nq.TextXAlignment = Enum.TextXAlignment.Left;
+nq.Parent = jq;
+(Instance.new("UICorner", nq)).CornerRadius = UDim.new(0, 8);
+local xq = Instance.new("UIPadding", nq);
+xq.PaddingLeft = UDim.new(0, 12);
+mq(jq, 340, "SESSION STATS");
+local lq = Instance.new("Frame");
+lq.Size = UDim2.new(1, -10, 0, 90);
+lq.Position = UDim2.new(0, 0, 0, 363);
+lq.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
+lq.BorderSizePixel = 0;
+lq.Parent = jq;
+(Instance.new("UICorner", lq)).CornerRadius = UDim.new(0, 8);
+local oq = Instance.new("TextLabel");
+oq.Size = UDim2.new(1, -20, 0, 22);
+oq.Position = UDim2.new(0, 14, 0, 12);
+oq.BackgroundTransparency = 1;
+oq.Text = "Session Rebirths: 0";
+oq.TextColor3 = Color3.fromRGB(160, 255, 160);
+oq.Font = Enum.Font.GothamMedium;
+oq.TextSize = 13;
+oq.TextXAlignment = Enum.TextXAlignment.Left;
+oq.Parent = lq;
+local Mq = Instance.new("TextLabel");
+Mq.Size = UDim2.new(1, -20, 0, 20);
+Mq.Position = UDim2.new(0, 14, 0, 36);
+Mq.BackgroundTransparency = 1;
+Mq.Text = "Time: 0h 0m";
+Mq.TextColor3 = Color3.fromRGB(180, 180, 210);
+Mq.Font = Enum.Font.Gotham;
+Mq.TextSize = 12;
+Mq.TextXAlignment = Enum.TextXAlignment.Left;
+Mq.Parent = lq;
+local Lq = Instance.new("TextLabel");
+Lq.Size = UDim2.new(1, -20, 0, 20);
+Lq.Position = UDim2.new(0, 14, 0, 58);
+Lq.BackgroundTransparency = 1;
+Lq.Text = "Rate: 0 /h";
+Lq.TextColor3 = Color3.fromRGB(140, 190, 255);
+Lq.Font = Enum.Font.Gotham;
+Lq.TextSize = 12;
+Lq.TextXAlignment = Enum.TextXAlignment.Left;
+Lq.Parent = lq;
+local rq = Instance.new("ScrollingFrame");
+rq.Name = "Boss";
+rq.Size = UDim2.new(1, -20, 1, -50);
+rq.Position = UDim2.new(0, 10, 0, 45);
+rq.BackgroundTransparency = 1;
+rq.BorderSizePixel = 0;
+rq.ScrollBarThickness = 4;
+rq.ScrollingEnabled = true;
+rq.Active = true;
+rq.ScrollBarImageColor3 = Color3.fromRGB(80, 60, 160);
+rq.CanvasSize = UDim2.new(0, 0, 0, 380);
+rq.Visible = false;
+rq.Parent = Rq;
+Aq.Boss = rq;
+local dq = Instance.new("TextLabel");
+dq.Size = UDim2.new(1, 0, 0, 28);
+dq.BackgroundTransparency = 1;
+dq.Text = "Boss";
+dq.TextColor3 = Color3.fromRGB(255, 255, 255);
+dq.Font = Enum.Font.GothamBold;
+dq.TextSize = 20;
+dq.TextXAlignment = Enum.TextXAlignment.Left;
+dq.Parent = rq;
+local iq = Instance.new("TextLabel");
+iq.Size = UDim2.new(1, 0, 0, 18);
+iq.Position = UDim2.new(0, 0, 0, 26);
+iq.BackgroundTransparency = 1;
+iq.Text = "Auto Boss Event";
+iq.TextColor3 = Color3.fromRGB(140, 140, 160);
+iq.Font = Enum.Font.Gotham;
+iq.TextSize = 12;
+iq.TextXAlignment = Enum.TextXAlignment.Left;
+iq.Parent = rq;
+mq(rq, 55, "AUTO BOSS");
+local aq = Instance.new("Frame");
+aq.Size = UDim2.new(1, -10, 0, 42);
+aq.Position = UDim2.new(0, 0, 0, 78);
+aq.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
+aq.BorderSizePixel = 0;
+aq.Parent = rq;
+(Instance.new("UICorner", aq)).CornerRadius = UDim.new(0, 8);
+local Zq = Instance.new("TextLabel");
+Zq.Size = UDim2.new(0, 70, 1, 0);
+Zq.Position = UDim2.new(0, 14, 0, 0);
+Zq.BackgroundTransparency = 1;
+Zq.Text = "Status:";
+Zq.TextColor3 = Color3.fromRGB(160, 160, 180);
+Zq.Font = Enum.Font.Gotham;
+Zq.TextSize = 12;
+Zq.TextXAlignment = Enum.TextXAlignment.Left;
+Zq.Parent = aq;
+a.StatusLabel = Instance.new("TextLabel");
+a.StatusLabel.Size = UDim2.new(1, -90, 1, 0);
+a.StatusLabel.Position = UDim2.new(0, 80, 0, 0);
+a.StatusLabel.BackgroundTransparency = 1;
+a.StatusLabel.Text = "Sin boss activo";
+a.StatusLabel.TextColor3 = Color3.fromRGB(160, 160, 180);
+a.StatusLabel.Font = Enum.Font.GothamMedium;
+a.StatusLabel.TextSize = 13;
+a.StatusLabel.TextXAlignment = Enum.TextXAlignment.Left;
+a.StatusLabel.Parent = aq;
+local Xq = Instance.new("Frame");
+Xq.Size = UDim2.new(1, -10, 0, 42);
+Xq.Position = UDim2.new(0, 0, 0, 128);
+Xq.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
+Xq.BorderSizePixel = 0;
+Xq.Parent = rq;
+(Instance.new("UICorner", Xq)).CornerRadius = UDim.new(0, 8);
+local yq = Instance.new("TextLabel");
+yq.Size = UDim2.new(0, 100, 1, 0);
+yq.Position = UDim2.new(0, 14, 0, 0);
+yq.BackgroundTransparency = 1;
+yq.Text = "Boss Health:";
+yq.TextColor3 = Color3.fromRGB(160, 160, 180);
+yq.Font = Enum.Font.Gotham;
+yq.TextSize = 12;
+yq.TextXAlignment = Enum.TextXAlignment.Left;
+yq.Parent = Xq;
+a.HealthLabel = Instance.new("TextLabel");
+a.HealthLabel.Size = UDim2.new(1, -120, 1, 0);
+a.HealthLabel.Position = UDim2.new(0, 110, 0, 0);
+a.HealthLabel.BackgroundTransparency = 1;
+a.HealthLabel.Text = "-";
+a.HealthLabel.TextColor3 = Color3.fromRGB(100, 200, 255);
+a.HealthLabel.Font = Enum.Font.GothamMedium;
+a.HealthLabel.TextSize = 13;
+a.HealthLabel.TextXAlignment = Enum.TextXAlignment.Left;
+a.HealthLabel.Parent = Xq;
+Hq(rq, 185, "Attack Boss", "Auto farm for Boss event (pauses OP Farm)", false, function(s)
+	local h = a:Set(s);
+	if h == false then
  
 	end;
 end);
-m1(o1, 255, "INFO");
-local E1 = Instance.new("TextLabel");
-E1.Size = UDim2.new(1, -10, 0, 80);
-E1.Position = UDim2.new(0, 0, 0, 278);
-E1.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
-E1.BorderSizePixel = 0;
-E1.Text = " Detecta automatically cuando aparece el Boss\n Cambia tamano a 5, ataca desde arriba\n Anti-lag + stable camera\n Reclama el cofre al derrotarlo\n Se apaga si te hacen dano (proteccion)";
-E1.TextColor3 = Color3.fromRGB(150, 150, 170);
-E1.Font = Enum.Font.Gotham;
-E1.TextSize = 12;
-E1.TextXAlignment = Enum.TextXAlignment.Left;
-E1.TextYAlignment = Enum.TextYAlignment.Top;
-E1.Parent = o1;
-(Instance.new("UICorner", E1)).CornerRadius = UDim.new(0, 8);
-(Instance.new("UIPadding", E1)).PaddingTop = UDim.new(0, 10);
-(Instance.new("UIPadding", E1)).PaddingLeft = UDim.new(0, 12);
-local Z1 = Instance.new("ScrollingFrame");
-Z1.Name = "Info";
-Z1.Size = UDim2.new(1, -20, 1, -50);
-Z1.Position = UDim2.new(0, 10, 0, 45);
-Z1.BackgroundTransparency = 1;
-Z1.BorderSizePixel = 0;
-Z1.ScrollBarThickness = 4;
-Z1.ScrollingEnabled = true;
-Z1.Active = true;
-Z1.ScrollBarImageColor3 = Color3.fromRGB(80, 60, 160);
-Z1.CanvasSize = UDim2.new(0, 0, 0, 360);
-Z1.Visible = false;
-Z1.Parent = r1;
-S1.Info = Z1;
-local G1 = Instance.new("TextLabel");
-G1.Size = UDim2.new(1, 0, 0, 28);
-G1.BackgroundTransparency = 1;
-G1.Text = "Info";
-G1.TextColor3 = Color3.fromRGB(255, 255, 255);
-G1.Font = Enum.Font.GothamBold;
-G1.TextSize = 20;
-G1.TextXAlignment = Enum.TextXAlignment.Left;
-G1.Parent = Z1;
-local U1 = Instance.new("TextLabel");
-U1.Size = UDim2.new(1, 0, 0, 18);
-U1.Position = UDim2.new(0, 0, 0, 28);
-U1.BackgroundTransparency = 1;
-U1.Text = "Session performance and farming rates";
-U1.TextColor3 = Color3.fromRGB(140, 140, 160);
-U1.Font = Enum.Font.Gotham;
-U1.TextSize = 12;
-U1.TextXAlignment = Enum.TextXAlignment.Left;
-U1.Parent = Z1;
-m1(Z1, 58, "RATES PER HOUR");
-local x_ = Instance.new("Frame");
-x_.Size = UDim2.new(1, -10, 0, 150);
-x_.Position = UDim2.new(0, 0, 0, 84);
-x_.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
-x_.BorderSizePixel = 0;
-x_.Parent = Z1;
-(Instance.new("UICorner", x_)).CornerRadius = UDim.new(0, 8);
-local n_ = Instance.new("TextLabel");
-n_.Size = UDim2.new(1, -28, 0, 32);
-n_.Position = UDim2.new(0, 14, 0, 12);
-n_.BackgroundTransparency = 1;
-n_.Text = "Strength per hour: 0";
-n_.TextColor3 = Color3.fromRGB(150, 210, 255);
-n_.Font = Enum.Font.GothamMedium;
-n_.TextSize = 14;
-n_.TextXAlignment = Enum.TextXAlignment.Left;
-n_.Parent = x_;
-local z_ = Instance.new("TextLabel");
-z_.Size = UDim2.new(1, -28, 0, 32);
-z_.Position = UDim2.new(0, 14, 0, 52);
-z_.BackgroundTransparency = 1;
-z_.Text = "Rebirths per hour: 0";
-z_.TextColor3 = Color3.fromRGB(160, 255, 160);
-z_.Font = Enum.Font.GothamMedium;
-z_.TextSize = 14;
-z_.TextXAlignment = Enum.TextXAlignment.Left;
-z_.Parent = x_;
-local u_ = Instance.new("TextLabel");
-u_.Size = UDim2.new(1, -28, 0, 32);
-u_.Position = UDim2.new(0, 14, 0, 92);
-u_.BackgroundTransparency = 1;
-u_.Text = "Session time: 0m";
-u_.TextColor3 = Color3.fromRGB(180, 180, 210);
-u_.Font = Enum.Font.Gotham;
-u_.TextSize = 12;
-u_.TextXAlignment = Enum.TextXAlignment.Left;
-u_.Parent = x_;
-local function h_()
-	local x = math.max(0, tick() - b);
-	local n = math.floor(x / 3600);
-	local z = math.floor(((x % 3600)) / 60);
-	local u = x > 0 and math.floor(((B / x)) * 3600) or 0;
-	local h = x > 0 and math.floor(((m / x)) * 3600) or 0;
-	if n_ then
-		n_.Text = "Strength per hour: " .. Y(u);
+mq(rq, 255, "INFO");
+local fq = Instance.new("TextLabel");
+fq.Size = UDim2.new(1, -10, 0, 80);
+fq.Position = UDim2.new(0, 0, 0, 278);
+fq.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
+fq.BorderSizePixel = 0;
+fq.Text = " Detecta automatically cuando aparece el Boss\n Cambia tamano a 5, ataca desde arriba\n Anti-lag + stable camera\n Reclama el cofre al derrotarlo\n Se apaga si te hacen dano (proteccion)";
+fq.TextColor3 = Color3.fromRGB(150, 150, 170);
+fq.Font = Enum.Font.Gotham;
+fq.TextSize = 12;
+fq.TextXAlignment = Enum.TextXAlignment.Left;
+fq.TextYAlignment = Enum.TextYAlignment.Top;
+fq.Parent = rq;
+(Instance.new("UICorner", fq)).CornerRadius = UDim.new(0, 8);
+(Instance.new("UIPadding", fq)).PaddingTop = UDim.new(0, 10);
+(Instance.new("UIPadding", fq)).PaddingLeft = UDim.new(0, 12);
+local wq = Instance.new("ScrollingFrame");
+wq.Name = "Info";
+wq.Size = UDim2.new(1, -20, 1, -50);
+wq.Position = UDim2.new(0, 10, 0, 45);
+wq.BackgroundTransparency = 1;
+wq.BorderSizePixel = 0;
+wq.ScrollBarThickness = 4;
+wq.ScrollingEnabled = true;
+wq.Active = true;
+wq.ScrollBarImageColor3 = Color3.fromRGB(80, 60, 160);
+wq.CanvasSize = UDim2.new(0, 0, 0, 360);
+wq.Visible = false;
+wq.Parent = Rq;
+Aq.Info = wq;
+local Kq = Instance.new("TextLabel");
+Kq.Size = UDim2.new(1, 0, 0, 28);
+Kq.BackgroundTransparency = 1;
+Kq.Text = "Info";
+Kq.TextColor3 = Color3.fromRGB(255, 255, 255);
+Kq.Font = Enum.Font.GothamBold;
+Kq.TextSize = 20;
+Kq.TextXAlignment = Enum.TextXAlignment.Left;
+Kq.Parent = wq;
+local uq = Instance.new("TextLabel");
+uq.Size = UDim2.new(1, 0, 0, 18);
+uq.Position = UDim2.new(0, 0, 0, 28);
+uq.BackgroundTransparency = 1;
+uq.Text = "Session performance and farming rates";
+uq.TextColor3 = Color3.fromRGB(140, 140, 160);
+uq.Font = Enum.Font.Gotham;
+uq.TextSize = 12;
+uq.TextXAlignment = Enum.TextXAlignment.Left;
+uq.Parent = wq;
+mq(wq, 58, "RATES PER HOUR");
+local sT = Instance.new("Frame");
+sT.Size = UDim2.new(1, -10, 0, 150);
+sT.Position = UDim2.new(0, 0, 0, 84);
+sT.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
+sT.BorderSizePixel = 0;
+sT.Parent = wq;
+(Instance.new("UICorner", sT)).CornerRadius = UDim.new(0, 8);
+local hT = Instance.new("TextLabel");
+hT.Size = UDim2.new(1, -28, 0, 32);
+hT.Position = UDim2.new(0, 14, 0, 12);
+hT.BackgroundTransparency = 1;
+hT.Text = "Strength per hour: 0";
+hT.TextColor3 = Color3.fromRGB(150, 210, 255);
+hT.Font = Enum.Font.GothamMedium;
+hT.TextSize = 14;
+hT.TextXAlignment = Enum.TextXAlignment.Left;
+hT.Parent = sT;
+local PT = Instance.new("TextLabel");
+PT.Size = UDim2.new(1, -28, 0, 32);
+PT.Position = UDim2.new(0, 14, 0, 52);
+PT.BackgroundTransparency = 1;
+PT.Text = "Rebirths per hour: 0";
+PT.TextColor3 = Color3.fromRGB(160, 255, 160);
+PT.Font = Enum.Font.GothamMedium;
+PT.TextSize = 14;
+PT.TextXAlignment = Enum.TextXAlignment.Left;
+PT.Parent = sT;
+local IT = Instance.new("TextLabel");
+IT.Size = UDim2.new(1, -28, 0, 32);
+IT.Position = UDim2.new(0, 14, 0, 92);
+IT.BackgroundTransparency = 1;
+IT.Text = "Session time: 0m";
+IT.TextColor3 = Color3.fromRGB(180, 180, 210);
+IT.Font = Enum.Font.Gotham;
+IT.TextSize = 12;
+IT.TextXAlignment = Enum.TextXAlignment.Left;
+IT.Parent = sT;
+local function TT()
+	local s = math.max(0, tick() - H);
+	local h = math.floor(s / 3600);
+	local P = math.floor(((s % 3600)) / 60);
+	local I = s > 0 and math.floor(((S / s)) * 3600) or 0;
+	local T = s > 0 and math.floor(((m / s)) * 3600) or 0;
+	if hT then
+		hT.Text = "Strength per hour: " .. b(I);
 	end;
-	if z_ then
-		z_.Text = "Rebirths per hour: " .. h;
+	if PT then
+		PT.Text = "Rebirths per hour: " .. T;
 	end;
-	if u_ then
-		u_.Text = string.format("Session time: %dh %dm", n, z);
+	if IT then
+		IT.Text = string.format("Session time: %dh %dm", h, P);
 	end;
-	if i1 then
-		i1.Text = "Session Rebirths: " .. m;
+	if oq then
+		oq.Text = "Session Rebirths: " .. m;
 	end;
-	if C1 then
-		C1.Text = string.format("Time: %dh %dm", n, z);
+	if Mq then
+		Mq.Text = string.format("Time: %dh %dm", h, P);
 	end;
-	if a1 then
-		a1.Text = "Rate: " .. (h .. " /h");
+	if Lq then
+		Lq.Text = "Rate: " .. (T .. " /h");
 	end;
-	if M1 then
-		M1.Text = "Fast Rebirth: " .. w;
+	if nq then
+		nq.Text = "Fast Rebirth: " .. C;
 	end;
 end;
 task.spawn(function()
-	while G and G.Parent do
-		h_();
+	while K and K.Parent do
+		TT();
 		task.wait(1);
 	end;
 end);
-local j_ = Instance.new("TextLabel");
-j_.Size = UDim2.new(1, -10, 0, 70);
-j_.Position = UDim2.new(0, 0, 0, 250);
-j_.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
-j_.BorderSizePixel = 0;
-j_.Text = "Rates are calculated from this session.\nStrength counts cumulative gains, including strength earned before rebirth.\nShort sessions may show 0 until enough data is collected.";
-j_.TextColor3 = Color3.fromRGB(150, 150, 170);
-j_.Font = Enum.Font.Gotham;
-j_.TextSize = 11;
-j_.TextXAlignment = Enum.TextXAlignment.Left;
-j_.TextYAlignment = Enum.TextYAlignment.Center;
-j_.Parent = Z1;
-(Instance.new("UICorner", j_)).CornerRadius = UDim.new(0, 8);
-local g_ = Instance.new("UIPadding", j_);
-g_.PaddingLeft = UDim.new(0, 12);
-local X_ = Instance.new("ScrollingFrame");
-X_.Name = "Settings";
-X_.Size = UDim2.new(1, -20, 1, -50);
-X_.Position = UDim2.new(0, 10, 0, 45);
-X_.BackgroundTransparency = 1;
-X_.BorderSizePixel = 0;
-X_.ScrollBarThickness = 4;
-X_.ScrollingEnabled = true;
-X_.Active = true;
-X_.CanvasSize = UDim2.new(0, 0, 0, 390);
-X_.Visible = false;
-X_.Parent = r1;
-S1.Settings = X_;
-local s_ = Instance.new("TextLabel");
-s_.Size = UDim2.new(1, 0, 0, 28);
-s_.BackgroundTransparency = 1;
-s_.Text = "Settings";
-s_.TextColor3 = Color3.fromRGB(255, 255, 255);
-s_.Font = Enum.Font.GothamBold;
-s_.TextSize = 20;
-s_.TextXAlignment = Enum.TextXAlignment.Left;
-s_.Parent = X_;
-local H_ = Instance.new("TextLabel");
-H_.Size = UDim2.new(1, 0, 0, 18);
-H_.Position = UDim2.new(0, 0, 0, 28);
-H_.BackgroundTransparency = 1;
-H_.Text = "Performance, UI and stability";
-H_.TextColor3 = Color3.fromRGB(140, 140, 160);
-H_.Font = Enum.Font.Gotham;
-H_.TextSize = 12;
-H_.TextXAlignment = Enum.TextXAlignment.Left;
-H_.Parent = X_;
-local A_ = setmetatable({}, { __mode = "k" });
-local l_ = false;
-local function t_(x)
-	l_ = x == true;
-	for n, z in ipairs(workspace:GetDescendants()) do
-		if z:IsA("ParticleEmitter") or z:IsA("Trail") or z:IsA("Beam") or z:IsA("Fire") or z:IsA("Smoke") or z:IsA("Sparkles") or z:IsA("PointLight") or z:IsA("SpotLight") or z:IsA("SurfaceLight") or z:IsA("Highlight") then
-			if A_[z] == nil then
-				A_[z] = z.Enabled;
+local VT = Instance.new("TextLabel");
+VT.Size = UDim2.new(1, -10, 0, 70);
+VT.Position = UDim2.new(0, 0, 0, 250);
+VT.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
+VT.BorderSizePixel = 0;
+VT.Text = "Rates are calculated from this session.\nStrength counts cumulative gains, including strength earned before rebirth.\nShort sessions may show 0 until enough data is collected.";
+VT.TextColor3 = Color3.fromRGB(150, 150, 170);
+VT.Font = Enum.Font.Gotham;
+VT.TextSize = 11;
+VT.TextXAlignment = Enum.TextXAlignment.Left;
+VT.TextYAlignment = Enum.TextYAlignment.Center;
+VT.Parent = wq;
+(Instance.new("UICorner", VT)).CornerRadius = UDim.new(0, 8);
+local kT = Instance.new("UIPadding", VT);
+kT.PaddingLeft = UDim.new(0, 12);
+local vT = Instance.new("ScrollingFrame");
+vT.Name = "Settings";
+vT.Size = UDim2.new(1, -20, 1, -50);
+vT.Position = UDim2.new(0, 10, 0, 45);
+vT.BackgroundTransparency = 1;
+vT.BorderSizePixel = 0;
+vT.ScrollBarThickness = 4;
+vT.ScrollingEnabled = true;
+vT.Active = true;
+vT.CanvasSize = UDim2.new(0, 0, 0, 390);
+vT.Visible = false;
+vT.Parent = Rq;
+Aq.Settings = vT;
+local OT = Instance.new("TextLabel");
+OT.Size = UDim2.new(1, 0, 0, 28);
+OT.BackgroundTransparency = 1;
+OT.Text = "Settings";
+OT.TextColor3 = Color3.fromRGB(255, 255, 255);
+OT.Font = Enum.Font.GothamBold;
+OT.TextSize = 20;
+OT.TextXAlignment = Enum.TextXAlignment.Left;
+OT.Parent = vT;
+local pT = Instance.new("TextLabel");
+pT.Size = UDim2.new(1, 0, 0, 18);
+pT.Position = UDim2.new(0, 0, 0, 28);
+pT.BackgroundTransparency = 1;
+pT.Text = "Performance, UI and stability";
+pT.TextColor3 = Color3.fromRGB(140, 140, 160);
+pT.Font = Enum.Font.Gotham;
+pT.TextSize = 12;
+pT.TextXAlignment = Enum.TextXAlignment.Left;
+pT.Parent = vT;
+local DT = setmetatable({}, { __mode = "k" });
+local GT = false;
+local function FT(s)
+	GT = s == true;
+	for h, P in ipairs(workspace:GetDescendants()) do
+		if P:IsA("ParticleEmitter") or P:IsA("Trail") or P:IsA("Beam") or P:IsA("Fire") or P:IsA("Smoke") or P:IsA("Sparkles") or P:IsA("PointLight") or P:IsA("SpotLight") or P:IsA("SurfaceLight") or P:IsA("Highlight") then
+			if DT[P] == nil then
+				DT[P] = P.Enabled;
 			end;
 			pcall(function()
-				z.Enabled = not x;
+				P.Enabled = not s;
 			end);
-		elseif z:IsA("BasePart") then
-			if A_[z] == nil then
-				A_[z] = z.CastShadow;
+		elseif P:IsA("BasePart") then
+			if DT[P] == nil then
+				DT[P] = P.CastShadow;
 			end;
 			pcall(function()
-				z.CastShadow = not x;
+				P.CastShadow = not s;
 			end);
 		end;
 	end;
-	if not x then
-		for x, n in pairs(A_) do
-			if x and x.Parent then
+	if not s then
+		for s, h in pairs(DT) do
+			if s and s.Parent then
 				pcall(function()
-					x.Enabled = n;
+					s.Enabled = h;
 				end);
 				pcall(function()
-					x.CastShadow = n;
+					s.CastShadow = h;
 				end);
 			end;
-			A_[x] = nil;
+			DT[s] = nil;
 		end;
 	end;
 end;
-m1(X_, 58, "PERFORMANCE");
-b1(X_, 82, "Performance Mode", "Reduce particulas, luces, highlights y sombras", false, t_);
-b1(X_, 145, "Stable UI", "Reduce animaciones visuales para bajar trabajo del cliente", true, function(x)
-	_G.ARGZxStableUI = x;
+mq(vT, 58, "PERFORMANCE");
+Hq(vT, 82, "Performance Mode", "Reduce particulas, luces, highlights y sombras", false, FT);
+Hq(vT, 145, "Stable UI", "Reduce animaciones visuales para bajar trabajo del cliente", true, function(s)
+	_G.ARGZxStableUI = s;
 end);
-m1(X_, 210, "FARM STABILITY");
-local S_ = Instance.new("TextLabel");
-S_.Size = UDim2.new(1, -10, 0, 70);
-S_.Position = UDim2.new(0, 0, 0, 234);
-S_.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
-S_.BorderSizePixel = 0;
-S_.Text = "OP Farm target: 800 reps/s\nThe client sends in controlled batches; server limits may still apply.\nFast Rebirth order: Speed -> Farm -> Packs -> Rebirth -> Golems";
-S_.TextColor3 = Color3.fromRGB(155, 155, 175);
-S_.Font = Enum.Font.Gotham;
-S_.TextSize = 12;
-S_.TextXAlignment = Enum.TextXAlignment.Left;
-S_.TextYAlignment = Enum.TextYAlignment.Center;
-S_.Parent = X_;
-(Instance.new("UICorner", S_)).CornerRadius = UDim.new(0, 8);
-local q_ = Instance.new("UIPadding", S_);
-q_.PaddingLeft = UDim.new(0, 12);
-local function W_(x, n)
-	local z = x:FindFirstChildOfClass("UIListLayout");
-	if z then
-		local function u()
-			x.CanvasSize = UDim2.new(0, 0, 0, z.AbsoluteContentSize.Y + ((n or 16)));
+mq(vT, 210, "FARM STABILITY");
+local AT = Instance.new("TextLabel");
+AT.Size = UDim2.new(1, -10, 0, 70);
+AT.Position = UDim2.new(0, 0, 0, 234);
+AT.BackgroundColor3 = Color3.fromRGB(24, 24, 30);
+AT.BorderSizePixel = 0;
+AT.Text = "OP Farm target: 800 reps/s\nThe client sends in controlled batches; server limits may still apply.\nFast Rebirth order: Speed -> Farm -> Packs -> Rebirth -> Golems";
+AT.TextColor3 = Color3.fromRGB(155, 155, 175);
+AT.Font = Enum.Font.Gotham;
+AT.TextSize = 12;
+AT.TextXAlignment = Enum.TextXAlignment.Left;
+AT.TextYAlignment = Enum.TextYAlignment.Center;
+AT.Parent = vT;
+(Instance.new("UICorner", AT)).CornerRadius = UDim.new(0, 8);
+local qT = Instance.new("UIPadding", AT);
+qT.PaddingLeft = UDim.new(0, 12);
+local function ET(s, h)
+	local P = s:FindFirstChildOfClass("UIListLayout");
+	if P then
+		local function I()
+			s.CanvasSize = UDim2.new(0, 0, 0, P.AbsoluteContentSize.Y + ((h or 16)));
 		end;
-		(z:GetPropertyChangedSignal("AbsoluteContentSize")):Connect(u);
-		u();
+		(P:GetPropertyChangedSignal("AbsoluteContentSize")):Connect(I);
+		I();
 	end;
 end;
-W_(k1, 24);
-W_(o1, 24);
-W_(Z1, 24);
-W_(X_, 24);
-g.InputBegan:Connect(function(x, n)
-	if n then
+ET(jq, 24);
+ET(rq, 24);
+ET(wq, 24);
+ET(vT, 24);
+k.InputBegan:Connect(function(s, h)
+	if h then
 		return;
 	end;
-	if x.KeyCode == Enum.KeyCode.RightControl then
-		if U.Visible then
-			U.Visible = false;
-			y1.Visible = true;
+	if s.KeyCode == Enum.KeyCode.RightControl then
+		if u.Visible then
+			u.Visible = false;
+			Nq.Visible = true;
 		else
-			y1.Visible = false;
-			U.Visible = true;
+			Nq.Visible = false;
+			u.Visible = true;
 		end;
 	end;
 end);
-K:UpdateUi();
+a:UpdateUi();
 print("ARGZx GUI + Auto Boss loaded");
