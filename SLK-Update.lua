@@ -175,7 +175,7 @@ end
 
 -- ==================== PING PROTECTION ====================
 local PingProtection = true
-local PING_PAUSE = 5000
+local PING_PAUSE = 12000
 local PING_RESUME = 350
 local PING_CHECK = 0.5
 local pingPaused = false
